@@ -1,122 +1,199 @@
-# TypeScript Library Template
+# Binary Layout Tree
 
-A comprehensive starter template for creating TypeScript libraries, pre-configured with testing infrastructure.
+[![npm version](https://badge.fury.io/js/@adaptive-desktop%2Fbinary-layout-tree.svg)](https://badge.fury.io/js/@adaptive-desktop%2Fbinary-layout-tree)
+[![CI](https://github.com/adaptive-desktop/binary-layout-tree/workflows/Test/badge.svg)](https://github.com/adaptive-desktop/binary-layout-tree/actions)
+[![codecov](https://codecov.io/gh/adaptive-desktop/binary-layout-tree/graph/badge.svg?token=M6VECB6C8O)](https://codecov.io/gh/adaptive-desktop/binary-layout-tree)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 
-## Features
+Framework-agnostic binary layout tree for adaptive desktop workspaces. The core foundation for building VS Code-style layouts with resizable panels, pinned sidebars, and flexible content organization.
 
-This template comes pre-configured with:
+## ✨ Features
 
-- **🧪 Testing** - Jest testing framework setup
-- **📦 TypeScript** - Full TypeScript support with build configuration
-- **✨ Prettier** - Code formatting and style consistency
-- **🔧 ESLint** - Code linting and quality checks
-- **📦 Rollup** - Module bundling for distribution
-- **📚 TypeDoc** - Documentation generation
+- **🌳 Pure Binary Tree**: Mathematical elegance with predictable behavior
+- **� Immutable Operations**: All operations return new tree instances
+- **🎯 Framework Agnostic**: Zero UI dependencies, works with React, Vue, Angular
+- **� Type Safe**: 100% TypeScript with comprehensive type definitions
+- **🧪 Fully Tested**: 100% test coverage with 84 comprehensive tests
+- **⚡ Performance Optimized**: Efficient algorithms for tree operations
+- **📦 Zero Dependencies**: Only `tslib` for TypeScript helpers
 
-## Getting Started
+## 🚀 Quick Start
 
 ### Installation
 
-1. **Clone or use this template:**
+```bash
+# npm
+npm install @adaptive-desktop/binary-layout-tree
 
-   ```sh
-   git clone https://github.com/your-username/typescript-library-template.git my-library
-   cd my-library
-   ```
+# yarn
+yarn add @adaptive-desktop/binary-layout-tree
 
-2. **Install dependencies:**
-
-   ```sh
-   # npm
-   npm install
-
-   # yarn
-   yarn install
-
-   # pnpm
-   pnpm install
-   ```
-
-3. **Commit your lock file:**
-   ```sh
-   git add package-lock.json  # or yarn.lock / pnpm-lock.yaml
-   git commit -m "Add lock file for reproducible builds"
-   ```
-
-4. **Update package.json:**
-   - Change the `name` field from `@your-org/your-library-name` to your library name
-   - Update `version`, `description`, and other metadata
-   - Update the repository URL from `https://github.com/your-username/your-repo.git`
-   - Update the author information from `Your Name <your.email@example.com>`
-
-5. **Replace example code:**
-   - The `src/lib/` directory contains example code (Calculator class and utilities)
-   - Replace this with your actual library code
-   - Update the exports in `src/index.ts` to match your library's public API
-
-> **📦 Package Manager Choice:** This template works with npm, yarn, or pnpm. Choose your preferred package manager and use it consistently throughout your project. The examples below show commands for all three - use whichever you prefer.
-
-> **🔒 Lock Files Required:** The CI workflows require a lock file to be committed for reproducible builds. After running your first `install` command, make sure to commit the generated lock file (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`).
-
-### Development
-
-#### Building Your Library
-
-Build the library for distribution:
-
-```sh
-npm run build             # or: yarn build / pnpm build
+# pnpm
+pnpm add @adaptive-desktop/binary-layout-tree
 ```
 
-Watch for changes during development:
+### Basic Usage
 
-```sh
-npm run build:watch       # or: yarn build:watch / pnpm build:watch
+```typescript
+import { LayoutTree } from '@adaptive-desktop/binary-layout-tree';
+
+// Create a simple layout
+const tree = new LayoutTree({
+  direction: 'row',
+  first: 'sidebar',
+  second: {
+    direction: 'column',
+    first: 'editor',
+    second: 'terminal',
+    splitPercentage: 75
+  },
+  splitPercentage: 20
+});
+
+// Get all panel IDs
+const panels = tree.getPanelIds(); // ['sidebar', 'editor', 'terminal']
+
+// Check if tree contains a panel
+const hasEditor = tree.hasPanel('editor'); // true
+
+// Find path to a panel
+const editorPath = tree.findPanelPath('editor'); // ['second', 'first']
 ```
 
-#### Testing
+## 📖 Core Concepts
 
-Run tests:
+### Binary Tree Structure
 
-```sh
-# Run all tests
-npm test                  # or: yarn test / pnpm test
+Every layout is represented as a binary tree where:
+- **Leaf nodes** are panel IDs (string or number)
+- **Parent nodes** split space between two children
+- **Direction** determines split orientation (`'row'` = horizontal, `'column'` = vertical)
+- **Split percentage** controls space allocation (0-100, defaults to 50)
 
-# Run tests in watch mode
-npm run test:watch        # or: yarn test:watch / pnpm test:watch
-
-# Run tests with coverage
-npm run test:coverage     # or: yarn test:coverage / pnpm test:coverage
+```typescript
+// VS Code-style layout
+const layout = {
+  direction: 'row',
+  first: 'sidebar',           // 20% width
+  second: {
+    direction: 'column',
+    first: 'editor',          // 75% of remaining height
+    second: 'terminal',       // 25% of remaining height
+    splitPercentage: 75
+  },
+  splitPercentage: 20
+};
 ```
 
-#### Code Formatting
+### Tree Operations
 
-Format your code with Prettier:
+```typescript
+import { LayoutTree, getLeaves, getNodeAtPath } from '@adaptive-desktop/binary-layout-tree';
 
-```sh
-# Format all files
-npm run format            # or: yarn format / pnpm format
+const tree = new LayoutTree('single-panel');
 
-# Check if files are formatted correctly
-npm run format:check      # or: yarn format:check / pnpm format:check
+// Tree traversal utilities
+const allPanels = getLeaves(tree.getRoot());
+const nodeAtPath = getNodeAtPath(tree.getRoot(), ['first', 'second']);
 
-# Lint your code
-npm run lint              # or: yarn lint / pnpm lint
+// Tree comparison
+const tree2 = new LayoutTree('single-panel');
+const areEqual = tree.equals(tree2); // true
 
-# Fix linting issues automatically
-npm run lint:fix          # or: yarn lint:fix / pnpm lint:fix
+// Immutable operations
+const copy = tree.copy();
 ```
 
-## Publishing
+## 🏗️ Architecture
 
-1. Build your library: `npm run build` (or `yarn build` / `pnpm build`)
-2. Update version in `package.json`
-3. Publish to npm: `npm publish`
+This library serves as the **core layer** in a three-tier architecture:
 
-## Contributing
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Application Layer                        │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │   React Web     │  │  React Native   │  │  Vue/Angular │ │
+│  │  Components     │  │   Components    │  │  Components  │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   Framework Layer                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │ @adaptive-      │  │ @adaptive-      │  │ @adaptive-   │ │
+│  │ desktop/react   │  │ desktop/react-  │  │ desktop/vue  │ │
+│  │                 │  │ native          │  │              │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                      Core Layer                             │
+│           @adaptive-desktop/binary-layout-tree              │
+│                 (This Package)                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 🔧 Development
+
+### Prerequisites
+
+- Node.js 16.9+ (for Corepack support)
+- Yarn 4.9.0 (managed via Corepack)
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/adaptive-desktop/binary-layout-tree.git
+cd binary-layout-tree
+
+# Enable Corepack (if not already enabled)
+corepack enable
+
+# Install dependencies
+yarn install
+```
+
+### Scripts
+
+```bash
+# Development
+yarn build              # Build for production
+yarn build:watch        # Build in watch mode
+yarn test               # Run tests
+yarn test:watch         # Run tests in watch mode
+yarn test:coverage      # Run tests with coverage
+
+# Code Quality
+yarn lint               # Run ESLint
+yarn lint:fix           # Fix ESLint issues
+yarn format             # Format with Prettier
+yarn format:check       # Check Prettier formatting
+yarn type-check         # Run TypeScript checks
+
+# Documentation
+yarn docs               # Generate TypeDoc documentation
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
 
 1. Fork the repository
-2. Create your feature branch
-3. Add tests for your changes
-4. Ensure all tests pass
-5. Submit a pull request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes with tests
+4. Ensure all checks pass: `yarn test && yarn lint && yarn type-check`
+5. Commit your changes: `git commit -m 'feat: add amazing feature'`
+6. Push to the branch: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Related Projects
+
+- **[@adaptive-desktop/react](https://github.com/adaptive-desktop/react)** - React components for binary layout trees
+- **[@adaptive-desktop/react-native](https://github.com/adaptive-desktop/react-native)** - React Native components
+- **[Adaptive Desktop](https://github.com/adaptive-desktop)** - Complete adaptive desktop workspace system

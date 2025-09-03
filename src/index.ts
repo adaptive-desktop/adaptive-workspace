@@ -1,15 +1,18 @@
 /**
- * @fileoverview Main entry point for your TypeScript library
+ * @fileoverview Main entry point for @adaptive-desktop/binary-layout-tree
  *
- * This is the main entry point for your library. Export your public API here.
+ * This is the main entry point for the binary layout tree library.
+ * It exports all public APIs for managing binary layout trees.
  */
 
-// Example exports - replace with your actual library code
-export * from './lib';
+// Core classes
+export { LayoutTree } from './LayoutTree';
 
-// You can also export individual functions, classes, or constants
-// export { MyClass } from './lib/MyClass';
-// export { myFunction } from './lib/utils';
+// Type definitions
+export * from './types';
 
-// Version information (optional)
+// Utility functions
+export * from './utils/treeUtils';
+
+// Version information
 export const VERSION = '0.1.0';

@@ -1,7 +1,7 @@
 {
-  "name": "@your-org/your-library-name",
+  "name": "@adaptive-desktop/binary-layout-tree",
   "version": "0.1.0",
-  "description": "A TypeScript library",
+  "description": "Framework-agnostic binary layout tree for adaptive desktop workspaces",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -26,12 +26,18 @@
     "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
+    "layout",
+    "binary-tree",
+    "workspace",
+    "adaptive-desktop",
+    "framework-agnostic",
+    "typescript"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Adaptive Desktop Team",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/your-repo.git"
+    "url": "git@github.com:adaptive-desktop/binary-layout-tree.git"
   },
   "dependencies": {
     "tslib": "^2.6.0"
@@ -44,10 +50,12 @@
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "jest": "^29.7.0",
+    "jest-util": "^30.0.5",
     "prettier": "^3.0.0",
     "rollup": "^3.29.0",
     "ts-jest": "^29.1.0",
     "typedoc": "^0.25.0",
     "typescript": "^5.2.0"
-  }
+  },
+  "packageManager": "yarn@4.9.0+sha512.5f5f00843eae735dfab6f0442524603e987ceca55e98b36eb0120f4e58908e5b1406545321e46627dca97d15d562f23dc13fb96cabd4e6bc92d379f619001e4e"
 }

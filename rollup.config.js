@@ -1,9 +1,9 @@
-import typescript from '@rollup/plugin-typescript';
-import { readFileSync } from 'fs';
+const typescript = require('@rollup/plugin-typescript');
+const { readFileSync } = require('fs');
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
-export default {
+module.exports = {
   input: 'src/index.ts',
   output: [
     {

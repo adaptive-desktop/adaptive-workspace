@@ -14,7 +14,7 @@ Framework-agnostic binary layout tree for adaptive desktop workspaces. The core 
 - **� Immutable Operations**: All operations return new tree instances
 - **🎯 Framework Agnostic**: Zero UI dependencies, works with React, Vue, Angular
 - **� Type Safe**: 100% TypeScript with comprehensive type definitions
-- **🧪 Fully Tested**: 100% test coverage with 84 comprehensive tests
+- **🧪 Fully Tested**: 98.67% test coverage with 236 comprehensive tests
 - **⚡ Performance Optimized**: Efficient algorithms for tree operations
 - **📦 Zero Dependencies**: Only `tslib` for TypeScript helpers
 

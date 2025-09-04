@@ -1034,4 +1034,237 @@ describe('LayoutTree', () => {
       });
     });
   });
+
+  describe('Serialization', () => {
+    describe('serialize', () => {
+      it('should serialize empty tree', () => {
+        const tree = new LayoutTree<string>();
+        const serialized = tree.serialize();
+        expect(serialized.version).toBe('1.0.0');
+        expect(serialized.tree).toBe(null);
+      });
+
+      it('should serialize single panel tree', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const serialized = tree.serialize();
+        expect(serialized.version).toBe('1.0.0');
+        expect(serialized.tree).toBe('panel1');
+      });
+
+      it('should serialize complex tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+            splitPercentage: 75,
+          },
+          splitPercentage: 60,
+        });
+        const serialized = tree.serialize();
+        expect(serialized.version).toBe('1.0.0');
+        expect(serialized.tree).toEqual({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+            splitPercentage: 75,
+          },
+          splitPercentage: 60,
+        });
+      });
+    });
+
+    describe('deserialize', () => {
+      it('should deserialize empty tree', () => {
+        const serialized = { version: '1.0.0', tree: null };
+        const tree = LayoutTree.deserialize<string>(serialized);
+        expect(tree.isEmpty()).toBe(true);
+        expect(tree.getRoot()).toBe(null);
+      });
+
+      it('should deserialize single panel tree', () => {
+        const serialized = { version: '1.0.0', tree: 'panel1' };
+        const tree = LayoutTree.deserialize<string>(serialized);
+        expect(tree.getRoot()).toBe('panel1');
+      });
+
+      it('should deserialize complex tree', () => {
+        const serialized = {
+          version: '1.0.0',
+          tree: {
+            direction: 'row' as const,
+            first: 'panel1',
+            second: {
+              direction: 'column' as const,
+              first: 'panel2',
+              second: 'panel3',
+              splitPercentage: 75,
+            },
+            splitPercentage: 60,
+          },
+        };
+        const tree = LayoutTree.deserialize<string>(serialized);
+        const root = tree.getRoot() as LayoutParent<string>;
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1');
+        expect(root.splitPercentage).toBe(60);
+
+        const secondChild = root.second as LayoutParent<string>;
+        expect(secondChild.direction).toBe('column');
+        expect(secondChild.first).toBe('panel2');
+        expect(secondChild.second).toBe('panel3');
+        expect(secondChild.splitPercentage).toBe(75);
+      });
+
+      it('should throw error for invalid serialized data', () => {
+        expect(() => {
+          LayoutTree.deserialize({ version: '2.0.0', tree: null });
+        }).toThrow('Unsupported serialization version');
+      });
+    });
+
+    describe('clone', () => {
+      it('should clone empty tree', () => {
+        const original = new LayoutTree<string>();
+        const clone = original.clone();
+        expect(clone).not.toBe(original);
+        expect(clone.isEmpty()).toBe(true);
+        expect(clone.equals(original)).toBe(true);
+      });
+
+      it('should clone single panel tree', () => {
+        const original = new LayoutTree<string>('panel1');
+        const clone = original.clone();
+        expect(clone).not.toBe(original);
+        expect(clone.getRoot()).toBe('panel1');
+        expect(clone.equals(original)).toBe(true);
+      });
+
+      it('should create deep clone of complex tree', () => {
+        const original = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+          },
+        });
+        const clone = original.clone();
+
+        expect(clone).not.toBe(original);
+        expect(clone.equals(original)).toBe(true);
+
+        // Verify deep cloning by modifying clone
+        const clonedTree = clone.resizeRegion([], 80);
+        expect(clonedTree.equals(original)).toBe(false);
+        expect((original.getRoot() as LayoutParent<string>).splitPercentage).toBeUndefined();
+      });
+    });
+
+    describe('toJSON', () => {
+      it('should convert tree to JSON string', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+          splitPercentage: 60,
+        });
+        const json = tree.toJSON();
+        const parsed = JSON.parse(json);
+        expect(parsed.version).toBe('1.0.0');
+        expect(parsed.tree.direction).toBe('row');
+        expect(parsed.tree.first).toBe('panel1');
+        expect(parsed.tree.second).toBe('panel2');
+        expect(parsed.tree.splitPercentage).toBe(60);
+      });
+
+      it('should support pretty printing', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const json = tree.toJSON(2);
+        expect(json).toContain('\n'); // Should have newlines for pretty printing
+        expect(json).toContain('  '); // Should have indentation
+      });
+
+      it('should handle empty tree', () => {
+        const tree = new LayoutTree<string>();
+        const json = tree.toJSON();
+        const parsed = JSON.parse(json);
+        expect(parsed.tree).toBe(null);
+      });
+    });
+
+    describe('fromJSON', () => {
+      it('should create tree from JSON string', () => {
+        const json = '{"version":"1.0.0","tree":{"direction":"row","first":"panel1","second":"panel2","splitPercentage":60}}';
+        const tree = LayoutTree.fromJSON<string>(json);
+        const root = tree.getRoot() as LayoutParent<string>;
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1');
+        expect(root.second).toBe('panel2');
+        expect(root.splitPercentage).toBe(60);
+      });
+
+      it('should handle empty tree JSON', () => {
+        const json = '{"version":"1.0.0","tree":null}';
+        const tree = LayoutTree.fromJSON<string>(json);
+        expect(tree.isEmpty()).toBe(true);
+      });
+
+      it('should throw error for invalid JSON', () => {
+        expect(() => {
+          LayoutTree.fromJSON('invalid json');
+        }).toThrow('Invalid JSON');
+      });
+
+      it('should throw error for invalid tree structure', () => {
+        const json = '{"version":"2.0.0","tree":null}';
+        expect(() => {
+          LayoutTree.fromJSON(json);
+        }).toThrow('Unsupported serialization version');
+      });
+    });
+
+    describe('Round-trip serialization', () => {
+      it('should preserve tree through serialize/deserialize', () => {
+        const original = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+            splitPercentage: 75,
+          },
+          splitPercentage: 60,
+        });
+
+        const serialized = original.serialize();
+        const deserialized = LayoutTree.deserialize<string>(serialized);
+        expect(deserialized.equals(original)).toBe(true);
+      });
+
+      it('should preserve tree through toJSON/fromJSON', () => {
+        const original = new LayoutTree<string>({
+          direction: 'column',
+          first: {
+            direction: 'row',
+            first: 'panel1',
+            second: 'panel2',
+          },
+          second: 'panel3',
+          splitPercentage: 40,
+        });
+
+        const json = original.toJSON();
+        const restored = LayoutTree.fromJSON<string>(json);
+        expect(restored.equals(original)).toBe(true);
+      });
+    });
+  });
 });

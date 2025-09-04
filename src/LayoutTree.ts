@@ -18,6 +18,12 @@ import {
   getAllPaths,
   getTreeDepth,
 } from './utils/pathUtils';
+import {
+  serializeLayoutTree,
+  deserializeLayoutTree,
+  cloneLayoutTree,
+  SerializableLayoutTree,
+} from './utils/serialization';
 
 /**
  * Immutable binary tree class for managing layout structures.
@@ -450,5 +456,109 @@ export class LayoutTree<T extends PanelId> {
    */
   getPanelCount(): number {
     return this.getPanelIds().length;
+  }
+
+  /**
+   * Serializes the tree to a JSON-safe format.
+   * The resulting object can be safely converted to JSON and stored or transmitted.
+   *
+   * @returns A serializable representation of the tree
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: 'panel2',
+   *   splitPercentage: 60
+   * });
+   * const serialized = tree.serialize();
+   * const json = JSON.stringify(serialized);
+   * ```
+   */
+  serialize(): SerializableLayoutTree {
+    return serializeLayoutTree(this.root);
+  }
+
+  /**
+   * Creates a new LayoutTree from serialized data.
+   * Validates the format and structure during deserialization.
+   *
+   * @param serialized - The serialized tree data
+   * @returns A new LayoutTree instance
+   * @throws Error if the serialized data is invalid
+   *
+   * @example
+   * ```typescript
+   * const json = '{"version":"1.0.0","tree":{"direction":"row","first":"panel1","second":"panel2"}}';
+   * const serialized = JSON.parse(json);
+   * const tree = LayoutTree.deserialize(serialized);
+   * ```
+   */
+  static deserialize<T extends PanelId>(serialized: SerializableLayoutTree): LayoutTree<T> {
+    const root = deserializeLayoutTree<T>(serialized);
+    return new LayoutTree<T>(root);
+  }
+
+  /**
+   * Creates a deep clone of the tree.
+   * The clone is completely independent of the original tree.
+   *
+   * @returns A new LayoutTree instance that is a deep copy of this tree
+   *
+   * @example
+   * ```typescript
+   * const original = new LayoutTree({ direction: 'row', first: 'panel1', second: 'panel2' });
+   * const clone = original.clone();
+   * // clone is completely independent of original
+   * ```
+   */
+  clone(): LayoutTree<T> {
+    const clonedRoot = cloneLayoutTree(this.root);
+    return new LayoutTree<T>(clonedRoot);
+  }
+
+  /**
+   * Converts the tree to a JSON string.
+   * This is a convenience method that combines serialization and JSON.stringify.
+   *
+   * @param space - Optional space parameter for JSON.stringify (for pretty printing)
+   * @returns A JSON string representation of the tree
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({ direction: 'row', first: 'panel1', second: 'panel2' });
+   * const json = tree.toJSON();
+   * const prettyJson = tree.toJSON(2); // Pretty printed with 2-space indentation
+   * ```
+   */
+  toJSON(space?: string | number): string {
+    return JSON.stringify(this.serialize(), null, space);
+  }
+
+  /**
+   * Creates a new LayoutTree from a JSON string.
+   * This is a convenience method that combines JSON.parse and deserialization.
+   *
+   * @param json - The JSON string to parse
+   * @returns A new LayoutTree instance
+   * @throws Error if the JSON is invalid or the data structure is incorrect
+   *
+   * @example
+   * ```typescript
+   * const json = '{"version":"1.0.0","tree":{"direction":"row","first":"panel1","second":"panel2"}}';
+   * const tree = LayoutTree.fromJSON(json);
+   * ```
+   */
+  static fromJSON<T extends PanelId>(json: string): LayoutTree<T> {
+    try {
+      const parsed = JSON.parse(json);
+      return LayoutTree.deserialize<T>(parsed);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        throw new Error(`Invalid JSON: ${error.message}`);
+      }
+      throw error;
+    }
   }
 }

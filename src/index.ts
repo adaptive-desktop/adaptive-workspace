@@ -14,6 +14,7 @@ export * from './types';
 // Utility functions
 export * from './utils/treeUtils';
 export * from './utils/pathUtils';
+export * from './utils/serialization';
 
 // Version information
 export const VERSION = '0.1.0';

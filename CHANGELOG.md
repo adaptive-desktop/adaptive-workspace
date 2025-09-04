@@ -25,7 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing yet
 
-## [0.1.0] - 2025-01-04
+## [0.1.1] - 2025-01-04
+
+### Fixed
+- Fixed npm publish issues with yarn-based project
+- Updated prepublishOnly script to use yarn commands instead of npm
+- Updated GitHub Actions workflow to use 'yarn npm publish' for consistency
+- Ensured proper authentication with YARN_NPM_AUTH_TOKEN
+
+## [0.1.0] - 2025-09-03
 
 ### Added
 

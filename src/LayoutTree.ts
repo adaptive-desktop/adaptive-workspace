@@ -143,11 +143,7 @@ export class LayoutTree<T extends PanelId> {
    * // Result: { direction: 'row', first: 'panel1', second: 'panel2', splitPercentage: 50 }
    * ```
    */
-  splitRegion(
-    path: LayoutPath,
-    newPanelId: T,
-    direction: LayoutDirection = 'row'
-  ): LayoutTree<T> {
+  splitRegion(path: LayoutPath, newPanelId: T, direction: LayoutDirection = 'row'): LayoutTree<T> {
     if (this.root === null) {
       // Create initial split with new panel
       const newRoot: LayoutParent<T> = {

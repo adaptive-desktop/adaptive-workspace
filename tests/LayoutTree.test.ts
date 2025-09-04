@@ -740,4 +740,298 @@ describe('LayoutTree', () => {
       });
     });
   });
+
+  describe('Path Navigation', () => {
+    describe('getPanelIds', () => {
+      it('should return empty array for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(tree.getPanelIds()).toEqual([]);
+      });
+
+      it('should return single panel for single panel tree', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.getPanelIds()).toEqual(['panel1']);
+      });
+
+      it('should return all panels in depth-first order', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+          },
+        });
+        expect(tree.getPanelIds()).toEqual(['panel1', 'panel2', 'panel3']);
+      });
+
+      it('should handle complex nested structures', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: {
+            direction: 'column',
+            first: 'panel1',
+            second: 'panel2',
+          },
+          second: {
+            direction: 'column',
+            first: 'panel3',
+            second: 'panel4',
+          },
+        });
+        expect(tree.getPanelIds()).toEqual(['panel1', 'panel2', 'panel3', 'panel4']);
+      });
+    });
+
+    describe('hasPanel', () => {
+      it('should return false for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(tree.hasPanel('panel1')).toBe(false);
+      });
+
+      it('should return true for existing panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.hasPanel('panel1')).toBe(true);
+      });
+
+      it('should return false for non-existing panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.hasPanel('panel2')).toBe(false);
+      });
+
+      it('should find panels in complex structures', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+          },
+        });
+        expect(tree.hasPanel('panel1')).toBe(true);
+        expect(tree.hasPanel('panel2')).toBe(true);
+        expect(tree.hasPanel('panel3')).toBe(true);
+        expect(tree.hasPanel('panel4')).toBe(false);
+      });
+    });
+
+    describe('findPanelPath', () => {
+      it('should return null for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(tree.findPanelPath('panel1')).toBe(null);
+      });
+
+      it('should return empty path for root panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.findPanelPath('panel1')).toEqual([]);
+      });
+
+      it('should return null for non-existing panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.findPanelPath('panel2')).toBe(null);
+      });
+
+      it('should find panels in simple structure', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+        });
+        expect(tree.findPanelPath('panel1')).toEqual(['first']);
+        expect(tree.findPanelPath('panel2')).toEqual(['second']);
+      });
+
+      it('should find panels in complex structure', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: {
+              direction: 'row',
+              first: 'panel3',
+              second: 'panel4',
+            },
+          },
+        });
+        expect(tree.findPanelPath('panel1')).toEqual(['first']);
+        expect(tree.findPanelPath('panel2')).toEqual(['second', 'first']);
+        expect(tree.findPanelPath('panel3')).toEqual(['second', 'second', 'first']);
+        expect(tree.findPanelPath('panel4')).toEqual(['second', 'second', 'second']);
+      });
+    });
+
+    describe('getNodeAtPathSafe', () => {
+      it('should return node at valid path', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+        });
+        expect(tree.getNodeAtPathSafe(['first'])).toBe('panel1');
+        expect(tree.getNodeAtPathSafe(['second'])).toBe('panel2');
+        expect(tree.getNodeAtPathSafe([])).toEqual(tree.getRoot());
+      });
+
+      it('should throw error for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(() => {
+          tree.getNodeAtPathSafe(['first']);
+        }).toThrow('Cannot navigate path first: tree is null');
+      });
+
+      it('should throw error for invalid path', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+        });
+        expect(() => {
+          tree.getNodeAtPathSafe(['invalid' as any]);
+        }).toThrow('Path invalid does not exist in the tree');
+      });
+
+      it('should throw error for non-existent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(() => {
+          tree.getNodeAtPathSafe(['first']);
+        }).toThrow('Path first does not exist in the tree');
+      });
+    });
+
+    describe('getAllPaths', () => {
+      it('should return empty array for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(tree.getAllPaths()).toEqual([]);
+      });
+
+      it('should return root path for single panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.getAllPaths()).toEqual([[]]);
+      });
+
+      it('should return all paths for simple tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+        });
+        const paths = tree.getAllPaths();
+        expect(paths).toContainEqual([]);
+        expect(paths).toContainEqual(['first']);
+        expect(paths).toContainEqual(['second']);
+        expect(paths.length).toBe(3);
+      });
+
+      it('should respect max depth parameter', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+          },
+        });
+        const paths = tree.getAllPaths(1);
+        const longPaths = paths.filter((path) => path.length > 1);
+        expect(longPaths.length).toBe(0);
+      });
+    });
+
+    describe('getDepth', () => {
+      it('should return -1 for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(tree.getDepth()).toBe(-1);
+      });
+
+      it('should return 0 for single panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.getDepth()).toBe(0);
+      });
+
+      it('should return 1 for simple tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+        });
+        expect(tree.getDepth()).toBe(1);
+      });
+
+      it('should return correct depth for complex tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: {
+              direction: 'row',
+              first: 'panel3',
+              second: 'panel4',
+            },
+          },
+        });
+        expect(tree.getDepth()).toBe(3);
+      });
+    });
+
+    describe('getPanelCount', () => {
+      it('should return 0 for empty tree', () => {
+        const tree = new LayoutTree<string>();
+        expect(tree.getPanelCount()).toBe(0);
+      });
+
+      it('should return 1 for single panel', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.getPanelCount()).toBe(1);
+      });
+
+      it('should return correct count for complex tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: {
+              direction: 'row',
+              first: 'panel3',
+              second: 'panel4',
+            },
+          },
+        });
+        expect(tree.getPanelCount()).toBe(4);
+      });
+
+      it('should handle deeply nested structures', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: {
+            direction: 'column',
+            first: {
+              direction: 'row',
+              first: 'panel1',
+              second: 'panel2',
+            },
+            second: 'panel3',
+          },
+          second: {
+            direction: 'column',
+            first: 'panel4',
+            second: {
+              direction: 'row',
+              first: 'panel5',
+              second: 'panel6',
+            },
+          },
+        });
+        expect(tree.getPanelCount()).toBe(6);
+      });
+    });
+  });
 });

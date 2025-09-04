@@ -6,7 +6,8 @@
  */
 
 import { PanelId, LayoutNode, LayoutParent, LayoutPath, LayoutDirection } from './types';
-import { getNodeAtPath, getOtherBranch, isValidSplitPercentage } from './utils/treeUtils';
+import { getNodeAtPath, getOtherBranch, isValidSplitPercentage, getLeaves } from './utils/treeUtils';
+import { findPanelPath, getAndAssertNodeAtPathExists, getAllPaths, getTreeDepth } from './utils/pathUtils';
 
 /**
  * Immutable binary tree class for managing layout structures.
@@ -301,5 +302,143 @@ export class LayoutTree<T extends PanelId> {
       ...root,
       [branch]: updatedChild,
     };
+  }
+
+  /**
+   * Gets all panel IDs (leaf nodes) from the tree.
+   * This is a convenience method that wraps the getLeaves utility function.
+   *
+   * @returns Array of all panel IDs in the tree, in depth-first order
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   * });
+   * const panels = tree.getPanelIds(); // ['panel1', 'panel2', 'panel3']
+   * ```
+   */
+  getPanelIds(): T[] {
+    return getLeaves(this.root);
+  }
+
+  /**
+   * Checks if the tree contains a specific panel ID.
+   *
+   * @param panelId - The panel ID to search for
+   * @returns True if the panel exists in the tree, false otherwise
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({ direction: 'row', first: 'panel1', second: 'panel2' });
+   * const hasPanel = tree.hasPanel('panel1'); // true
+   * const hasOther = tree.hasPanel('panel3'); // false
+   * ```
+   */
+  hasPanel(panelId: T): boolean {
+    return this.findPanelPath(panelId) !== null;
+  }
+
+  /**
+   * Finds the path to a specific panel in the tree.
+   * Returns null if the panel is not found.
+   *
+   * @param panelId - The panel ID to find
+   * @returns The path to the panel, or null if not found
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   * });
+   * const path = tree.findPanelPath('panel2'); // ['second', 'first']
+   * ```
+   */
+  findPanelPath(panelId: T): LayoutPath | null {
+    return findPanelPath(this.root, panelId);
+  }
+
+  /**
+   * Gets a node at the specified path with error handling.
+   * Throws an error if the path does not exist.
+   *
+   * @param path - The path to navigate to
+   * @returns The node at the specified path
+   * @throws Error if the path does not exist
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({ direction: 'row', first: 'panel1', second: 'panel2' });
+   * const node = tree.getNodeAtPathSafe(['first']); // Returns 'panel1'
+   * tree.getNodeAtPathSafe(['invalid']); // Throws error
+   * ```
+   */
+  getNodeAtPathSafe(path: LayoutPath): LayoutNode<T> {
+    return getAndAssertNodeAtPathExists(this.root, path);
+  }
+
+  /**
+   * Gets all possible paths in the tree up to a specified maximum depth.
+   *
+   * @param maxDepth - Maximum depth to traverse (default: 10)
+   * @returns Array of all valid paths in the tree
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: 'panel2'
+   * });
+   * const paths = tree.getAllPaths(); // [[], ['first'], ['second']]
+   * ```
+   */
+  getAllPaths(maxDepth: number = 10): LayoutPath[] {
+    return getAllPaths(this.root, maxDepth);
+  }
+
+  /**
+   * Calculates the depth of the tree (maximum path length to any leaf).
+   *
+   * @returns The maximum depth of the tree (0 for single node, -1 for empty tree)
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree('panel1');
+   * const depth = tree.getDepth(); // 0
+   *
+   * const complexTree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   * });
+   * const complexDepth = complexTree.getDepth(); // 2
+   * ```
+   */
+  getDepth(): number {
+    return getTreeDepth(this.root);
+  }
+
+  /**
+   * Gets the total number of panels (leaf nodes) in the tree.
+   *
+   * @returns The number of panels in the tree
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   * });
+   * const count = tree.getPanelCount(); // 3
+   * ```
+   */
+  getPanelCount(): number {
+    return this.getPanelIds().length;
   }
 }

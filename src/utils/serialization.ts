@@ -169,7 +169,9 @@ function deserializeLayoutNode<T extends PanelId>(
 
   // Validate split percentage if present
   if (parent.splitPercentage !== undefined && !isValidSplitPercentage(parent.splitPercentage)) {
-    throw new Error(`Invalid split percentage: ${parent.splitPercentage}. Must be between 0 and 100`);
+    throw new Error(
+      `Invalid split percentage: ${parent.splitPercentage}. Must be between 0 and 100`
+    );
   }
 
   // Recursively deserialize children
@@ -287,7 +289,9 @@ function isValidSerializedNode(node: unknown): boolean {
  * // clone is completely independent of original
  * ```
  */
-export function cloneLayoutTree<T extends PanelId>(tree: LayoutNode<T> | null): LayoutNode<T> | null {
+export function cloneLayoutTree<T extends PanelId>(
+  tree: LayoutNode<T> | null
+): LayoutNode<T> | null {
   // Use serialization/deserialization for deep cloning
   const serialized = serializeLayoutTree(tree);
   return deserializeLayoutTree<T>(serialized);

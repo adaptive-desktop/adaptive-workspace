@@ -5,7 +5,8 @@
  * binary tree operations for layout management.
  */
 
-import { PanelId, LayoutNode, LayoutParent } from './types';
+import { PanelId, LayoutNode, LayoutParent, LayoutPath, LayoutDirection } from './types';
+import { getNodeAtPath, getOtherBranch, isValidSplitPercentage } from './utils/treeUtils';
 
 /**
  * Immutable binary tree class for managing layout structures.
@@ -71,7 +72,7 @@ export class LayoutTree<T extends PanelId> {
    * @returns A new LayoutTree instance with the same root
    */
   copy(): LayoutTree<T> {
-    return new LayoutTree(this.root);
+    return new LayoutTree<T>(this.root);
   }
 
   /**
@@ -123,5 +124,186 @@ export class LayoutTree<T extends PanelId> {
       this.nodesEqual(parent1.first, parent2.first) &&
       this.nodesEqual(parent1.second, parent2.second)
     );
+  }
+
+  /**
+   * Splits a region at the specified path, creating a new parent node with the existing
+   * node and a new panel. This operation is immutable and returns a new tree instance.
+   *
+   * @param path - Path to the node to split
+   * @param newPanelId - ID of the new panel to create
+   * @param direction - Direction of the split ('row' or 'column')
+   * @returns A new LayoutTree with the split applied
+   * @throws Error if the path does not exist or is invalid
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree('panel1');
+   * const newTree = tree.splitRegion([], 'panel2', 'row');
+   * // Result: { direction: 'row', first: 'panel1', second: 'panel2', splitPercentage: 50 }
+   * ```
+   */
+  splitRegion(
+    path: LayoutPath,
+    newPanelId: T,
+    direction: LayoutDirection = 'row'
+  ): LayoutTree<T> {
+    if (this.root === null) {
+      // Create initial split with new panel
+      const newRoot: LayoutParent<T> = {
+        direction,
+        first: newPanelId,
+        second: newPanelId,
+        splitPercentage: 50,
+      };
+      return new LayoutTree<T>(newRoot);
+    }
+
+    const nodeAtPath = getNodeAtPath(this.root, path);
+    if (nodeAtPath === null) {
+      throw new Error(`Cannot split: path ${path.join('/')} does not exist`);
+    }
+
+    // Create new parent node with existing node and new panel
+    const newParent: LayoutParent<T> = {
+      direction,
+      first: nodeAtPath,
+      second: newPanelId,
+      splitPercentage: 50,
+    };
+
+    // Replace node at path with new parent
+    const newRoot = this.replaceNodeAtPath(this.root, path, newParent);
+    return new LayoutTree<T>(newRoot);
+  }
+
+  /**
+   * Removes a region at the specified path. The sibling node takes over the parent's position.
+   * This operation is immutable and returns a new tree instance.
+   *
+   * @param path - Path to the node to remove
+   * @returns A new LayoutTree with the node removed
+   * @throws Error if the path does not exist or the sibling cannot be found
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: 'panel2'
+   * });
+   * const newTree = tree.removeRegion(['first']);
+   * // Result: 'panel2' (sibling takes over)
+   * ```
+   */
+  removeRegion(path: LayoutPath): LayoutTree<T> {
+    if (this.root === null || path.length === 0) {
+      return new LayoutTree<T>(null);
+    }
+
+    if (path.length === 1) {
+      // Removing direct child of root
+      const siblingBranch = getOtherBranch(path[0]);
+      const sibling = getNodeAtPath(this.root, [siblingBranch]);
+      return new LayoutTree<T>(sibling);
+    }
+
+    // Remove node and promote sibling
+    const parentPath = path.slice(0, -1);
+    const removedBranch = path[path.length - 1];
+    const siblingBranch = getOtherBranch(removedBranch);
+    const siblingPath = [...parentPath, siblingBranch];
+    const sibling = getNodeAtPath(this.root, siblingPath);
+
+    if (sibling === null) {
+      throw new Error(`Cannot remove: sibling at path ${siblingPath.join('/')} not found`);
+    }
+
+    const newRoot = this.replaceNodeAtPath(this.root, parentPath, sibling);
+    return new LayoutTree<T>(newRoot);
+  }
+
+  /**
+   * Resizes a region by updating the split percentage of the parent node at the specified path.
+   * This operation is immutable and returns a new tree instance.
+   *
+   * @param path - Path to the parent node to resize
+   * @param percentage - New split percentage (0-100)
+   * @returns A new LayoutTree with the updated split percentage
+   * @throws Error if the percentage is invalid, path doesn't exist, or path doesn't point to a parent node
+   *
+   * @example
+   * ```typescript
+   * const tree = new LayoutTree({
+   *   direction: 'row',
+   *   first: 'panel1',
+   *   second: 'panel2',
+   *   splitPercentage: 50
+   * });
+   * const newTree = tree.resizeRegion([], 70);
+   * // Result: same structure but with splitPercentage: 70
+   * ```
+   */
+  resizeRegion(path: LayoutPath, percentage: number): LayoutTree<T> {
+    if (!isValidSplitPercentage(percentage)) {
+      throw new Error(`Invalid split percentage: ${percentage}. Must be between 0 and 100.`);
+    }
+
+    if (this.root === null) {
+      throw new Error('Cannot resize: tree is empty');
+    }
+
+    const nodeAtPath = getNodeAtPath(this.root, path);
+    if (nodeAtPath === null) {
+      throw new Error(`Cannot resize: path ${path.join('/')} does not exist`);
+    }
+
+    if (typeof nodeAtPath !== 'object' || !('direction' in nodeAtPath)) {
+      throw new Error(`Cannot resize: path ${path.join('/')} does not point to a parent node`);
+    }
+
+    const updatedNode: LayoutParent<T> = {
+      ...nodeAtPath,
+      splitPercentage: percentage,
+    };
+
+    const newRoot = this.replaceNodeAtPath(this.root, path, updatedNode);
+    return new LayoutTree<T>(newRoot);
+  }
+
+  /**
+   * Private helper method to replace a node at a specific path in the tree.
+   * This is used internally by tree operations to create new tree instances.
+   *
+   * @param root - The root node to start from
+   * @param path - Path to the node to replace
+   * @param replacement - The new node to place at the path
+   * @returns A new tree with the replacement applied
+   * @throws Error if the path cannot be navigated
+   */
+  private replaceNodeAtPath(
+    root: LayoutNode<T>,
+    path: LayoutPath,
+    replacement: LayoutNode<T>
+  ): LayoutNode<T> {
+    if (path.length === 0) {
+      return replacement;
+    }
+
+    if (typeof root !== 'object' || !('direction' in root)) {
+      throw new Error('Cannot navigate path on leaf node');
+    }
+
+    const [branch, ...remainingPath] = path;
+    const updatedChild = this.replaceNodeAtPath(
+      branch === 'first' ? root.first : root.second,
+      remainingPath,
+      replacement
+    );
+
+    return {
+      ...root,
+      [branch]: updatedChild,
+    };
   }
 }

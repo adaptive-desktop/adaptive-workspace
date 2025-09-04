@@ -6,7 +6,7 @@
  */
 
 import { LayoutTree } from '../src/LayoutTree';
-import { LayoutParent, LayoutNode } from '../src/types';
+import { LayoutParent, LayoutNode, LayoutPath } from '../src/types';
 
 describe('LayoutTree', () => {
   describe('Construction', () => {
@@ -338,6 +338,406 @@ describe('LayoutTree', () => {
       
       expect(leafTree.equals(parentTree)).toBe(false);
       expect(parentTree.equals(leafTree)).toBe(false);
+    });
+  });
+
+  describe('Tree Operations', () => {
+    describe('splitRegion', () => {
+      it('should split empty tree', () => {
+        const tree = new LayoutTree<string>();
+        const newTree = tree.splitRegion([], 'panel1', 'row');
+
+        const root = newTree.getRoot() as LayoutParent<string>;
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1');
+        expect(root.second).toBe('panel1');
+        expect(root.splitPercentage).toBe(50);
+      });
+
+      it('should split single panel tree', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const newTree = tree.splitRegion([], 'panel2', 'row');
+
+        const root = newTree.getRoot() as LayoutParent<string>;
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1');
+        expect(root.second).toBe('panel2');
+        expect(root.splitPercentage).toBe(50);
+      });
+
+      it('should split with column direction', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const newTree = tree.splitRegion([], 'panel2', 'column');
+
+        const root = newTree.getRoot() as LayoutParent<string>;
+        expect(root.direction).toBe('column');
+        expect(root.first).toBe('panel1');
+        expect(root.second).toBe('panel2');
+      });
+
+      it('should split nested node', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        const newTree = tree.splitRegion(['first'], 'panel3', 'column');
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.direction).toBe('row');
+        expect(root.second).toBe('panel2');
+
+        const firstChild = root.first as LayoutParent<string>;
+        expect(firstChild.direction).toBe('column');
+        expect(firstChild.first).toBe('panel1');
+        expect(firstChild.second).toBe('panel3');
+      });
+
+      it('should split deeply nested node', () => {
+        const complexTree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3'
+          }
+        });
+
+        const newTree = complexTree.splitRegion(['second', 'first'], 'panel4', 'row');
+        const root = newTree.getRoot() as LayoutParent<string>;
+        const secondChild = root.second as LayoutParent<string>;
+        const nestedChild = secondChild.first as LayoutParent<string>;
+
+        expect(nestedChild.direction).toBe('row');
+        expect(nestedChild.first).toBe('panel2');
+        expect(nestedChild.second).toBe('panel4');
+      });
+
+      it('should throw error for invalid path', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.splitRegion(['invalid' as any], 'panel2', 'row');
+        }).toThrow('Cannot split: path invalid does not exist');
+      });
+
+      it('should throw error for non-existent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.splitRegion(['first'], 'panel2', 'row');
+        }).toThrow('Cannot split: path first does not exist');
+      });
+
+      it('should default to row direction', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const newTree = tree.splitRegion([], 'panel2');
+
+        const root = newTree.getRoot() as LayoutParent<string>;
+        expect(root.direction).toBe('row');
+      });
+
+      it('should not modify original tree', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const newTree = tree.splitRegion([], 'panel2', 'row');
+
+        expect(tree.getRoot()).toBe('panel1');
+        expect(newTree.getRoot()).not.toBe(tree.getRoot());
+      });
+    });
+
+    describe('removeRegion', () => {
+      it('should remove from empty tree', () => {
+        const tree = new LayoutTree<string>();
+        const newTree = tree.removeRegion([]);
+
+        expect(newTree.isEmpty()).toBe(true);
+        expect(newTree.getRoot()).toBe(null);
+      });
+
+      it('should remove root node', () => {
+        const tree = new LayoutTree<string>('panel1');
+        const newTree = tree.removeRegion([]);
+
+        expect(newTree.isEmpty()).toBe(true);
+        expect(newTree.getRoot()).toBe(null);
+      });
+
+      it('should remove first child, promote second', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        const newTree = tree.removeRegion(['first']);
+        expect(newTree.getRoot()).toBe('panel2');
+      });
+
+      it('should remove second child, promote first', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        const newTree = tree.removeRegion(['second']);
+        expect(newTree.getRoot()).toBe('panel1');
+      });
+
+      it('should remove nested node', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3'
+          }
+        });
+
+        const newTree = tree.removeRegion(['second', 'first']);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1');
+        expect(root.second).toBe('panel3'); // panel3 promoted
+      });
+
+      it('should remove complex nested structure', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: {
+            direction: 'column',
+            first: 'panel1',
+            second: 'panel2'
+          },
+          second: 'panel3'
+        });
+
+        const newTree = tree.removeRegion(['first', 'second']);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1'); // panel1 promoted
+        expect(root.second).toBe('panel3');
+      });
+
+      it('should throw error when sibling not found', () => {
+        // This is a theoretical edge case that shouldn't happen in normal usage
+        // but we test it for completeness
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.removeRegion(['first', 'second']);
+        }).toThrow('Cannot remove: sibling at path first/first not found');
+      });
+
+      it('should handle complex nested removal scenarios', () => {
+        // Test various complex removal scenarios to ensure robustness
+        const complexTree = new LayoutTree<string>({
+          direction: 'row',
+          first: {
+            direction: 'column',
+            first: 'panel1',
+            second: {
+              direction: 'row',
+              first: 'panel2',
+              second: 'panel3'
+            }
+          },
+          second: 'panel4'
+        });
+
+        // Remove a deeply nested node
+        const newTree = complexTree.removeRegion(['first', 'second', 'first']);
+        const root = newTree.getRoot() as LayoutParent<string>;
+        const firstChild = root.first as LayoutParent<string>;
+
+        expect(root.direction).toBe('row');
+        expect(firstChild.direction).toBe('column');
+        expect(firstChild.first).toBe('panel1');
+        expect(firstChild.second).toBe('panel3'); // panel3 promoted
+        expect(root.second).toBe('panel4');
+      });
+
+      it('should not modify original tree', () => {
+        const originalRoot = {
+          direction: 'row' as const,
+          first: 'panel1',
+          second: 'panel2'
+        };
+        const tree = new LayoutTree<string>(originalRoot);
+        const newTree = tree.removeRegion(['first']);
+
+        expect(tree.getRoot()).toBe(originalRoot);
+        expect(newTree.getRoot()).toBe('panel2');
+      });
+    });
+
+    describe('resizeRegion', () => {
+      it('should resize root parent node', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2',
+          splitPercentage: 50
+        });
+
+        const newTree = tree.resizeRegion([], 70);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.direction).toBe('row');
+        expect(root.first).toBe('panel1');
+        expect(root.second).toBe('panel2');
+        expect(root.splitPercentage).toBe(70);
+      });
+
+      it('should resize nested parent node', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: {
+            direction: 'column',
+            first: 'panel2',
+            second: 'panel3',
+            splitPercentage: 50
+          }
+        });
+
+        const newTree = tree.resizeRegion(['second'], 25);
+        const root = newTree.getRoot() as LayoutParent<string>;
+        const secondChild = root.second as LayoutParent<string>;
+
+        expect(secondChild.splitPercentage).toBe(25);
+        expect(secondChild.direction).toBe('column');
+        expect(secondChild.first).toBe('panel2');
+        expect(secondChild.second).toBe('panel3');
+      });
+
+      it('should resize deeply nested node', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: {
+            direction: 'column',
+            first: 'panel1',
+            second: {
+              direction: 'row',
+              first: 'panel2',
+              second: 'panel3',
+              splitPercentage: 60
+            }
+          },
+          second: 'panel4'
+        });
+
+        const newTree = tree.resizeRegion(['first', 'second'], 80);
+        const root = newTree.getRoot() as LayoutParent<string>;
+        const firstChild = root.first as LayoutParent<string>;
+        const nestedChild = firstChild.second as LayoutParent<string>;
+
+        expect(nestedChild.splitPercentage).toBe(80);
+      });
+
+      it('should handle edge case percentages', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        // Test 0%
+        const tree0 = tree.resizeRegion([], 0);
+        expect((tree0.getRoot() as LayoutParent<string>).splitPercentage).toBe(0);
+
+        // Test 100%
+        const tree100 = tree.resizeRegion([], 100);
+        expect((tree100.getRoot() as LayoutParent<string>).splitPercentage).toBe(100);
+
+        // Test decimal
+        const treeDecimal = tree.resizeRegion([], 33.33);
+        expect((treeDecimal.getRoot() as LayoutParent<string>).splitPercentage).toBe(33.33);
+      });
+
+      it('should throw error for invalid percentage - negative', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        expect(() => {
+          tree.resizeRegion([], -10);
+        }).toThrow('Invalid split percentage: -10. Must be between 0 and 100.');
+      });
+
+      it('should throw error for invalid percentage - over 100', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        expect(() => {
+          tree.resizeRegion([], 150);
+        }).toThrow('Invalid split percentage: 150. Must be between 0 and 100.');
+      });
+
+      it('should throw error for invalid percentage - NaN', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        expect(() => {
+          tree.resizeRegion([], NaN);
+        }).toThrow('Invalid split percentage: NaN. Must be between 0 and 100.');
+      });
+
+      it('should throw error for empty tree', () => {
+        const tree = new LayoutTree<string>();
+
+        expect(() => {
+          tree.resizeRegion([], 50);
+        }).toThrow('Cannot resize: tree is empty');
+      });
+
+      it('should throw error for non-existent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.resizeRegion(['first'], 50);
+        }).toThrow('Cannot resize: path first does not exist');
+      });
+
+      it('should throw error for leaf node path', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          first: 'panel1',
+          second: 'panel2'
+        });
+
+        expect(() => {
+          tree.resizeRegion(['first'], 50);
+        }).toThrow('Cannot resize: path first does not point to a parent node');
+      });
+
+      it('should not modify original tree', () => {
+        const originalRoot = {
+          direction: 'row' as const,
+          first: 'panel1',
+          second: 'panel2',
+          splitPercentage: 50
+        };
+        const tree = new LayoutTree<string>(originalRoot);
+        const newTree = tree.resizeRegion([], 70);
+
+        expect((tree.getRoot() as LayoutParent<string>).splitPercentage).toBe(50);
+        expect((newTree.getRoot() as LayoutParent<string>).splitPercentage).toBe(70);
+      });
     });
   });
 });

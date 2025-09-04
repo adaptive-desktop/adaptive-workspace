@@ -47,6 +47,6 @@ jobs:
           echo "Version check passed: $TAG_VERSION"
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: yarn npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

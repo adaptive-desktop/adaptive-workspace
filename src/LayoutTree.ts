@@ -6,8 +6,18 @@
  */
 
 import { PanelId, LayoutNode, LayoutParent, LayoutPath, LayoutDirection } from './types';
-import { getNodeAtPath, getOtherBranch, isValidSplitPercentage, getLeaves } from './utils/treeUtils';
-import { findPanelPath, getAndAssertNodeAtPathExists, getAllPaths, getTreeDepth } from './utils/pathUtils';
+import {
+  getNodeAtPath,
+  getOtherBranch,
+  isValidSplitPercentage,
+  getLeaves,
+} from './utils/treeUtils';
+import {
+  findPanelPath,
+  getAndAssertNodeAtPathExists,
+  getAllPaths,
+  getTreeDepth,
+} from './utils/pathUtils';
 
 /**
  * Immutable binary tree class for managing layout structures.

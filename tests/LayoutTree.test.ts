@@ -1348,66 +1348,219 @@ describe('LayoutTree', () => {
     });
 
     describe('movePanel', () => {
-      it('should move panel to replace another panel in simple case', () => {
-        const tree = new LayoutTree<string>({
-          direction: 'row',
-          leading: 'panel1',
-          trailing: 'panel2',
-        });
-
-        const newTree = tree.movePanel(['leading'], [], 'replace');
-
-        // panel1 should replace the root, panel2 should be removed
-        expect(newTree.getRoot()).toBe('panel1');
-      });
-
-      it('should throw error when moving non-panel', () => {
-        const tree = new LayoutTree<string>({
-          direction: 'row',
-          leading: {
-            direction: 'column',
+      describe('replace position', () => {
+        it('should replace target panel with moved panel', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
             leading: 'panel1',
             trailing: 'panel2',
-          },
-          trailing: 'panel3',
+          });
+
+          const newTree = tree.movePanel(['leading'], ['trailing'], 'replace');
+          const root = newTree.getRoot() as LayoutParent<string>;
+
+          expect(root.leading).toBe('panel2'); // panel2 promoted after panel1 removed
+          expect(root.trailing).toBe('panel1'); // panel1 moved to replace panel2
         });
 
-        expect(() => {
-          tree.movePanel([], ['trailing'], 'replace');
-        }).toThrow('Cannot move: path  does not point to a panel');
-      });
+        it('should replace root with moved panel', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
 
-      it('should throw error when moving from non-existent path', () => {
-        const tree = new LayoutTree<string>('panel1');
+          const newTree = tree.movePanel(['leading'], [], 'replace');
 
-        expect(() => {
-          tree.movePanel(['leading'], [], 'replace');
-        }).toThrow('Cannot move: path leading does not point to a panel');
-      });
-
-      it('should throw error for invalid insert position', () => {
-        const tree = new LayoutTree<string>({
-          direction: 'row',
-          leading: 'panel1',
-          trailing: 'panel2',
+          // panel1 should replace the root, panel2 should be promoted
+          expect(newTree.getRoot()).toBe('panel1');
         });
 
-        expect(() => {
-          tree.movePanel(['leading'], ['trailing'], 'invalid' as any);
-        }).toThrow('Invalid insert position: invalid');
+        it('should replace panel in complex tree', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: {
+              direction: 'column',
+              leading: 'panel1',
+              trailing: 'panel2',
+            },
+            trailing: 'panel3',
+          });
+
+          const newTree = tree.movePanel(['leading', 'leading'], ['trailing'], 'replace');
+          const root = newTree.getRoot() as LayoutParent<string>;
+
+          expect(root.leading).toBe('panel2'); // panel2 promoted after panel1 removed
+          expect(root.trailing).toBe('panel1'); // panel1 moved to replace panel3
+        });
       });
 
-      it('should not modify original tree', () => {
-        const tree = new LayoutTree<string>({
-          direction: 'row',
-          leading: 'panel1',
-          trailing: 'panel2',
+      describe('before position', () => {
+        it('should insert panel before target in simple tree', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
+
+          const newTree = tree.movePanel(['leading'], ['trailing'], 'before');
+
+          // After removing panel1, panel2 becomes root
+          // Then split panel2 with panel1 as leading child
+          const root = newTree.getRoot() as LayoutParent<string>;
+          expect(root.direction).toBe('column');
+          expect(root.leading).toBe('panel1');
+          expect(root.trailing).toBe('panel2');
         });
 
-        const originalRoot = tree.getRoot();
-        tree.movePanel(['leading'], [], 'replace');
+        it('should insert panel before target in complex tree', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: {
+              direction: 'column',
+              leading: 'panel2',
+              trailing: 'panel3',
+            },
+          });
 
-        expect(tree.getRoot()).toBe(originalRoot);
+          const newTree = tree.movePanel(['leading'], ['trailing', 'leading'], 'before');
+
+          // After removing panel1, trailing becomes root
+          // Then split panel2 with panel1 as leading child
+          const root = newTree.getRoot() as LayoutParent<string>;
+          expect(root.direction).toBe('column');
+          expect(root.trailing).toBe('panel3');
+
+          const newSplit = root.leading as LayoutParent<string>;
+          expect(newSplit.direction).toBe('column');
+          expect(newSplit.leading).toBe('panel1');
+          expect(newSplit.trailing).toBe('panel2');
+        });
+      });
+
+      describe('after position', () => {
+        it('should insert panel after target in simple tree', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
+
+          const newTree = tree.movePanel(['leading'], ['trailing'], 'after');
+
+          // After removing panel1, panel2 becomes root
+          // Then split panel2 with panel1 as trailing child (after swap)
+          const root = newTree.getRoot() as LayoutParent<string>;
+          expect(root.direction).toBe('column');
+          expect(root.leading).toBe('panel2');
+          expect(root.trailing).toBe('panel1');
+        });
+
+        it('should insert panel after target in complex tree', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: {
+              direction: 'column',
+              leading: 'panel2',
+              trailing: 'panel3',
+            },
+          });
+
+          const newTree = tree.movePanel(['leading'], ['trailing', 'leading'], 'after');
+
+          // After removing panel1, trailing becomes root
+          // Then split panel2 with panel1 as trailing child (after swap)
+          const root = newTree.getRoot() as LayoutParent<string>;
+          expect(root.direction).toBe('column');
+          expect(root.trailing).toBe('panel3');
+
+          const newSplit = root.leading as LayoutParent<string>;
+          expect(newSplit.direction).toBe('column');
+          expect(newSplit.leading).toBe('panel2');
+          expect(newSplit.trailing).toBe('panel1');
+        });
+
+        it('should handle after position when swap fails', () => {
+          // Test edge case where targetParent is null or not a parent
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
+
+          // This should still work even if swap logic fails
+          const newTree = tree.movePanel(['leading'], ['trailing'], 'after');
+          expect(newTree.getPanelIds()).toContain('panel1');
+          expect(newTree.getPanelIds()).toContain('panel2');
+        });
+      });
+
+      describe('error cases', () => {
+        it('should throw error when moving non-panel', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: {
+              direction: 'column',
+              leading: 'panel1',
+              trailing: 'panel2',
+            },
+            trailing: 'panel3',
+          });
+
+          expect(() => {
+            tree.movePanel([], ['trailing'], 'replace');
+          }).toThrow('Cannot move: path  does not point to a panel');
+        });
+
+        it('should throw error when moving from non-existent path', () => {
+          const tree = new LayoutTree<string>('panel1');
+
+          expect(() => {
+            tree.movePanel(['leading'], [], 'replace');
+          }).toThrow('Cannot move: path leading does not point to a panel');
+        });
+
+        it('should throw error for invalid insert position', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
+
+          expect(() => {
+            tree.movePanel(['leading'], ['trailing'], 'invalid' as any);
+          }).toThrow('Invalid insert position: invalid');
+        });
+
+        it('should throw error when target path becomes invalid after removal', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
+
+          // Try to move panel1 before panel1 (which won't exist after removal)
+          expect(() => {
+            tree.movePanel(['leading'], ['leading'], 'before');
+          }).toThrow();
+        });
+      });
+
+      describe('immutability', () => {
+        it('should not modify original tree', () => {
+          const tree = new LayoutTree<string>({
+            direction: 'row',
+            leading: 'panel1',
+            trailing: 'panel2',
+          });
+
+          const originalRoot = tree.getRoot();
+          tree.movePanel(['leading'], ['trailing'], 'replace');
+
+          expect(tree.getRoot()).toBe(originalRoot);
+        });
       });
     });
   });

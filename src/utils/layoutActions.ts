@@ -102,7 +102,7 @@ export function canSplitRegion<T extends PanelId>(
   // This would need actual bounds information to work properly
   // For now, just check if the path exists and points to a panel
   try {
-    const node = tree.getNodeAtPath(path);
+    const node = tree.getNodeAtPathSafe(path);
     return node !== null && typeof node !== 'object';
   } catch {
     return false;

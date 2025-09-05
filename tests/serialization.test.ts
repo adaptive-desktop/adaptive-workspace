@@ -19,21 +19,21 @@ describe('Serialization Utilities', () => {
   // Sample tree structures for testing
   const simpleTree: LayoutParent<string> = {
     direction: 'row',
-    first: 'panel1',
-    second: 'panel2',
+    leading: 'panel1',
+    trailing: 'panel2',
     splitPercentage: 60,
   };
 
   const complexTree: LayoutParent<string> = {
     direction: 'row',
-    first: 'panel1',
-    second: {
+    leading: 'panel1',
+    trailing: {
       direction: 'column',
-      first: 'panel2',
-      second: {
+      leading: 'panel2',
+      trailing: {
         direction: 'row',
-        first: 'panel3',
-        second: 'panel4',
+        leading: 'panel3',
+        trailing: 'panel4',
         splitPercentage: 25,
       },
       splitPercentage: 75,
@@ -72,8 +72,8 @@ describe('Serialization Utilities', () => {
         version: SERIALIZATION_VERSION,
         tree: {
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
           splitPercentage: 60,
         },
       });
@@ -85,14 +85,14 @@ describe('Serialization Utilities', () => {
         version: SERIALIZATION_VERSION,
         tree: {
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: {
+            leading: 'panel2',
+            trailing: {
               direction: 'row',
-              first: 'panel3',
-              second: 'panel4',
+              leading: 'panel3',
+              trailing: 'panel4',
               splitPercentage: 25,
             },
             splitPercentage: 75,
@@ -105,14 +105,14 @@ describe('Serialization Utilities', () => {
     it('should serialize tree without split percentage', () => {
       const treeWithoutSplit: LayoutParent<string> = {
         direction: 'column',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
       };
       const result = serializeLayoutTree(treeWithoutSplit);
       expect(result.tree).toEqual({
         direction: 'column',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: undefined,
       });
     });
@@ -120,14 +120,14 @@ describe('Serialization Utilities', () => {
     it('should handle mixed panel ID types', () => {
       const mixedTree: LayoutParent<string | number> = {
         direction: 'row',
-        first: 'stringPanel',
-        second: 42,
+        leading: 'stringPanel',
+        trailing: 42,
       };
       const result = serializeLayoutTree(mixedTree);
       expect(result.tree).toEqual({
         direction: 'row',
-        first: 'stringPanel',
-        second: 42,
+        leading: 'stringPanel',
+        trailing: 42,
         splitPercentage: undefined,
       });
     });
@@ -166,8 +166,8 @@ describe('Serialization Utilities', () => {
         version: SERIALIZATION_VERSION,
         tree: {
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
           splitPercentage: 60,
         },
       };
@@ -180,14 +180,14 @@ describe('Serialization Utilities', () => {
         version: SERIALIZATION_VERSION,
         tree: {
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: {
+            leading: 'panel2',
+            trailing: {
               direction: 'row',
-              first: 'panel3',
-              second: 'panel4',
+              leading: 'panel3',
+              trailing: 'panel4',
               splitPercentage: 25,
             },
             splitPercentage: 75,
@@ -204,15 +204,15 @@ describe('Serialization Utilities', () => {
         version: SERIALIZATION_VERSION,
         tree: {
           direction: 'column',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
         },
       };
       const result = deserializeLayoutTree<string>(serialized);
       expect(result).toEqual({
         direction: 'column',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: undefined,
       });
     });
@@ -256,7 +256,7 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
+            leading: 'panel1',
             // missing second
           },
         } as any);
@@ -269,8 +269,8 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'invalid',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
           },
         } as any);
       }).toThrow('Invalid direction: invalid');
@@ -282,8 +282,8 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
             splitPercentage: -10,
           },
         });
@@ -294,8 +294,8 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
             splitPercentage: 150,
           },
         });
@@ -308,8 +308,8 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: null,
-            second: 'panel2',
+            leading: null,
+            trailing: 'panel2',
           },
         } as any);
       }).toThrow('Invalid parent node: children cannot be null');
@@ -346,8 +346,8 @@ describe('Serialization Utilities', () => {
     it('should preserve number panel IDs', () => {
       const numberTree: LayoutParent<number> = {
         direction: 'column',
-        first: 1,
-        second: 2,
+        leading: 1,
+        trailing: 2,
         splitPercentage: 30,
       };
       const serialized = serializeLayoutTree(numberTree);
@@ -366,19 +366,19 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
           },
         },
         {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'column',
-            first: 'panel1',
-            second: {
+            leading: 'panel1',
+            trailing: {
               direction: 'row',
-              first: 'panel2',
-              second: 'panel3',
+              leading: 'panel2',
+              trailing: 'panel3',
               splitPercentage: 50,
             },
             splitPercentage: 75,
@@ -429,15 +429,15 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'invalid',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
           },
         },
         {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
+            leading: 'panel1',
             // missing second
           },
         },
@@ -445,8 +445,8 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
             splitPercentage: -10,
           },
         },
@@ -454,8 +454,8 @@ describe('Serialization Utilities', () => {
           version: SERIALIZATION_VERSION,
           tree: {
             direction: 'row',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
             splitPercentage: 150,
           },
         },
@@ -471,11 +471,11 @@ describe('Serialization Utilities', () => {
         version: SERIALIZATION_VERSION,
         tree: {
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'invalid', // Invalid nested direction
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
           },
         },
       };
@@ -521,12 +521,12 @@ describe('Serialization Utilities', () => {
       expect(clone).not.toBe(original);
 
       // Modify nested property in clone
-      if (clone && typeof clone === 'object' && 'second' in clone) {
-        const secondChild = (clone as LayoutParent<string>).second;
-        if (typeof secondChild === 'object' && 'splitPercentage' in secondChild) {
-          (secondChild as LayoutParent<string>).splitPercentage = 90;
+      if (clone && typeof clone === 'object' && 'trailing' in clone) {
+        const trailingChild = (clone as LayoutParent<string>).trailing;
+        if (typeof trailingChild === 'object' && 'splitPercentage' in trailingChild) {
+          (trailingChild as LayoutParent<string>).splitPercentage = 90;
           // Original should be unchanged
-          const originalSecond = (original as LayoutParent<string>).second;
+          const originalSecond = (original as LayoutParent<string>).trailing;
           expect((originalSecond as LayoutParent<string>).splitPercentage).toBe(75);
         }
       }
@@ -535,8 +535,8 @@ describe('Serialization Utilities', () => {
     it('should handle number panel IDs', () => {
       const original: LayoutParent<number> = {
         direction: 'row',
-        first: 1,
-        second: 2,
+        leading: 1,
+        trailing: 2,
         splitPercentage: 50,
       };
       const clone = cloneLayoutTree(original);
@@ -548,15 +548,15 @@ describe('Serialization Utilities', () => {
     it('should preserve all properties', () => {
       const original: LayoutParent<string> = {
         direction: 'column',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 33.33,
       };
       const clone = cloneLayoutTree(original) as LayoutParent<string>;
 
       expect(clone.direction).toBe(original.direction);
-      expect(clone.first).toBe(original.first);
-      expect(clone.second).toBe(original.second);
+      expect(clone.leading).toBe(original.leading);
+      expect(clone.trailing).toBe(original.trailing);
       expect(clone.splitPercentage).toBe(original.splitPercentage);
     });
   });

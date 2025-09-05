@@ -20,10 +20,10 @@ import { isParent, getNodeAtPath } from './treeUtils';
  * ```typescript
  * const tree = {
  *   direction: 'row',
- *   first: 'panel1',
- *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+ *   leading: 'panel1',
+ *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
  * };
- * const path = findPanelPath(tree, 'panel2'); // ['second', 'first']
+ * const path = findPanelPath(tree, 'panel2'); // ['trailing', 'leading']
  * ```
  */
 export function findPanelPath<T extends PanelId>(
@@ -55,16 +55,16 @@ function findPanelPathRecursive<T extends PanelId>(
     return node === panelId ? currentPath : null;
   }
 
-  // Search in first child
-  const firstPath = findPanelPathRecursive(node.first, panelId, [...currentPath, 'first']);
-  if (firstPath !== null) {
-    return firstPath;
+  // Search in leading child
+  const leadingPath = findPanelPathRecursive(node.leading, panelId, [...currentPath, 'leading']);
+  if (leadingPath !== null) {
+    return leadingPath;
   }
 
-  // Search in second child
-  const secondPath = findPanelPathRecursive(node.second, panelId, [...currentPath, 'second']);
-  if (secondPath !== null) {
-    return secondPath;
+  // Search in trailing child
+  const trailingPath = findPanelPathRecursive(node.trailing, panelId, [...currentPath, 'trailing']);
+  if (trailingPath !== null) {
+    return trailingPath;
   }
 
   return null;
@@ -81,8 +81,8 @@ function findPanelPathRecursive<T extends PanelId>(
  *
  * @example
  * ```typescript
- * const tree = { direction: 'row', first: 'panel1', second: 'panel2' };
- * const node = getAndAssertNodeAtPathExists(tree, ['first']); // Returns 'panel1'
+ * const tree = { direction: 'row', leading: 'panel1', trailing: 'panel2' };
+ * const node = getAndAssertNodeAtPathExists(tree, ['leading']); // Returns 'panel1'
  * getAndAssertNodeAtPathExists(tree, ['invalid']); // Throws error
  * ```
  */
@@ -141,8 +141,8 @@ export function createBalancedTreeFromLeaves<T extends PanelId>(
   // Create parent node
   const parent: LayoutParent<T> = {
     direction,
-    first: leftSubtree!,
-    second: rightSubtree!,
+    leading: leftSubtree!,
+    trailing: rightSubtree!,
     splitPercentage: 50,
   };
 
@@ -158,13 +158,13 @@ export function createBalancedTreeFromLeaves<T extends PanelId>(
  *
  * @example
  * ```typescript
- * isValidPath(['first', 'second']); // true
- * isValidPath(['first', 'invalid']); // false
+ * isValidPath(['leading', 'trailing']); // true
+ * isValidPath(['leading', 'invalid']); // false
  * isValidPath([]); // true (empty path is valid)
  * ```
  */
 export function isValidPath(path: LayoutPath): boolean {
-  return path.every((branch) => branch === 'first' || branch === 'second');
+  return path.every((branch) => branch === 'leading' || branch === 'trailing');
 }
 
 /**
@@ -179,10 +179,10 @@ export function isValidPath(path: LayoutPath): boolean {
  * ```typescript
  * const tree = {
  *   direction: 'row',
- *   first: 'panel1',
- *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+ *   leading: 'panel1',
+ *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
  * };
- * const paths = getAllPaths(tree); // [[], ['first'], ['second'], ['second', 'first'], ['second', 'second']]
+ * const paths = getAllPaths(tree); // [[], ['leading'], ['trailing'], ['trailing', 'leading'], ['trailing', 'trailing']]
  * ```
  */
 export function getAllPaths<T extends PanelId>(
@@ -217,8 +217,8 @@ function collectPathsRecursive<T extends PanelId>(
 
   // If this is a parent node, recurse into children
   if (isParent(node)) {
-    collectPathsRecursive(node.first, [...currentPath, 'first'], paths, maxDepth);
-    collectPathsRecursive(node.second, [...currentPath, 'second'], paths, maxDepth);
+    collectPathsRecursive(node.leading, [...currentPath, 'leading'], paths, maxDepth);
+    collectPathsRecursive(node.trailing, [...currentPath, 'trailing'], paths, maxDepth);
   }
 }
 
@@ -232,8 +232,8 @@ function collectPathsRecursive<T extends PanelId>(
  * ```typescript
  * const tree = {
  *   direction: 'row',
- *   first: 'panel1',
- *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+ *   leading: 'panel1',
+ *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
  * };
  * const depth = getTreeDepth(tree); // 2
  * ```
@@ -247,8 +247,8 @@ export function getTreeDepth<T extends PanelId>(tree: LayoutNode<T> | null): num
     return 0;
   }
 
-  const leftDepth = getTreeDepth(tree.first);
-  const rightDepth = getTreeDepth(tree.second);
+  const leftDepth = getTreeDepth(tree.leading);
+  const rightDepth = getTreeDepth(tree.trailing);
 
   return 1 + Math.max(leftDepth, rightDepth);
 }

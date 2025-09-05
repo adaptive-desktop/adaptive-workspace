@@ -37,8 +37,8 @@ describe('LayoutTree', () => {
     it('should create tree with parent node', () => {
       const parent: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 60
       };
       const tree = new LayoutTree(parent);
@@ -49,11 +49,11 @@ describe('LayoutTree', () => {
     it('should create tree with complex nested structure', () => {
       const complexRoot: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel3',
+          leading: 'panel2',
+          trailing: 'panel3',
           splitPercentage: 30
         },
         splitPercentage: 70
@@ -96,8 +96,8 @@ describe('LayoutTree', () => {
     it('should maintain reference to original root object', () => {
       const originalRoot: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 50
       };
       const tree = new LayoutTree(originalRoot);
@@ -145,11 +145,11 @@ describe('LayoutTree', () => {
     it('should create copy with complex structure', () => {
       const complexRoot: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel3'
+          leading: 'panel2',
+          trailing: 'panel3'
         }
       };
       const tree = new LayoutTree(complexRoot);
@@ -196,14 +196,14 @@ describe('LayoutTree', () => {
     it('should consider trees with same structure equal', () => {
       const root1: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 60
       };
       const root2: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 60
       };
       
@@ -217,13 +217,13 @@ describe('LayoutTree', () => {
     it('should consider trees with different directions unequal', () => {
       const root1: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
       };
       const root2: LayoutParent<string> = {
         direction: 'column',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
       };
       
       const tree1 = new LayoutTree(root1);
@@ -235,14 +235,14 @@ describe('LayoutTree', () => {
     it('should consider trees with different split percentages unequal', () => {
       const root1: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 60
       };
       const root2: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 40
       };
       
@@ -255,14 +255,14 @@ describe('LayoutTree', () => {
     it('should handle undefined split percentages as 50', () => {
       const root1: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 50
       };
       const root2: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
         // splitPercentage undefined, should default to 50
       };
       
@@ -275,22 +275,22 @@ describe('LayoutTree', () => {
     it('should handle complex nested structures', () => {
       const complexRoot1: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel3',
+          leading: 'panel2',
+          trailing: 'panel3',
           splitPercentage: 30
         },
         splitPercentage: 70
       };
       const complexRoot2: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel3',
+          leading: 'panel2',
+          trailing: 'panel3',
           splitPercentage: 30
         },
         splitPercentage: 70
@@ -305,20 +305,20 @@ describe('LayoutTree', () => {
     it('should detect differences in nested structures', () => {
       const complexRoot1: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel3'
+          leading: 'panel2',
+          trailing: 'panel3'
         }
       };
       const complexRoot2: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel4' // Different panel ID
+          leading: 'panel2',
+          trailing: 'panel4' // Different panel ID
         }
       };
       
@@ -332,8 +332,8 @@ describe('LayoutTree', () => {
       const leafTree = new LayoutTree<string>('panel1');
       const parentTree = new LayoutTree<string>({
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
       });
       
       expect(leafTree.equals(parentTree)).toBe(false);
@@ -349,8 +349,8 @@ describe('LayoutTree', () => {
 
         const root = newTree.getRoot() as LayoutParent<string>;
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1');
-        expect(root.second).toBe('panel1');
+        expect(root.leading).toBe('panel1');
+        expect(root.trailing).toBe('panel1');
         expect(root.splitPercentage).toBe(50);
       });
 
@@ -360,8 +360,8 @@ describe('LayoutTree', () => {
 
         const root = newTree.getRoot() as LayoutParent<string>;
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1');
-        expect(root.second).toBe('panel2');
+        expect(root.leading).toBe('panel1');
+        expect(root.trailing).toBe('panel2');
         expect(root.splitPercentage).toBe(50);
       });
 
@@ -371,48 +371,48 @@ describe('LayoutTree', () => {
 
         const root = newTree.getRoot() as LayoutParent<string>;
         expect(root.direction).toBe('column');
-        expect(root.first).toBe('panel1');
-        expect(root.second).toBe('panel2');
+        expect(root.leading).toBe('panel1');
+        expect(root.trailing).toBe('panel2');
       });
 
       it('should split nested node', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
-        const newTree = tree.splitRegion(['first'], 'panel3', 'column');
+        const newTree = tree.splitRegion(['leading'], 'panel3', 'column');
         const root = newTree.getRoot() as LayoutParent<string>;
 
         expect(root.direction).toBe('row');
-        expect(root.second).toBe('panel2');
+        expect(root.trailing).toBe('panel2');
 
-        const firstChild = root.first as LayoutParent<string>;
-        expect(firstChild.direction).toBe('column');
-        expect(firstChild.first).toBe('panel1');
-        expect(firstChild.second).toBe('panel3');
+        const leadingChild = root.leading as LayoutParent<string>;
+        expect(leadingChild.direction).toBe('column');
+        expect(leadingChild.leading).toBe('panel1');
+        expect(leadingChild.trailing).toBe('panel3');
       });
 
       it('should split deeply nested node', () => {
         const complexTree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3'
+            leading: 'panel2',
+            trailing: 'panel3'
           }
         });
 
-        const newTree = complexTree.splitRegion(['second', 'first'], 'panel4', 'row');
+        const newTree = complexTree.splitRegion(['trailing', 'leading'], 'panel4', 'row');
         const root = newTree.getRoot() as LayoutParent<string>;
-        const secondChild = root.second as LayoutParent<string>;
-        const nestedChild = secondChild.first as LayoutParent<string>;
+        const trailingChild = root.trailing as LayoutParent<string>;
+        const nestedChild = trailingChild.leading as LayoutParent<string>;
 
         expect(nestedChild.direction).toBe('row');
-        expect(nestedChild.first).toBe('panel2');
-        expect(nestedChild.second).toBe('panel4');
+        expect(nestedChild.leading).toBe('panel2');
+        expect(nestedChild.trailing).toBe('panel4');
       });
 
       it('should throw error for invalid path', () => {
@@ -427,8 +427,8 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>('panel1');
 
         expect(() => {
-          tree.splitRegion(['first'], 'panel2', 'row');
-        }).toThrow('Cannot split: path first does not exist');
+          tree.splitRegion(['leading'], 'panel2', 'row');
+        }).toThrow('Cannot split: path leading does not exist');
       });
 
       it('should default to row direction', () => {
@@ -465,64 +465,64 @@ describe('LayoutTree', () => {
         expect(newTree.getRoot()).toBe(null);
       });
 
-      it('should remove first child, promote second', () => {
+      it('should remove leading child, promote second', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
-        const newTree = tree.removeRegion(['first']);
+        const newTree = tree.removeRegion(['leading']);
         expect(newTree.getRoot()).toBe('panel2');
       });
 
-      it('should remove second child, promote first', () => {
+      it('should remove trailing child, promote first', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
-        const newTree = tree.removeRegion(['second']);
+        const newTree = tree.removeRegion(['trailing']);
         expect(newTree.getRoot()).toBe('panel1');
       });
 
       it('should remove nested node', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3'
+            leading: 'panel2',
+            trailing: 'panel3'
           }
         });
 
-        const newTree = tree.removeRegion(['second', 'first']);
+        const newTree = tree.removeRegion(['trailing', 'leading']);
         const root = newTree.getRoot() as LayoutParent<string>;
 
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1');
-        expect(root.second).toBe('panel3'); // panel3 promoted
+        expect(root.leading).toBe('panel1');
+        expect(root.trailing).toBe('panel3'); // panel3 promoted
       });
 
       it('should remove complex nested structure', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: {
+          leading: {
             direction: 'column',
-            first: 'panel1',
-            second: 'panel2'
+            leading: 'panel1',
+            trailing: 'panel2'
           },
-          second: 'panel3'
+          trailing: 'panel3'
         });
 
-        const newTree = tree.removeRegion(['first', 'second']);
+        const newTree = tree.removeRegion(['leading', 'trailing']);
         const root = newTree.getRoot() as LayoutParent<string>;
 
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1'); // panel1 promoted
-        expect(root.second).toBe('panel3');
+        expect(root.leading).toBe('panel1'); // panel1 promoted
+        expect(root.trailing).toBe('panel3');
       });
 
       it('should throw error when sibling not found', () => {
@@ -531,46 +531,46 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>('panel1');
 
         expect(() => {
-          tree.removeRegion(['first', 'second']);
-        }).toThrow('Cannot remove: sibling at path first/first not found');
+          tree.removeRegion(['leading', 'trailing']);
+        }).toThrow('Cannot remove: sibling at path leading/leading not found');
       });
 
       it('should handle complex nested removal scenarios', () => {
         // Test various complex removal scenarios to ensure robustness
         const complexTree = new LayoutTree<string>({
           direction: 'row',
-          first: {
+          leading: {
             direction: 'column',
-            first: 'panel1',
-            second: {
+            leading: 'panel1',
+            trailing: {
               direction: 'row',
-              first: 'panel2',
-              second: 'panel3'
+              leading: 'panel2',
+              trailing: 'panel3'
             }
           },
-          second: 'panel4'
+          trailing: 'panel4'
         });
 
         // Remove a deeply nested node
-        const newTree = complexTree.removeRegion(['first', 'second', 'first']);
+        const newTree = complexTree.removeRegion(['leading', 'trailing', 'leading']);
         const root = newTree.getRoot() as LayoutParent<string>;
-        const firstChild = root.first as LayoutParent<string>;
+        const leadingChild = root.leading as LayoutParent<string>;
 
         expect(root.direction).toBe('row');
-        expect(firstChild.direction).toBe('column');
-        expect(firstChild.first).toBe('panel1');
-        expect(firstChild.second).toBe('panel3'); // panel3 promoted
-        expect(root.second).toBe('panel4');
+        expect(leadingChild.direction).toBe('column');
+        expect(leadingChild.leading).toBe('panel1');
+        expect(leadingChild.trailing).toBe('panel3'); // panel3 promoted
+        expect(root.trailing).toBe('panel4');
       });
 
       it('should not modify original tree', () => {
         const originalRoot = {
           direction: 'row' as const,
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         };
         const tree = new LayoutTree<string>(originalRoot);
-        const newTree = tree.removeRegion(['first']);
+        const newTree = tree.removeRegion(['leading']);
 
         expect(tree.getRoot()).toBe(originalRoot);
         expect(newTree.getRoot()).toBe('panel2');
@@ -581,8 +581,8 @@ describe('LayoutTree', () => {
       it('should resize root parent node', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
           splitPercentage: 50
         });
 
@@ -590,53 +590,53 @@ describe('LayoutTree', () => {
         const root = newTree.getRoot() as LayoutParent<string>;
 
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1');
-        expect(root.second).toBe('panel2');
+        expect(root.leading).toBe('panel1');
+        expect(root.trailing).toBe('panel2');
         expect(root.splitPercentage).toBe(70);
       });
 
       it('should resize nested parent node', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
             splitPercentage: 50
           }
         });
 
-        const newTree = tree.resizeRegion(['second'], 25);
+        const newTree = tree.resizeRegion(['trailing'], 25);
         const root = newTree.getRoot() as LayoutParent<string>;
-        const secondChild = root.second as LayoutParent<string>;
+        const trailingChild = root.trailing as LayoutParent<string>;
 
-        expect(secondChild.splitPercentage).toBe(25);
-        expect(secondChild.direction).toBe('column');
-        expect(secondChild.first).toBe('panel2');
-        expect(secondChild.second).toBe('panel3');
+        expect(trailingChild.splitPercentage).toBe(25);
+        expect(trailingChild.direction).toBe('column');
+        expect(trailingChild.leading).toBe('panel2');
+        expect(trailingChild.trailing).toBe('panel3');
       });
 
       it('should resize deeply nested node', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: {
+          leading: {
             direction: 'column',
-            first: 'panel1',
-            second: {
+            leading: 'panel1',
+            trailing: {
               direction: 'row',
-              first: 'panel2',
-              second: 'panel3',
+              leading: 'panel2',
+              trailing: 'panel3',
               splitPercentage: 60
             }
           },
-          second: 'panel4'
+          trailing: 'panel4'
         });
 
-        const newTree = tree.resizeRegion(['first', 'second'], 80);
+        const newTree = tree.resizeRegion(['leading', 'trailing'], 80);
         const root = newTree.getRoot() as LayoutParent<string>;
-        const firstChild = root.first as LayoutParent<string>;
-        const nestedChild = firstChild.second as LayoutParent<string>;
+        const leadingChild = root.leading as LayoutParent<string>;
+        const nestedChild = leadingChild.trailing as LayoutParent<string>;
 
         expect(nestedChild.splitPercentage).toBe(80);
       });
@@ -644,8 +644,8 @@ describe('LayoutTree', () => {
       it('should handle edge case percentages', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
         // Test 0%
@@ -664,8 +664,8 @@ describe('LayoutTree', () => {
       it('should throw error for invalid percentage - negative', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
         expect(() => {
@@ -676,8 +676,8 @@ describe('LayoutTree', () => {
       it('should throw error for invalid percentage - over 100', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
         expect(() => {
@@ -688,8 +688,8 @@ describe('LayoutTree', () => {
       it('should throw error for invalid percentage - NaN', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
         expect(() => {
@@ -709,27 +709,27 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>('panel1');
 
         expect(() => {
-          tree.resizeRegion(['first'], 50);
-        }).toThrow('Cannot resize: path first does not exist');
+          tree.resizeRegion(['leading'], 50);
+        }).toThrow('Cannot resize: path leading does not exist');
       });
 
       it('should throw error for leaf node path', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         });
 
         expect(() => {
-          tree.resizeRegion(['first'], 50);
-        }).toThrow('Cannot resize: path first does not point to a parent node');
+          tree.resizeRegion(['leading'], 50);
+        }).toThrow('Cannot resize: path leading does not point to a parent node');
       });
 
       it('should not modify original tree', () => {
         const originalRoot = {
           direction: 'row' as const,
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
           splitPercentage: 50
         };
         const tree = new LayoutTree<string>(originalRoot);
@@ -756,11 +756,11 @@ describe('LayoutTree', () => {
       it('should return all panels in depth-first order', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
           },
         });
         expect(tree.getPanelIds()).toEqual(['panel1', 'panel2', 'panel3']);
@@ -769,15 +769,15 @@ describe('LayoutTree', () => {
       it('should handle complex nested structures', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: {
+          leading: {
             direction: 'column',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
           },
-          second: {
+          trailing: {
             direction: 'column',
-            first: 'panel3',
-            second: 'panel4',
+            leading: 'panel3',
+            trailing: 'panel4',
           },
         });
         expect(tree.getPanelIds()).toEqual(['panel1', 'panel2', 'panel3', 'panel4']);
@@ -803,11 +803,11 @@ describe('LayoutTree', () => {
       it('should find panels in complex structures', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
           },
         });
         expect(tree.hasPanel('panel1')).toBe(true);
@@ -836,31 +836,31 @@ describe('LayoutTree', () => {
       it('should find panels in simple structure', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
         });
-        expect(tree.findPanelPath('panel1')).toEqual(['first']);
-        expect(tree.findPanelPath('panel2')).toEqual(['second']);
+        expect(tree.findPanelPath('panel1')).toEqual(['leading']);
+        expect(tree.findPanelPath('panel2')).toEqual(['trailing']);
       });
 
       it('should find panels in complex structure', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: {
+            leading: 'panel2',
+            trailing: {
               direction: 'row',
-              first: 'panel3',
-              second: 'panel4',
+              leading: 'panel3',
+              trailing: 'panel4',
             },
           },
         });
-        expect(tree.findPanelPath('panel1')).toEqual(['first']);
-        expect(tree.findPanelPath('panel2')).toEqual(['second', 'first']);
-        expect(tree.findPanelPath('panel3')).toEqual(['second', 'second', 'first']);
-        expect(tree.findPanelPath('panel4')).toEqual(['second', 'second', 'second']);
+        expect(tree.findPanelPath('panel1')).toEqual(['leading']);
+        expect(tree.findPanelPath('panel2')).toEqual(['trailing', 'leading']);
+        expect(tree.findPanelPath('panel3')).toEqual(['trailing', 'trailing', 'leading']);
+        expect(tree.findPanelPath('panel4')).toEqual(['trailing', 'trailing', 'trailing']);
       });
     });
 
@@ -868,26 +868,26 @@ describe('LayoutTree', () => {
       it('should return node at valid path', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
         });
-        expect(tree.getNodeAtPathSafe(['first'])).toBe('panel1');
-        expect(tree.getNodeAtPathSafe(['second'])).toBe('panel2');
+        expect(tree.getNodeAtPathSafe(['leading'])).toBe('panel1');
+        expect(tree.getNodeAtPathSafe(['trailing'])).toBe('panel2');
         expect(tree.getNodeAtPathSafe([])).toEqual(tree.getRoot());
       });
 
       it('should throw error for empty tree', () => {
         const tree = new LayoutTree<string>();
         expect(() => {
-          tree.getNodeAtPathSafe(['first']);
-        }).toThrow('Cannot navigate path first: tree is null');
+          tree.getNodeAtPathSafe(['leading']);
+        }).toThrow('Cannot navigate path leading: tree is null');
       });
 
       it('should throw error for invalid path', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
         });
         expect(() => {
           tree.getNodeAtPathSafe(['invalid' as any]);
@@ -897,8 +897,8 @@ describe('LayoutTree', () => {
       it('should throw error for non-existent path', () => {
         const tree = new LayoutTree<string>('panel1');
         expect(() => {
-          tree.getNodeAtPathSafe(['first']);
-        }).toThrow('Path first does not exist in the tree');
+          tree.getNodeAtPathSafe(['leading']);
+        }).toThrow('Path leading does not exist in the tree');
       });
     });
 
@@ -916,24 +916,24 @@ describe('LayoutTree', () => {
       it('should return all paths for simple tree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
         });
         const paths = tree.getAllPaths();
         expect(paths).toContainEqual([]);
-        expect(paths).toContainEqual(['first']);
-        expect(paths).toContainEqual(['second']);
+        expect(paths).toContainEqual(['leading']);
+        expect(paths).toContainEqual(['trailing']);
         expect(paths.length).toBe(3);
       });
 
       it('should respect max depth parameter', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
           },
         });
         const paths = tree.getAllPaths(1);
@@ -956,8 +956,8 @@ describe('LayoutTree', () => {
       it('should return 1 for simple tree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
         });
         expect(tree.getDepth()).toBe(1);
       });
@@ -965,14 +965,14 @@ describe('LayoutTree', () => {
       it('should return correct depth for complex tree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: {
+            leading: 'panel2',
+            trailing: {
               direction: 'row',
-              first: 'panel3',
-              second: 'panel4',
+              leading: 'panel3',
+              trailing: 'panel4',
             },
           },
         });
@@ -994,14 +994,14 @@ describe('LayoutTree', () => {
       it('should return correct count for complex tree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: {
+            leading: 'panel2',
+            trailing: {
               direction: 'row',
-              first: 'panel3',
-              second: 'panel4',
+              leading: 'panel3',
+              trailing: 'panel4',
             },
           },
         });
@@ -1011,22 +1011,22 @@ describe('LayoutTree', () => {
       it('should handle deeply nested structures', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: {
+          leading: {
             direction: 'column',
-            first: {
+            leading: {
               direction: 'row',
-              first: 'panel1',
-              second: 'panel2',
+              leading: 'panel1',
+              trailing: 'panel2',
             },
-            second: 'panel3',
+            trailing: 'panel3',
           },
-          second: {
+          trailing: {
             direction: 'column',
-            first: 'panel4',
-            second: {
+            leading: 'panel4',
+            trailing: {
               direction: 'row',
-              first: 'panel5',
-              second: 'panel6',
+              leading: 'panel5',
+              trailing: 'panel6',
             },
           },
         });
@@ -1040,38 +1040,38 @@ describe('LayoutTree', () => {
       it('should serialize empty tree', () => {
         const tree = new LayoutTree<string>();
         const serialized = tree.serialize();
-        expect(serialized.version).toBe('1.0.0');
+        expect(serialized.version).toBe('0.2.0');
         expect(serialized.tree).toBe(null);
       });
 
       it('should serialize single panel tree', () => {
         const tree = new LayoutTree<string>('panel1');
         const serialized = tree.serialize();
-        expect(serialized.version).toBe('1.0.0');
+        expect(serialized.version).toBe('0.2.0');
         expect(serialized.tree).toBe('panel1');
       });
 
       it('should serialize complex tree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
             splitPercentage: 75,
           },
           splitPercentage: 60,
         });
         const serialized = tree.serialize();
-        expect(serialized.version).toBe('1.0.0');
+        expect(serialized.version).toBe('0.2.0');
         expect(serialized.tree).toEqual({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
             splitPercentage: 75,
           },
           splitPercentage: 60,
@@ -1081,28 +1081,28 @@ describe('LayoutTree', () => {
 
     describe('deserialize', () => {
       it('should deserialize empty tree', () => {
-        const serialized = { version: '1.0.0', tree: null };
+        const serialized = { version: '0.2.0', tree: null };
         const tree = LayoutTree.deserialize<string>(serialized);
         expect(tree.isEmpty()).toBe(true);
         expect(tree.getRoot()).toBe(null);
       });
 
       it('should deserialize single panel tree', () => {
-        const serialized = { version: '1.0.0', tree: 'panel1' };
+        const serialized = { version: '0.2.0', tree: 'panel1' };
         const tree = LayoutTree.deserialize<string>(serialized);
         expect(tree.getRoot()).toBe('panel1');
       });
 
       it('should deserialize complex tree', () => {
         const serialized = {
-          version: '1.0.0',
+          version: '0.2.0',
           tree: {
             direction: 'row' as const,
-            first: 'panel1',
-            second: {
+            leading: 'panel1',
+            trailing: {
               direction: 'column' as const,
-              first: 'panel2',
-              second: 'panel3',
+              leading: 'panel2',
+              trailing: 'panel3',
               splitPercentage: 75,
             },
             splitPercentage: 60,
@@ -1111,14 +1111,14 @@ describe('LayoutTree', () => {
         const tree = LayoutTree.deserialize<string>(serialized);
         const root = tree.getRoot() as LayoutParent<string>;
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1');
+        expect(root.leading).toBe('panel1');
         expect(root.splitPercentage).toBe(60);
 
-        const secondChild = root.second as LayoutParent<string>;
-        expect(secondChild.direction).toBe('column');
-        expect(secondChild.first).toBe('panel2');
-        expect(secondChild.second).toBe('panel3');
-        expect(secondChild.splitPercentage).toBe(75);
+        const trailingChild = root.trailing as LayoutParent<string>;
+        expect(trailingChild.direction).toBe('column');
+        expect(trailingChild.leading).toBe('panel2');
+        expect(trailingChild.trailing).toBe('panel3');
+        expect(trailingChild.splitPercentage).toBe(75);
       });
 
       it('should throw error for invalid serialized data', () => {
@@ -1148,11 +1148,11 @@ describe('LayoutTree', () => {
       it('should create deep clone of complex tree', () => {
         const original = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
           },
         });
         const clone = original.clone();
@@ -1171,16 +1171,16 @@ describe('LayoutTree', () => {
       it('should convert tree to JSON string', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: 'panel2',
+          leading: 'panel1',
+          trailing: 'panel2',
           splitPercentage: 60,
         });
         const json = tree.toJSON();
         const parsed = JSON.parse(json);
-        expect(parsed.version).toBe('1.0.0');
+        expect(parsed.version).toBe('0.2.0');
         expect(parsed.tree.direction).toBe('row');
-        expect(parsed.tree.first).toBe('panel1');
-        expect(parsed.tree.second).toBe('panel2');
+        expect(parsed.tree.leading).toBe('panel1');
+        expect(parsed.tree.trailing).toBe('panel2');
         expect(parsed.tree.splitPercentage).toBe(60);
       });
 
@@ -1201,17 +1201,17 @@ describe('LayoutTree', () => {
 
     describe('fromJSON', () => {
       it('should create tree from JSON string', () => {
-        const json = '{"version":"1.0.0","tree":{"direction":"row","first":"panel1","second":"panel2","splitPercentage":60}}';
+        const json = '{"version":"0.2.0","tree":{"direction":"row","leading":"panel1","trailing":"panel2","splitPercentage":60}}';
         const tree = LayoutTree.fromJSON<string>(json);
         const root = tree.getRoot() as LayoutParent<string>;
         expect(root.direction).toBe('row');
-        expect(root.first).toBe('panel1');
-        expect(root.second).toBe('panel2');
+        expect(root.leading).toBe('panel1');
+        expect(root.trailing).toBe('panel2');
         expect(root.splitPercentage).toBe(60);
       });
 
       it('should handle empty tree JSON', () => {
-        const json = '{"version":"1.0.0","tree":null}';
+        const json = '{"version":"0.2.0","tree":null}';
         const tree = LayoutTree.fromJSON<string>(json);
         expect(tree.isEmpty()).toBe(true);
       });
@@ -1234,11 +1234,11 @@ describe('LayoutTree', () => {
       it('should preserve tree through serialize/deserialize', () => {
         const original = new LayoutTree<string>({
           direction: 'row',
-          first: 'panel1',
-          second: {
+          leading: 'panel1',
+          trailing: {
             direction: 'column',
-            first: 'panel2',
-            second: 'panel3',
+            leading: 'panel2',
+            trailing: 'panel3',
             splitPercentage: 75,
           },
           splitPercentage: 60,
@@ -1252,12 +1252,12 @@ describe('LayoutTree', () => {
       it('should preserve tree through toJSON/fromJSON', () => {
         const original = new LayoutTree<string>({
           direction: 'column',
-          first: {
+          leading: {
             direction: 'row',
-            first: 'panel1',
-            second: 'panel2',
+            leading: 'panel1',
+            trailing: 'panel2',
           },
-          second: 'panel3',
+          trailing: 'panel3',
           splitPercentage: 40,
         });
 

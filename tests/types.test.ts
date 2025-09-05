@@ -64,19 +64,19 @@ describe('Core Types', () => {
   });
 
   describe('LayoutBranch', () => {
-    it('should accept "first" value', () => {
-      const branch: LayoutBranch = 'first';
-      expect(branch).toBe('first');
+    it('should accept "leading" value', () => {
+      const branch: LayoutBranch = 'leading';
+      expect(branch).toBe('leading');
     });
 
-    it('should accept "second" value', () => {
-      const branch: LayoutBranch = 'second';
-      expect(branch).toBe('second');
+    it('should accept "trailing" value', () => {
+      const branch: LayoutBranch = 'trailing';
+      expect(branch).toBe('trailing');
     });
 
     it('should be used in arrays for paths', () => {
-      const path: LayoutBranch[] = ['first', 'second', 'first'];
-      expect(path).toEqual(['first', 'second', 'first']);
+      const path: LayoutBranch[] = ['leading', 'trailing', 'leading'];
+      expect(path).toEqual(['leading', 'trailing', 'leading']);
       expect(path.length).toBe(3);
     });
   });
@@ -89,24 +89,24 @@ describe('Core Types', () => {
     });
 
     it('should accept single branch', () => {
-      const path: LayoutPath = ['first'];
-      expect(path).toEqual(['first']);
+      const path: LayoutPath = ['leading'];
+      expect(path).toEqual(['leading']);
       expect(path.length).toBe(1);
     });
 
     it('should accept multiple branches', () => {
-      const path: LayoutPath = ['first', 'second', 'first', 'second'];
-      expect(path).toEqual(['first', 'second', 'first', 'second']);
+      const path: LayoutPath = ['leading', 'trailing', 'leading', 'trailing'];
+      expect(path).toEqual(['leading', 'trailing', 'leading', 'trailing']);
       expect(path.length).toBe(4);
     });
 
     it('should support array methods', () => {
-      const path: LayoutPath = ['first', 'second'];
-      const extended = [...path, 'first'];
-      expect(extended).toEqual(['first', 'second', 'first']);
-      
+      const path: LayoutPath = ['leading', 'trailing'];
+      const extended = [...path, 'leading'];
+      expect(extended).toEqual(['leading', 'trailing', 'leading']);
+
       const sliced = path.slice(0, 1);
-      expect(sliced).toEqual(['first']);
+      expect(sliced).toEqual(['leading']);
     });
   });
 
@@ -114,66 +114,66 @@ describe('Core Types', () => {
     it('should create valid parent with string panel IDs', () => {
       const parent: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2',
+        leading: 'panel1',
+        trailing: 'panel2',
         splitPercentage: 60
       };
 
       expect(parent.direction).toBe('row');
-      expect(parent.first).toBe('panel1');
-      expect(parent.second).toBe('panel2');
+      expect(parent.leading).toBe('panel1');
+      expect(parent.trailing).toBe('panel2');
       expect(parent.splitPercentage).toBe(60);
     });
 
     it('should create valid parent with number panel IDs', () => {
       const parent: LayoutParent<number> = {
         direction: 'column',
-        first: 1,
-        second: 2,
+        leading: 1,
+        trailing: 2,
         splitPercentage: 30
       };
 
       expect(parent.direction).toBe('column');
-      expect(parent.first).toBe(1);
-      expect(parent.second).toBe(2);
+      expect(parent.leading).toBe(1);
+      expect(parent.trailing).toBe(2);
       expect(parent.splitPercentage).toBe(30);
     });
 
     it('should allow optional splitPercentage', () => {
       const parent: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
         // splitPercentage is optional
       };
 
       expect(parent.direction).toBe('row');
-      expect(parent.first).toBe('panel1');
-      expect(parent.second).toBe('panel2');
+      expect(parent.leading).toBe('panel1');
+      expect(parent.trailing).toBe('panel2');
       expect(parent.splitPercentage).toBeUndefined();
     });
 
     it('should support nested parent structures', () => {
       const nestedParent: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: 'panel2',
-          second: 'panel3',
+          leading: 'panel2',
+          trailing: 'panel3',
           splitPercentage: 40
         },
         splitPercentage: 70
       };
 
       expect(nestedParent.direction).toBe('row');
-      expect(nestedParent.first).toBe('panel1');
-      expect(typeof nestedParent.second).toBe('object');
-      
-      const secondChild = nestedParent.second as LayoutParent<string>;
-      expect(secondChild.direction).toBe('column');
-      expect(secondChild.first).toBe('panel2');
-      expect(secondChild.second).toBe('panel3');
+      expect(nestedParent.leading).toBe('panel1');
+      expect(typeof nestedParent.trailing).toBe('object');
+
+      const trailingChild = nestedParent.trailing as LayoutParent<string>;
+      expect(trailingChild.direction).toBe('column');
+      expect(trailingChild.leading).toBe('panel2');
+      expect(trailingChild.trailing).toBe('panel3');
     });
   });
 
@@ -187,31 +187,31 @@ describe('Core Types', () => {
     it('should accept parent as internal node', () => {
       const parentNode: LayoutNode<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
       };
 
       expect(typeof parentNode).toBe('object');
       expect(parentNode).toHaveProperty('direction');
-      expect(parentNode).toHaveProperty('first');
-      expect(parentNode).toHaveProperty('second');
+      expect(parentNode).toHaveProperty('leading');
+      expect(parentNode).toHaveProperty('trailing');
     });
 
     it('should support complex nested structures', () => {
       const complexNode: LayoutNode<string> = {
         direction: 'row',
-        first: {
+        leading: {
           direction: 'column',
-          first: 'panel1',
-          second: 'panel2'
+          leading: 'panel1',
+          trailing: 'panel2'
         },
-        second: {
+        trailing: {
           direction: 'column',
-          first: 'panel3',
-          second: {
+          leading: 'panel3',
+          trailing: {
             direction: 'row',
-            first: 'panel4',
-            second: 'panel5'
+            leading: 'panel4',
+            trailing: 'panel5'
           }
         }
       };
@@ -220,25 +220,25 @@ describe('Core Types', () => {
       expect(complexNode).toHaveProperty('direction', 'row');
       
       // Verify nested structure exists
-      const firstChild = (complexNode as LayoutParent<string>).first;
-      const secondChild = (complexNode as LayoutParent<string>).second;
-      
-      expect(typeof firstChild).toBe('object');
-      expect(typeof secondChild).toBe('object');
+      const leadingChild = (complexNode as LayoutParent<string>).leading;
+      const trailingChild = (complexNode as LayoutParent<string>).trailing;
+
+      expect(typeof leadingChild).toBe('object');
+      expect(typeof trailingChild).toBe('object');
     });
 
     it('should maintain type safety with mixed ID types', () => {
       // This should work with consistent types
       const stringNode: LayoutNode<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: 'panel2'
+        leading: 'panel1',
+        trailing: 'panel2'
       };
 
       const numberNode: LayoutNode<number> = {
         direction: 'column',
-        first: 1,
-        second: 2
+        leading: 1,
+        trailing: 2
       };
 
       expect(typeof stringNode).toBe('object');

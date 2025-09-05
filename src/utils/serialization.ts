@@ -5,7 +5,7 @@
  * to/from JSON format, enabling persistence and data exchange.
  */
 
-import { PanelId, LayoutNode, LayoutParent, LayoutDirection } from '../types';
+import { PanelId, LayoutNode, LayoutParent, LayoutDirection, RegionConstraints } from '../types';
 import { isParent, isValidSplitPercentage } from './treeUtils';
 
 /**
@@ -31,18 +31,20 @@ export type SerializableLayoutNode = SerializableLayoutParent | PanelId;
 export interface SerializableLayoutParent {
   /** The direction of the split */
   direction: LayoutDirection;
-  /** The first child node */
-  first: SerializableLayoutNode;
-  /** The second child node */
-  second: SerializableLayoutNode;
+  /** The leading child node */
+  leading: SerializableLayoutNode;
+  /** The trailing child node */
+  trailing: SerializableLayoutNode;
   /** The split percentage (optional, defaults to 50) */
   splitPercentage?: number;
+  /** Constraints for child regions */
+  constraints?: RegionConstraints;
 }
 
 /**
  * Current version of the serialization format.
  */
-export const SERIALIZATION_VERSION = '1.0.0';
+export const SERIALIZATION_VERSION = '0.2.0';
 
 /**
  * Serializes a layout tree to a JSON-safe format.
@@ -55,8 +57,8 @@ export const SERIALIZATION_VERSION = '1.0.0';
  * ```typescript
  * const tree = {
  *   direction: 'row',
- *   first: 'panel1',
- *   second: 'panel2',
+ *   leading: 'panel1',
+ *   trailing: 'panel2',
  *   splitPercentage: 60
  * };
  * const serialized = serializeLayoutTree(tree);
@@ -91,9 +93,10 @@ function serializeLayoutNode<T extends PanelId>(
 
   return {
     direction: node.direction,
-    first: serializeLayoutNode(node.first)!,
-    second: serializeLayoutNode(node.second)!,
+    leading: serializeLayoutNode(node.leading)!,
+    trailing: serializeLayoutNode(node.trailing)!,
     splitPercentage: node.splitPercentage,
+    constraints: node.constraints,
   };
 }
 
@@ -107,7 +110,7 @@ function serializeLayoutNode<T extends PanelId>(
  *
  * @example
  * ```typescript
- * const json = '{"version":"1.0.0","tree":{"direction":"row","first":"panel1","second":"panel2"}}';
+ * const json = '{"version":"1.0.0","tree":{"direction":"row","leading":"panel1","trailing":"panel2"}}';
  * const serialized = JSON.parse(json);
  * const tree = deserializeLayoutTree(serialized);
  * ```
@@ -125,7 +128,7 @@ export function deserializeLayoutTree<T extends PanelId>(
 
   if (serialized.version !== SERIALIZATION_VERSION) {
     throw new Error(
-      `Unsupported serialization version: ${serialized.version}. Expected: ${SERIALIZATION_VERSION}`
+      `Unsupported serialization version: ${serialized.version}. Expected: ${SERIALIZATION_VERSION}.`
     );
   }
 
@@ -156,7 +159,7 @@ function deserializeLayoutNode<T extends PanelId>(
   }
 
   // Validate parent node structure
-  if (!('direction' in node) || !('first' in node) || !('second' in node)) {
+  if (!('direction' in node) || !('leading' in node) || !('trailing' in node)) {
     throw new Error('Invalid parent node: missing required properties');
   }
 
@@ -175,18 +178,19 @@ function deserializeLayoutNode<T extends PanelId>(
   }
 
   // Recursively deserialize children
-  const first = deserializeLayoutNode<T>(parent.first);
-  const second = deserializeLayoutNode<T>(parent.second);
+  const leading = deserializeLayoutNode<T>(parent.leading);
+  const trailing = deserializeLayoutNode<T>(parent.trailing);
 
-  if (first === null || second === null) {
+  if (leading === null || trailing === null) {
     throw new Error('Invalid parent node: children cannot be null');
   }
 
   return {
     direction: parent.direction,
-    first,
-    second,
+    leading,
+    trailing,
     splitPercentage: parent.splitPercentage,
+    constraints: parent.constraints,
   } as LayoutParent<T>;
 }
 
@@ -199,7 +203,7 @@ function deserializeLayoutNode<T extends PanelId>(
  *
  * @example
  * ```typescript
- * const json = '{"version":"1.0.0","tree":{"direction":"row","first":"panel1","second":"panel2"}}';
+ * const json = '{"version":"1.0.0","tree":{"direction":"row","leading":"panel1","trailing":"panel2"}}';
  * const data = JSON.parse(json);
  * if (isValidSerializedTree(data)) {
  *   const tree = deserializeLayoutTree(data);
@@ -255,7 +259,7 @@ function isValidSerializedNode(node: unknown): boolean {
   const obj = node as Record<string, unknown>;
 
   // Check required properties
-  if (!('direction' in obj) || !('first' in obj) || !('second' in obj)) {
+  if (!('direction' in obj) || !('leading' in obj) || !('trailing' in obj)) {
     return false;
   }
 
@@ -272,7 +276,7 @@ function isValidSerializedNode(node: unknown): boolean {
   }
 
   // Recursively validate children
-  return isValidSerializedNode(obj.first) && isValidSerializedNode(obj.second);
+  return isValidSerializedNode(obj.leading) && isValidSerializedNode(obj.trailing);
 }
 
 /**
@@ -284,7 +288,7 @@ function isValidSerializedNode(node: unknown): boolean {
  *
  * @example
  * ```typescript
- * const original = { direction: 'row', first: 'panel1', second: 'panel2' };
+ * const original = { direction: 'row', leading: 'panel1', trailing: 'panel2' };
  * const clone = cloneLayoutTree(original);
  * // clone is completely independent of original
  * ```

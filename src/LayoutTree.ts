@@ -5,12 +5,22 @@
  * binary tree operations for layout management.
  */
 
-import { PanelId, LayoutNode, LayoutParent, LayoutPath, LayoutDirection } from './types';
+import {
+  PanelId,
+  LayoutNode,
+  LayoutParent,
+  LayoutPath,
+  LayoutDirection,
+  LayoutBranch,
+  RegionConstraints,
+  InsertPosition,
+} from './types';
 import {
   getNodeAtPath,
   getOtherBranch,
   isValidSplitPercentage,
   getLeaves,
+  isParent,
 } from './utils/treeUtils';
 import {
   findPanelPath,
@@ -45,8 +55,8 @@ import {
  * // Create a tree with a split
  * const splitTree = new LayoutTree<string>({
  *   direction: 'row',
- *   first: 'panel1',
- *   second: 'panel2',
+ *   leading: 'panel1',
+ *   trailing: 'panel2',
  *   splitPercentage: 60
  * });
  * ```
@@ -138,8 +148,8 @@ export class LayoutTree<T extends PanelId> {
     return (
       parent1.direction === parent2.direction &&
       (parent1.splitPercentage || 50) === (parent2.splitPercentage || 50) &&
-      this.nodesEqual(parent1.first, parent2.first) &&
-      this.nodesEqual(parent1.second, parent2.second)
+      this.nodesEqual(parent1.leading, parent2.leading) &&
+      this.nodesEqual(parent1.trailing, parent2.trailing)
     );
   }
 
@@ -157,7 +167,7 @@ export class LayoutTree<T extends PanelId> {
    * ```typescript
    * const tree = new LayoutTree('panel1');
    * const newTree = tree.splitRegion([], 'panel2', 'row');
-   * // Result: { direction: 'row', first: 'panel1', second: 'panel2', splitPercentage: 50 }
+   * // Result: { direction: 'row', leading: 'panel1', trailing: 'panel2', splitPercentage: 50 }
    * ```
    */
   splitRegion(path: LayoutPath, newPanelId: T, direction: LayoutDirection = 'row'): LayoutTree<T> {
@@ -165,23 +175,27 @@ export class LayoutTree<T extends PanelId> {
       // Create initial split with new panel
       const newRoot: LayoutParent<T> = {
         direction,
-        first: newPanelId,
-        second: newPanelId,
+        leading: newPanelId,
+        trailing: newPanelId,
         splitPercentage: 50,
       };
       return new LayoutTree<T>(newRoot);
     }
 
-    const nodeAtPath = getNodeAtPath(this.root, path);
-    if (nodeAtPath === null) {
+    const existingPanel = getNodeAtPath(this.root, path);
+    if (existingPanel === null) {
       throw new Error(`Cannot split: path ${path.join('/')} does not exist`);
     }
 
-    // Create new parent node with existing node and new panel
+    if (isParent(existingPanel)) {
+      throw new Error(`Cannot split: path ${path.join('/')} does not point to a panel`);
+    }
+
+    // Create new parent node with existing panel and new panel
     const newParent: LayoutParent<T> = {
       direction,
-      first: nodeAtPath,
-      second: newPanelId,
+      leading: existingPanel,
+      trailing: newPanelId,
       splitPercentage: 50,
     };
 
@@ -191,23 +205,62 @@ export class LayoutTree<T extends PanelId> {
   }
 
   /**
-   * Removes a region at the specified path. The sibling node takes over the parent's position.
+   * Resizes a region by updating the split percentage of the parent node at the specified path.
    * This operation is immutable and returns a new tree instance.
    *
-   * @param path - Path to the node to remove
-   * @returns A new LayoutTree with the node removed
-   * @throws Error if the path does not exist or the sibling cannot be found
+   * @param path - Path to the parent node to resize
+   * @param percentage - New split percentage (0-100)
+   * @returns A new LayoutTree with the updated split percentage
+   * @throws Error if the percentage is invalid, path doesn't exist, or path doesn't point to a parent node
    *
    * @example
    * ```typescript
    * const tree = new LayoutTree({
    *   direction: 'row',
-   *   first: 'panel1',
-   *   second: 'panel2'
+   *   leading: 'panel1',
+   *   trailing: 'panel2',
+   *   splitPercentage: 50
    * });
-   * const newTree = tree.removeRegion(['first']);
-   * // Result: 'panel2' (sibling takes over)
+   * const newTree = tree.resizeRegion([], 70);
+   * // Result: same structure but with splitPercentage: 70
    * ```
+   */
+  resizeRegion(path: LayoutPath, percentage: number): LayoutTree<T> {
+    if (!isValidSplitPercentage(percentage)) {
+      throw new Error(`Invalid split percentage: ${percentage}. Must be between 0 and 100.`);
+    }
+
+    if (this.root === null) {
+      throw new Error('Cannot resize: tree is empty');
+    }
+
+    const nodeAtPath = getNodeAtPath(this.root, path);
+    if (nodeAtPath === null) {
+      throw new Error(`Cannot resize: path ${path.join('/')} does not exist`);
+    }
+
+    if (typeof nodeAtPath !== 'object' || !('direction' in nodeAtPath)) {
+      throw new Error(`Cannot resize: path ${path.join('/')} does not point to a parent node`);
+    }
+
+    // Validate against constraints after basic validation
+    if (!this.canResize(path, percentage)) {
+      throw new Error(
+        `Cannot resize region at path ${path.join('/')}: region is locked or violates constraints`
+      );
+    }
+
+    const updatedNode: LayoutParent<T> = {
+      ...nodeAtPath,
+      splitPercentage: percentage,
+    };
+
+    const newRoot = this.replaceNodeAtPath(this.root, path, updatedNode);
+    return new LayoutTree<T>(newRoot);
+  }
+
+  /**
+   * Remove a region and let its sibling take the space
    */
   removeRegion(path: LayoutPath): LayoutTree<T> {
     if (this.root === null || path.length === 0) {
@@ -237,51 +290,51 @@ export class LayoutTree<T extends PanelId> {
   }
 
   /**
-   * Resizes a region by updating the split percentage of the parent node at the specified path.
-   * This operation is immutable and returns a new tree instance.
-   *
-   * @param path - Path to the parent node to resize
-   * @param percentage - New split percentage (0-100)
-   * @returns A new LayoutTree with the updated split percentage
-   * @throws Error if the percentage is invalid, path doesn't exist, or path doesn't point to a parent node
-   *
-   * @example
-   * ```typescript
-   * const tree = new LayoutTree({
-   *   direction: 'row',
-   *   first: 'panel1',
-   *   second: 'panel2',
-   *   splitPercentage: 50
-   * });
-   * const newTree = tree.resizeRegion([], 70);
-   * // Result: same structure but with splitPercentage: 70
-   * ```
+   * Move a panel to a new location
    */
-  resizeRegion(path: LayoutPath, percentage: number): LayoutTree<T> {
-    if (!isValidSplitPercentage(percentage)) {
-      throw new Error(`Invalid split percentage: ${percentage}. Must be between 0 and 100.`);
+  movePanel(fromPath: LayoutPath, toPath: LayoutPath, position: InsertPosition): LayoutTree<T> {
+    const panelToMove = getNodeAtPath(this.root, fromPath);
+    if (panelToMove === null || isParent(panelToMove)) {
+      throw new Error(`Cannot move: path ${fromPath.join('/')} does not point to a panel`);
     }
 
-    if (this.root === null) {
-      throw new Error('Cannot resize: tree is empty');
+    // First remove the panel
+    const newTree = this.removeRegion(fromPath);
+
+    // Then insert it at the new location
+    switch (position) {
+      case 'before': {
+        // Split the target and insert as leading child
+        return newTree.splitRegion(toPath, panelToMove, 'column');
+      }
+      case 'after': {
+        // Split the target and insert as trailing child
+        const splitTree = newTree.splitRegion(toPath, panelToMove, 'column');
+        // Swap the children to put new panel as trailing
+        const targetParent = getNodeAtPath(splitTree.root, toPath.slice(0, -1));
+        if (targetParent !== null && isParent(targetParent)) {
+          const swappedParent: LayoutParent<T> = {
+            ...targetParent,
+            leading: targetParent.trailing,
+            trailing: targetParent.leading,
+          };
+          const newRoot = splitTree.replaceNodeAtPath(
+            splitTree.root!,
+            toPath.slice(0, -1),
+            swappedParent
+          );
+          return new LayoutTree<T>(newRoot);
+        }
+        return splitTree;
+      }
+      case 'replace': {
+        // Replace the target panel
+        const newRoot = newTree.replaceNodeAtPath(newTree.root!, toPath, panelToMove);
+        return new LayoutTree<T>(newRoot);
+      }
+      default:
+        throw new Error(`Invalid insert position: ${position}`);
     }
-
-    const nodeAtPath = getNodeAtPath(this.root, path);
-    if (nodeAtPath === null) {
-      throw new Error(`Cannot resize: path ${path.join('/')} does not exist`);
-    }
-
-    if (typeof nodeAtPath !== 'object' || !('direction' in nodeAtPath)) {
-      throw new Error(`Cannot resize: path ${path.join('/')} does not point to a parent node`);
-    }
-
-    const updatedNode: LayoutParent<T> = {
-      ...nodeAtPath,
-      splitPercentage: percentage,
-    };
-
-    const newRoot = this.replaceNodeAtPath(this.root, path, updatedNode);
-    return new LayoutTree<T>(newRoot);
   }
 
   /**
@@ -309,7 +362,7 @@ export class LayoutTree<T extends PanelId> {
 
     const [branch, ...remainingPath] = path;
     const updatedChild = this.replaceNodeAtPath(
-      branch === 'first' ? root.first : root.second,
+      branch === 'leading' ? root.leading : root.trailing,
       remainingPath,
       replacement
     );
@@ -330,8 +383,8 @@ export class LayoutTree<T extends PanelId> {
    * ```typescript
    * const tree = new LayoutTree({
    *   direction: 'row',
-   *   first: 'panel1',
-   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   *   leading: 'panel1',
+   *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
    * });
    * const panels = tree.getPanelIds(); // ['panel1', 'panel2', 'panel3']
    * ```
@@ -368,10 +421,10 @@ export class LayoutTree<T extends PanelId> {
    * ```typescript
    * const tree = new LayoutTree({
    *   direction: 'row',
-   *   first: 'panel1',
-   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   *   leading: 'panel1',
+   *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
    * });
-   * const path = tree.findPanelPath('panel2'); // ['second', 'first']
+   * const path = tree.findPanelPath('panel2'); // ['trailing', 'leading']
    * ```
    */
   findPanelPath(panelId: T): LayoutPath | null {
@@ -407,10 +460,10 @@ export class LayoutTree<T extends PanelId> {
    * ```typescript
    * const tree = new LayoutTree({
    *   direction: 'row',
-   *   first: 'panel1',
-   *   second: 'panel2'
+   *   leading: 'panel1',
+   *   trailing: 'panel2'
    * });
-   * const paths = tree.getAllPaths(); // [[], ['first'], ['second']]
+   * const paths = tree.getAllPaths(); // [[], ['leading'], ['trailing']]
    * ```
    */
   getAllPaths(maxDepth: number = 10): LayoutPath[] {
@@ -429,8 +482,8 @@ export class LayoutTree<T extends PanelId> {
    *
    * const complexTree = new LayoutTree({
    *   direction: 'row',
-   *   first: 'panel1',
-   *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+   *   leading: 'panel1',
+   *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
    * });
    * const complexDepth = complexTree.getDepth(); // 2
    * ```
@@ -468,8 +521,8 @@ export class LayoutTree<T extends PanelId> {
    * ```typescript
    * const tree = new LayoutTree({
    *   direction: 'row',
-   *   first: 'panel1',
-   *   second: 'panel2',
+   *   leading: 'panel1',
+   *   trailing: 'panel2',
    *   splitPercentage: 60
    * });
    * const serialized = tree.serialize();
@@ -508,7 +561,7 @@ export class LayoutTree<T extends PanelId> {
    *
    * @example
    * ```typescript
-   * const original = new LayoutTree({ direction: 'row', first: 'panel1', second: 'panel2' });
+   * const original = new LayoutTree({ direction: 'row', leading: 'panel1', trailing: 'panel2' });
    * const clone = original.clone();
    * // clone is completely independent of original
    * ```
@@ -516,6 +569,146 @@ export class LayoutTree<T extends PanelId> {
   clone(): LayoutTree<T> {
     const clonedRoot = cloneLayoutTree(this.root);
     return new LayoutTree<T>(clonedRoot);
+  }
+
+  /**
+   * Lock or unlock a region to prevent resizing
+   */
+  lockRegion(path: LayoutPath, locked: boolean): LayoutTree<T> {
+    if (path.length === 0) {
+      throw new Error('Cannot lock root region');
+    }
+
+    const parentPath = path.slice(0, -1);
+    const branch = path[path.length - 1] as LayoutBranch;
+
+    const parentNode = getNodeAtPath(this.root, parentPath);
+    if (parentNode === null || !isParent(parentNode)) {
+      throw new Error(`Cannot lock: parent at path ${parentPath.join('/')} is not a parent node`);
+    }
+
+    const updatedConstraints: RegionConstraints = {
+      ...parentNode.constraints,
+      [branch]: {
+        ...parentNode.constraints?.[branch],
+        locked,
+      },
+    };
+
+    const updatedParent: LayoutParent<T> = {
+      ...parentNode,
+      constraints: updatedConstraints,
+    };
+
+    const newRoot = this.replaceNodeAtPath(this.root!, parentPath, updatedParent);
+    return new LayoutTree<T>(newRoot);
+  }
+
+  /**
+   * Set minimum size constraint for a region
+   */
+  setMinSize(path: LayoutPath, minSize: number): LayoutTree<T> {
+    if (path.length === 0) {
+      throw new Error('Cannot set min size for root region');
+    }
+
+    const parentPath = path.slice(0, -1);
+    const branch = path[path.length - 1] as LayoutBranch;
+
+    const parentNode = getNodeAtPath(this.root, parentPath);
+    if (parentNode === null || !isParent(parentNode)) {
+      throw new Error(
+        `Cannot set min size: parent at path ${parentPath.join('/')} is not a parent node`
+      );
+    }
+
+    const updatedConstraints: RegionConstraints = {
+      ...parentNode.constraints,
+      [branch]: {
+        ...parentNode.constraints?.[branch],
+        minSize,
+      },
+    };
+
+    const updatedParent: LayoutParent<T> = {
+      ...parentNode,
+      constraints: updatedConstraints,
+    };
+
+    const newRoot = this.replaceNodeAtPath(this.root!, parentPath, updatedParent);
+    return new LayoutTree<T>(newRoot);
+  }
+
+  /**
+   * Check if a region is locked
+   */
+  isRegionLocked(path: LayoutPath): boolean {
+    if (path.length === 0) return false;
+
+    const parentPath = path.slice(0, -1);
+    const branch = path[path.length - 1] as LayoutBranch;
+
+    const parentNode = getNodeAtPath(this.root, parentPath);
+    if (parentNode === null || !isParent(parentNode) || !parentNode.constraints) {
+      return false;
+    }
+
+    return parentNode.constraints[branch]?.locked === true;
+  }
+
+  /**
+   * Check if a region is collapsible
+   */
+  isRegionCollapsible(path: LayoutPath): boolean {
+    if (path.length === 0) return false;
+
+    const parentPath = path.slice(0, -1);
+    const branch = path[path.length - 1] as LayoutBranch;
+
+    const parentNode = getNodeAtPath(this.root, parentPath);
+    if (parentNode === null || !isParent(parentNode) || !parentNode.constraints) {
+      return false;
+    }
+
+    return parentNode.constraints[branch]?.collapsible === true;
+  }
+
+  /**
+   * Get constraint for a specific region
+   */
+  getRegionConstraints(path: LayoutPath): RegionConstraints[LayoutBranch] | undefined {
+    if (path.length === 0) return undefined;
+
+    const parentPath = path.slice(0, -1);
+    const branch = path[path.length - 1] as LayoutBranch;
+
+    const parentNode = getNodeAtPath(this.root, parentPath);
+    if (parentNode === null || !isParent(parentNode) || !parentNode.constraints) {
+      return undefined;
+    }
+
+    return parentNode.constraints[branch];
+  }
+
+  /**
+   * Validate resize operation against constraints
+   */
+  canResize(path: LayoutPath, _newPercentage: number): boolean {
+    const node = getNodeAtPath(this.root, path);
+    if (node === null || !isParent(node)) return false;
+
+    const constraints = node.constraints;
+    if (!constraints) return true;
+
+    // Check if either child is locked
+    if (constraints.leading?.locked || constraints.trailing?.locked) {
+      return false;
+    }
+
+    // Additional validation for min/max sizes would go here
+    // This would require knowing the actual pixel dimensions
+
+    return true;
   }
 
   /**

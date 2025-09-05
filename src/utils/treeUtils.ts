@@ -22,7 +22,7 @@ import {
  *
  * @example
  * ```typescript
- * const node: LayoutNode<string> = { direction: 'row', first: 'a', second: 'b' };
+ * const node: LayoutNode<string> = { direction: 'row', leading: 'a', trailing: 'b' };
  * if (isParent(node)) {
  *   console.log(node.direction); // TypeScript knows this is safe
  * }
@@ -43,8 +43,8 @@ export function isParent<T extends PanelId>(node: LayoutNode<T>): node is Layout
  * ```typescript
  * const tree = {
  *   direction: 'row',
- *   first: 'panel1',
- *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+ *   leading: 'panel1',
+ *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
  * };
  * const leaves = getLeaves(tree); // ['panel1', 'panel2', 'panel3']
  * ```
@@ -53,7 +53,7 @@ export function getLeaves<T extends PanelId>(tree: LayoutNode<T> | null): T[] {
   if (tree == null) {
     return [];
   } else if (isParent(tree)) {
-    return getLeaves(tree.first).concat(getLeaves(tree.second));
+    return getLeaves(tree.leading).concat(getLeaves(tree.trailing));
   } else {
     return [tree];
   }
@@ -71,13 +71,13 @@ export function getLeaves<T extends PanelId>(tree: LayoutNode<T> | null): T[] {
  * ```typescript
  * const tree = {
  *   direction: 'row',
- *   first: 'panel1',
- *   second: { direction: 'column', first: 'panel2', second: 'panel3' }
+ *   leading: 'panel1',
+ *   trailing: { direction: 'column', leading: 'panel2', trailing: 'panel3' }
  * };
  *
  * getNodeAtPath(tree, []) // Returns the root node
- * getNodeAtPath(tree, ['first']) // Returns 'panel1'
- * getNodeAtPath(tree, ['second', 'first']) // Returns 'panel2'
+ * getNodeAtPath(tree, ['leading']) // Returns 'panel1'
+ * getNodeAtPath(tree, ['trailing', 'leading']) // Returns 'panel2'
  * getNodeAtPath(tree, ['invalid', 'path']) // Returns null
  * ```
  */
@@ -96,11 +96,11 @@ export function getNodeAtPath<T extends PanelId>(
   const [branch, ...remainingPath] = path;
 
   // Validate that the branch is valid
-  if (branch !== 'first' && branch !== 'second') {
+  if (branch !== 'leading' && branch !== 'trailing') {
     return null;
   }
 
-  const nextNode = branch === 'first' ? tree.first : tree.second;
+  const nextNode = branch === 'leading' ? tree.leading : tree.trailing;
   return getNodeAtPath(nextNode, remainingPath);
 }
 
@@ -108,16 +108,16 @@ export function getNodeAtPath<T extends PanelId>(
  * Gets the opposite branch direction.
  *
  * @param branch - The branch to get the opposite of
- * @returns The opposite branch ('first' -> 'second', 'second' -> 'first')
+ * @returns The opposite branch ('leading' -> 'trailing', 'trailing' -> 'leading')
  *
  * @example
  * ```typescript
- * getOtherBranch('first') // Returns 'second'
- * getOtherBranch('second') // Returns 'first'
+ * getOtherBranch('leading') // Returns 'trailing'
+ * getOtherBranch('trailing') // Returns 'leading'
  * ```
  */
 export function getOtherBranch(branch: LayoutBranch): LayoutBranch {
-  return branch === 'first' ? 'second' : 'first';
+  return branch === 'leading' ? 'trailing' : 'leading';
 }
 
 /**

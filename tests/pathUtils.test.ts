@@ -19,35 +19,35 @@ describe('Path Utilities', () => {
   // Sample tree structures for testing
   const simpleTree: LayoutParent<string> = {
     direction: 'row',
-    first: 'panel1',
-    second: 'panel2',
+    leading: 'panel1',
+    trailing: 'panel2',
   };
 
   const complexTree: LayoutParent<string> = {
     direction: 'row',
-    first: 'panel1',
-    second: {
+    leading: 'panel1',
+    trailing: {
       direction: 'column',
-      first: 'panel2',
-      second: {
+      leading: 'panel2',
+      trailing: {
         direction: 'row',
-        first: 'panel3',
-        second: 'panel4',
+        leading: 'panel3',
+        trailing: 'panel4',
       },
     },
   };
 
   describe('findPanelPath', () => {
     it('should find panel in simple tree', () => {
-      expect(findPanelPath(simpleTree, 'panel1')).toEqual(['first']);
-      expect(findPanelPath(simpleTree, 'panel2')).toEqual(['second']);
+      expect(findPanelPath(simpleTree, 'panel1')).toEqual(['leading']);
+      expect(findPanelPath(simpleTree, 'panel2')).toEqual(['trailing']);
     });
 
     it('should find panel in complex tree', () => {
-      expect(findPanelPath(complexTree, 'panel1')).toEqual(['first']);
-      expect(findPanelPath(complexTree, 'panel2')).toEqual(['second', 'first']);
-      expect(findPanelPath(complexTree, 'panel3')).toEqual(['second', 'second', 'first']);
-      expect(findPanelPath(complexTree, 'panel4')).toEqual(['second', 'second', 'second']);
+      expect(findPanelPath(complexTree, 'panel1')).toEqual(['leading']);
+      expect(findPanelPath(complexTree, 'panel2')).toEqual(['trailing', 'leading']);
+      expect(findPanelPath(complexTree, 'panel3')).toEqual(['trailing', 'trailing', 'leading']);
+      expect(findPanelPath(complexTree, 'panel4')).toEqual(['trailing', 'trailing', 'trailing']);
     });
 
     it('should return null for non-existent panel', () => {
@@ -67,62 +67,62 @@ describe('Path Utilities', () => {
     it('should handle number panel IDs', () => {
       const numberTree: LayoutParent<number> = {
         direction: 'row',
-        first: 1,
-        second: 2,
+        leading: 1,
+        trailing: 2,
       };
-      expect(findPanelPath(numberTree, 1)).toEqual(['first']);
-      expect(findPanelPath(numberTree, 2)).toEqual(['second']);
+      expect(findPanelPath(numberTree, 1)).toEqual(['leading']);
+      expect(findPanelPath(numberTree, 2)).toEqual(['trailing']);
       expect(findPanelPath(numberTree, 3)).toBe(null);
     });
 
     it('should handle deeply nested structures', () => {
       const deepTree: LayoutParent<string> = {
         direction: 'row',
-        first: {
+        leading: {
           direction: 'column',
-          first: {
+          leading: {
             direction: 'row',
-            first: 'deep-panel',
-            second: 'other',
+            leading: 'deep-panel',
+            trailing: 'other',
           },
-          second: 'panel2',
+          trailing: 'panel2',
         },
-        second: 'panel3',
+        trailing: 'panel3',
       };
-      expect(findPanelPath(deepTree, 'deep-panel')).toEqual(['first', 'first', 'first']);
+      expect(findPanelPath(deepTree, 'deep-panel')).toEqual(['leading', 'leading', 'leading']);
     });
 
     it('should handle duplicate panel IDs (returns first occurrence)', () => {
       const duplicateTree: LayoutParent<string> = {
         direction: 'row',
-        first: 'duplicate',
-        second: {
+        leading: 'duplicate',
+        trailing: {
           direction: 'column',
-          first: 'duplicate',
-          second: 'other',
+          leading: 'duplicate',
+          trailing: 'other',
         },
       };
       // Should return the first occurrence found (depth-first search)
-      expect(findPanelPath(duplicateTree, 'duplicate')).toEqual(['first']);
+      expect(findPanelPath(duplicateTree, 'duplicate')).toEqual(['leading']);
     });
   });
 
   describe('getAndAssertNodeAtPathExists', () => {
     it('should return node at valid path', () => {
-      expect(getAndAssertNodeAtPathExists(simpleTree, ['first'])).toBe('panel1');
-      expect(getAndAssertNodeAtPathExists(simpleTree, ['second'])).toBe('panel2');
+      expect(getAndAssertNodeAtPathExists(simpleTree, ['leading'])).toBe('panel1');
+      expect(getAndAssertNodeAtPathExists(simpleTree, ['trailing'])).toBe('panel2');
       expect(getAndAssertNodeAtPathExists(simpleTree, [])).toBe(simpleTree);
     });
 
     it('should return node at complex path', () => {
-      expect(getAndAssertNodeAtPathExists(complexTree, ['second', 'first'])).toBe('panel2');
-      expect(getAndAssertNodeAtPathExists(complexTree, ['second', 'second', 'first'])).toBe('panel3');
+      expect(getAndAssertNodeAtPathExists(complexTree, ['trailing', 'leading'])).toBe('panel2');
+      expect(getAndAssertNodeAtPathExists(complexTree, ['trailing', 'trailing', 'leading'])).toBe('panel3');
     });
 
     it('should throw error for null tree', () => {
       expect(() => {
-        getAndAssertNodeAtPathExists(null, ['first']);
-      }).toThrow('Cannot navigate path first: tree is null');
+        getAndAssertNodeAtPathExists(null, ['leading']);
+      }).toThrow('Cannot navigate path leading: tree is null');
     });
 
     it('should throw error for invalid path', () => {
@@ -133,8 +133,8 @@ describe('Path Utilities', () => {
 
     it('should throw error for non-existent path', () => {
       expect(() => {
-        getAndAssertNodeAtPathExists(simpleTree, ['first', 'second']);
-      }).toThrow('Path first/second does not exist in the tree');
+        getAndAssertNodeAtPathExists(simpleTree, ['leading', 'trailing']);
+      }).toThrow('Path leading/trailing does not exist in the tree');
     });
 
     it('should handle empty path', () => {
@@ -154,8 +154,8 @@ describe('Path Utilities', () => {
     it('should create balanced tree for two panels', () => {
       const tree = createBalancedTreeFromLeaves(['panel1', 'panel2']) as LayoutParent<string>;
       expect(tree.direction).toBe('row');
-      expect(tree.first).toBe('panel1');
-      expect(tree.second).toBe('panel2');
+      expect(tree.leading).toBe('panel1');
+      expect(tree.trailing).toBe('panel2');
       expect(tree.splitPercentage).toBe(50);
     });
 
@@ -164,34 +164,34 @@ describe('Path Utilities', () => {
       expect(tree.direction).toBe('row');
 
       // For 3 panels, Math.ceil(3/2) = 2, so split is [panel1, panel2] and [panel3]
-      const firstChild = tree.first as LayoutParent<string>;
-      expect(firstChild.direction).toBe('row');
-      expect(firstChild.first).toBe('panel1');
-      expect(firstChild.second).toBe('panel2');
+      const leadingChild = tree.leading as LayoutParent<string>;
+      expect(leadingChild.direction).toBe('row');
+      expect(leadingChild.leading).toBe('panel1');
+      expect(leadingChild.trailing).toBe('panel2');
 
-      expect(tree.second).toBe('panel3');
+      expect(tree.trailing).toBe('panel3');
     });
 
     it('should create balanced tree for four panels', () => {
       const tree = createBalancedTreeFromLeaves(['panel1', 'panel2', 'panel3', 'panel4']) as LayoutParent<string>;
       expect(tree.direction).toBe('row');
       
-      const firstChild = tree.first as LayoutParent<string>;
-      expect(firstChild.direction).toBe('row');
-      expect(firstChild.first).toBe('panel1');
-      expect(firstChild.second).toBe('panel2');
+      const leadingChild = tree.leading as LayoutParent<string>;
+      expect(leadingChild.direction).toBe('row');
+      expect(leadingChild.leading).toBe('panel1');
+      expect(leadingChild.trailing).toBe('panel2');
       
-      const secondChild = tree.second as LayoutParent<string>;
-      expect(secondChild.direction).toBe('row');
-      expect(secondChild.first).toBe('panel3');
-      expect(secondChild.second).toBe('panel4');
+      const trailingChild = tree.trailing as LayoutParent<string>;
+      expect(trailingChild.direction).toBe('row');
+      expect(trailingChild.leading).toBe('panel3');
+      expect(trailingChild.trailing).toBe('panel4');
     });
 
     it('should use specified direction', () => {
       const tree = createBalancedTreeFromLeaves(['panel1', 'panel2'], 'column') as LayoutParent<string>;
       expect(tree.direction).toBe('column');
-      expect(tree.first).toBe('panel1');
-      expect(tree.second).toBe('panel2');
+      expect(tree.leading).toBe('panel1');
+      expect(tree.trailing).toBe('panel2');
     });
 
     it('should handle larger arrays', () => {
@@ -216,31 +216,31 @@ describe('Path Utilities', () => {
       const tree = createBalancedTreeFromLeaves([1, 2, 3]) as LayoutParent<number>;
 
       // For 3 panels, split is [1, 2] and [3]
-      const firstChild = tree.first as LayoutParent<number>;
-      expect(firstChild.first).toBe(1);
-      expect(firstChild.second).toBe(2);
+      const leadingChild = tree.leading as LayoutParent<number>;
+      expect(leadingChild.leading).toBe(1);
+      expect(leadingChild.trailing).toBe(2);
 
-      expect(tree.second).toBe(3);
+      expect(tree.trailing).toBe(3);
     });
   });
 
   describe('isValidPath', () => {
     it('should accept valid paths', () => {
       expect(isValidPath([])).toBe(true);
-      expect(isValidPath(['first'])).toBe(true);
-      expect(isValidPath(['second'])).toBe(true);
-      expect(isValidPath(['first', 'second'])).toBe(true);
-      expect(isValidPath(['second', 'first', 'second'])).toBe(true);
+      expect(isValidPath(['leading'])).toBe(true);
+      expect(isValidPath(['trailing'])).toBe(true);
+      expect(isValidPath(['leading', 'trailing'])).toBe(true);
+      expect(isValidPath(['trailing', 'leading', 'trailing'])).toBe(true);
     });
 
     it('should reject invalid paths', () => {
       expect(isValidPath(['invalid' as any])).toBe(false);
-      expect(isValidPath(['first', 'invalid' as any])).toBe(false);
-      expect(isValidPath(['invalid' as any, 'first'])).toBe(false);
+      expect(isValidPath(['leading', 'invalid' as any])).toBe(false);
+      expect(isValidPath(['invalid' as any, 'leading'])).toBe(false);
     });
 
     it('should handle mixed valid and invalid', () => {
-      expect(isValidPath(['first', 'second', 'invalid' as any])).toBe(false);
+      expect(isValidPath(['leading', 'trailing', 'invalid' as any])).toBe(false);
     });
   });
 
@@ -248,20 +248,20 @@ describe('Path Utilities', () => {
     it('should return all paths for simple tree', () => {
       const paths = getAllPaths(simpleTree);
       expect(paths).toContainEqual([]);
-      expect(paths).toContainEqual(['first']);
-      expect(paths).toContainEqual(['second']);
+      expect(paths).toContainEqual(['leading']);
+      expect(paths).toContainEqual(['trailing']);
       expect(paths.length).toBe(3);
     });
 
     it('should return all paths for complex tree', () => {
       const paths = getAllPaths(complexTree);
       expect(paths).toContainEqual([]);
-      expect(paths).toContainEqual(['first']);
-      expect(paths).toContainEqual(['second']);
-      expect(paths).toContainEqual(['second', 'first']);
-      expect(paths).toContainEqual(['second', 'second']);
-      expect(paths).toContainEqual(['second', 'second', 'first']);
-      expect(paths).toContainEqual(['second', 'second', 'second']);
+      expect(paths).toContainEqual(['leading']);
+      expect(paths).toContainEqual(['trailing']);
+      expect(paths).toContainEqual(['trailing', 'leading']);
+      expect(paths).toContainEqual(['trailing', 'trailing']);
+      expect(paths).toContainEqual(['trailing', 'trailing', 'leading']);
+      expect(paths).toContainEqual(['trailing', 'trailing', 'trailing']);
       expect(paths.length).toBe(7);
     });
 
@@ -308,19 +308,19 @@ describe('Path Utilities', () => {
     it('should handle unbalanced trees', () => {
       const unbalancedTree: LayoutParent<string> = {
         direction: 'row',
-        first: 'panel1',
-        second: {
+        leading: 'panel1',
+        trailing: {
           direction: 'column',
-          first: {
+          leading: {
             direction: 'row',
-            first: {
+            leading: {
               direction: 'column',
-              first: 'deep',
-              second: 'panel',
+              leading: 'deep',
+              trailing: 'panel',
             },
-            second: 'other',
+            trailing: 'other',
           },
-          second: 'panel2',
+          trailing: 'panel2',
         },
       };
       expect(getTreeDepth(unbalancedTree)).toBe(4);
@@ -338,5 +338,5 @@ function getAllLeaves<T extends string | number>(tree: LayoutNode<T> | null): T[
     return [tree];
   }
 
-  return getAllLeaves(tree.first).concat(getAllLeaves(tree.second));
+  return getAllLeaves(tree.leading).concat(getAllLeaves(tree.trailing));
 }

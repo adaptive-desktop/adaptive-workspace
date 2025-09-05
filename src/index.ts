@@ -15,6 +15,9 @@ export * from './types';
 export * from './utils/treeUtils';
 export * from './utils/pathUtils';
 export * from './utils/serialization';
+export * from './utils/boundsUtils';
+export * from './utils/layoutActions';
+export * from './utils/validation';
 
 // Version information
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';

@@ -1,7 +1,7 @@
 {
-  "name": "@adaptive-desktop/binary-layout-tree",
+  "name": "@adaptive-desktop/adaptive-workspace",
   "version": "0.1.0",
-  "description": "Framework-agnostic binary layout tree for adaptive desktop workspaces",
+  "description": "Framework-agnostic workspace layout manager for adaptive desktop applications",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -26,18 +26,20 @@
     "prepublishOnly": "yarn clean && yarn build"
   },
   "keywords": [
-    "layout",
-    "binary-tree",
     "workspace",
+    "layout-manager",
     "adaptive-desktop",
+    "viewport",
     "framework-agnostic",
-    "typescript"
+    "typescript",
+    "desktop-layout",
+    "workspace-management"
   ],
   "author": "Adaptive Desktop Team",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:adaptive-desktop/binary-layout-tree.git"
+    "url": "git@github.com:adaptive-desktop/adaptive-workspace.git"
   },
   "dependencies": {
     "tslib": "^2.6.0"

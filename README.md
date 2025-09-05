@@ -1,21 +1,22 @@
-# Binary Layout Tree
+# Adaptive Workspace
 
-[![npm version](https://badge.fury.io/js/@adaptive-desktop%2Fbinary-layout-tree.svg)](https://badge.fury.io/js/@adaptive-desktop%2Fbinary-layout-tree)
-[![CI](https://github.com/adaptive-desktop/binary-layout-tree/workflows/Test/badge.svg)](https://github.com/adaptive-desktop/binary-layout-tree/actions)
-[![codecov](https://codecov.io/gh/adaptive-desktop/binary-layout-tree/graph/badge.svg?token=M6VECB6C8O)](https://codecov.io/gh/adaptive-desktop/binary-layout-tree)
+[![npm version](https://badge.fury.io/js/@adaptive-desktop%2Fadaptive-workspace.svg)](https://badge.fury.io/js/@adaptive-desktop%2Fadaptive-workspace)
+[![CI](https://github.com/adaptive-desktop/adaptive-workspace/workflows/Test/badge.svg)](https://github.com/adaptive-desktop/adaptive-workspace/actions)
+[![codecov](https://codecov.io/gh/adaptive-desktop/adaptive-workspace/graph/badge.svg?token=M6VECB6C8O)](https://codecov.io/gh/adaptive-desktop/adaptive-workspace)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 
-Framework-agnostic binary layout tree for adaptive desktop workspaces. The core foundation for building VS Code-style layouts with resizable panels, pinned sidebars, and flexible content organization.
+Framework-agnostic workspace layout manager for adaptive desktop applications. The core foundation for building VS Code-style layouts with resizable viewports, dynamic panel organization, and flexible workspace management.
 
 ## ✨ Features
 
-- **🌳 Pure Binary Tree**: Mathematical elegance with predictable behavior
-- **� Immutable Operations**: All operations return new tree instances
+- **🏢 Workspace Management**: Organize viewports within adaptive workspaces
+- **🔄 Dynamic Operations**: Split, remove, insert, and swap viewports seamlessly
+- **📐 Coordinate-Based API**: Intuitive row/column positioning system
 - **🎯 Framework Agnostic**: Zero UI dependencies, works with React, Vue, Angular
-- **� Type Safe**: 100% TypeScript with comprehensive type definitions
-- **🧪 Fully Tested**: 98.67% test coverage with 236 comprehensive tests
-- **⚡ Performance Optimized**: Efficient algorithms for tree operations
+- **💎 Type Safe**: 100% TypeScript with comprehensive type definitions
+- **🧪 Test-Driven**: Built with TDD approach for reliable behavior
+- **⚡ Efficient Implementation**: Binary tree backend for optimal performance
 - **📦 Zero Dependencies**: Only `tslib` for TypeScript helpers
 
 ## 🚀 Quick Start
@@ -24,85 +25,96 @@ Framework-agnostic binary layout tree for adaptive desktop workspaces. The core 
 
 ```bash
 # npm
-npm install @adaptive-desktop/binary-layout-tree
+npm install @adaptive-desktop/adaptive-workspace
 
 # yarn
-yarn add @adaptive-desktop/binary-layout-tree
+yarn add @adaptive-desktop/adaptive-workspace
 
 # pnpm
-pnpm add @adaptive-desktop/binary-layout-tree
+pnpm add @adaptive-desktop/adaptive-workspace
 ```
 
 ### Basic Usage
 
 ```typescript
-import { LayoutTree } from '@adaptive-desktop/binary-layout-tree';
+import { createWorkspace } from '@adaptive-desktop/adaptive-workspace';
 
-// Create a simple layout
-const tree = new LayoutTree({
-  direction: 'row',
-  first: 'sidebar',
-  second: {
-    direction: 'column',
-    first: 'editor',
-    second: 'terminal',
-    splitPercentage: 75
-  },
-  splitPercentage: 20
+// Create a workspace
+const workspace = createWorkspace('main-workspace', {
+  x: 0, y: 0, width: 1920, height: 1080
 });
 
-// Get all panel IDs
-const panels = tree.getPanelIds(); // ['sidebar', 'editor', 'terminal']
+// Start with empty layout, then add first viewport
+let layout = workspace.layout;
+layout = layout.insertViewport([], 'editor');
 
-// Check if tree contains a panel
-const hasEditor = tree.hasPanel('editor'); // true
+// Split the viewport horizontally
+layout = layout.splitViewport({ row: 0, column: 0 }, 'terminal', 'horizontal');
 
-// Find path to a panel
-const editorPath = tree.findPanelPath('editor'); // ['second', 'first']
+// Insert a sidebar to the left
+layout = layout.insertViewport([
+  { row: 0, column: 0 },
+  { row: 1, column: 0 }
+], 'sidebar', 'left');
+
+// Get all viewports
+const viewports = layout.getAllViewports(); // ['editor', 'terminal', 'sidebar']
+
+// Find viewport position
+const editorPos = layout.getPositionForPanel('editor'); // { row: 0, column: 1 }
 ```
 
 ## 📖 Core Concepts
 
-### Binary Tree Structure
+### Workspace Layout Management
 
-Every layout is represented as a binary tree where:
-- **Leaf nodes** are panel IDs (string or number)
-- **Parent nodes** split space between two children
-- **Direction** determines split orientation (`'row'` = horizontal, `'column'` = vertical)
-- **Split percentage** controls space allocation (0-100, defaults to 50)
+Adaptive workspaces organize content using a coordinate-based system:
+- **Workspace** - The container with screen position and dimensions
+- **Layout** - Grid organization of viewports within the workspace
+- **Viewport** - Individual areas that contain panels
+- **Panel** - The actual content (editors, terminals, sidebars, etc.)
 
 ```typescript
-// VS Code-style layout
-const layout = {
-  direction: 'row',
-  first: 'sidebar',           // 20% width
-  second: {
-    direction: 'column',
-    first: 'editor',          // 75% of remaining height
-    second: 'terminal',       // 25% of remaining height
-    splitPercentage: 75
-  },
-  splitPercentage: 20
-};
+// Create VS Code-style layout step by step
+const workspace = createWorkspace('ide', { x: 0, y: 0, width: 1920, height: 1080 });
+
+// Start empty, add editor
+let layout = workspace.layout.insertViewport([], 'editor');
+
+// Split horizontally for terminal
+layout = layout.splitViewport({ row: 0, column: 0 }, 'terminal', 'horizontal');
+
+// Add sidebar to the left
+layout = layout.insertViewport([
+  { row: 0, column: 0 },
+  { row: 1, column: 0 }
+], 'sidebar', 'left');
+
+// Result: sidebar | editor
+//                 | terminal
 ```
 
-### Tree Operations
+### Layout Operations
 
 ```typescript
-import { LayoutTree, getLeaves, getNodeAtPath } from '@adaptive-desktop/binary-layout-tree';
+import { createWorkspace } from '@adaptive-desktop/adaptive-workspace';
 
-const tree = new LayoutTree('single-panel');
+const workspace = createWorkspace('main', { x: 0, y: 0, width: 800, height: 600 });
+let layout = workspace.layout.insertViewport([], 'panel1');
 
-// Tree traversal utilities
-const allPanels = getLeaves(tree.getRoot());
-const nodeAtPath = getNodeAtPath(tree.getRoot(), ['first', 'second']);
+// Split operations
+layout = layout.splitViewport({ row: 0, column: 0 }, 'panel2', 'vertical');
 
-// Tree comparison
-const tree2 = new LayoutTree('single-panel');
-const areEqual = tree.equals(tree2); // true
+// Insert operations (add new row/column)
+layout = layout.insertViewport([{ row: 0, column: 0 }], 'panel3', 'above');
 
-// Immutable operations
-const copy = tree.copy();
+// Swap operations
+layout = layout.swapViewports('panel1', 'panel2');
+
+// Remove operations
+layout = layout.removeViewport({ row: 1, column: 0 });
+
+// All operations are immutable - return new layout instances
 ```
 
 ## 🏗️ Architecture
@@ -127,7 +139,7 @@ This library serves as the **core layer** in a three-tier architecture:
 └─────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────┐
 │                      Core Layer                             │
-│           @adaptive-desktop/binary-layout-tree              │
+│           @adaptive-desktop/adaptive-workspace              │
 │                 (This Package)                              │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -143,8 +155,8 @@ This library serves as the **core layer** in a three-tier architecture:
 
 ```bash
 # Clone the repository
-git clone https://github.com/adaptive-desktop/binary-layout-tree.git
-cd binary-layout-tree
+git clone https://github.com/adaptive-desktop/adaptive-workspace.git
+cd adaptive-workspace
 
 # Enable Corepack (if not already enabled)
 corepack enable

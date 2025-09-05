@@ -9,33 +9,21 @@
  * This establishes the foundation for all other layout operations.
  */
 
-import { LayoutTree } from '../src/LayoutTree';
-import { 
-  LayoutManager, 
-  ViewportPosition, 
-  LayoutSize, 
-  ViewportBounds
-} from '../src/interfaces/LayoutManager';
+import {
+  LayoutManager,
+  ViewportPosition,
+  LayoutSize,
+  ViewportBounds,
+  createWorkspace,
+  createViewport,
+  calculateScreenBounds,
+  ScreenBounds,
+  Workspace,
+  Viewport,
+  LayoutTree
+} from '../src';
 
-// Core interfaces for workspace management
-interface ScreenBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-interface Workspace {
-  id: string;
-  position: ScreenBounds;
-  layout: LayoutManager<string>;
-}
-
-interface Viewport {
-  panelId: string;
-  gridPosition: ViewportPosition;
-  screenBounds: ScreenBounds;
-}
+// Interfaces are now imported from the main package
 
 // TODO: This will be the actual implementation
 class LayoutTreeManager implements LayoutManager<string> {
@@ -147,35 +135,8 @@ class LayoutTreeManager implements LayoutManager<string> {
   }
 }
 
-// Factory functions (TypeScript convention: functions for simple creation)
-function createWorkspace(id: string, position: ScreenBounds): Workspace {
-  return {
-    id,
-    position,
-    layout: new LayoutTreeManager()
-  };
-}
-
-function createViewport(panelId: string, gridPosition: ViewportPosition, screenBounds: ScreenBounds): Viewport {
-  return {
-    panelId,
-    gridPosition,
-    screenBounds
-  };
-}
-
-// Helper function to calculate screen bounds from workspace and grid position
-function calculateScreenBounds(workspace: Workspace, gridPosition: ViewportPosition, gridSize: LayoutSize): ScreenBounds {
-  const cellWidth = workspace.position.width / gridSize.columns;
-  const cellHeight = workspace.position.height / gridSize.rows;
-  
-  return {
-    x: workspace.position.x + (gridPosition.column * cellWidth),
-    y: workspace.position.y + (gridPosition.row * cellHeight),
-    width: cellWidth,
-    height: cellHeight
-  };
-}
+// Factory functions are now imported from the main package
+// Note: We still need our custom LayoutTreeManager for testing
 
 /**
  * Phase 0: Foundational Tests

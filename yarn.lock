@@ -5,9 +5,9 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@adaptive-desktop/binary-layout-tree@workspace:.":
+"@adaptive-desktop/adaptive-workspace@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@adaptive-desktop/binary-layout-tree@workspace:."
+  resolution: "@adaptive-desktop/adaptive-workspace@workspace:."
   dependencies:
     "@rollup/plugin-typescript": "npm:^11.1.0"
     "@types/jest": "npm:^29.5.0"

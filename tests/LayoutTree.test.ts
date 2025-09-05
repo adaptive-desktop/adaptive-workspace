@@ -739,6 +739,127 @@ describe('LayoutTree', () => {
         expect((newTree.getRoot() as LayoutParent<string>).splitPercentage).toBe(70);
       });
     });
+
+    describe('lockRegion', () => {
+      it('should lock a region', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        const newTree = tree.lockRegion(['leading'], true);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.constraints?.leading?.locked).toBe(true);
+      });
+
+      it('should unlock a region', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { locked: true },
+          },
+        });
+
+        const newTree = tree.lockRegion(['leading'], false);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.constraints?.leading?.locked).toBe(false);
+      });
+
+      it('should throw error for root region', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.lockRegion([], true);
+        }).toThrow('Cannot lock root region');
+      });
+
+      it('should throw error for invalid parent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.lockRegion(['leading'], true);
+        }).toThrow('Cannot lock: parent at path  is not a parent node');
+      });
+
+      it('should not modify original tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        const originalRoot = tree.getRoot();
+        tree.lockRegion(['leading'], true);
+
+        expect(tree.getRoot()).toBe(originalRoot);
+      });
+    });
+
+    describe('setMinSize', () => {
+      it('should set minimum size constraint', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        const newTree = tree.setMinSize(['leading'], 100);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.constraints?.leading?.minSize).toBe(100);
+      });
+
+      it('should update existing constraints', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { locked: true },
+          },
+        });
+
+        const newTree = tree.setMinSize(['leading'], 150);
+        const root = newTree.getRoot() as LayoutParent<string>;
+
+        expect(root.constraints?.leading?.minSize).toBe(150);
+        expect(root.constraints?.leading?.locked).toBe(true);
+      });
+
+      it('should throw error for root region', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.setMinSize([], 100);
+        }).toThrow('Cannot set min size for root region');
+      });
+
+      it('should throw error for invalid parent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.setMinSize(['leading'], 100);
+        }).toThrow('Cannot set min size: parent at path  is not a parent node');
+      });
+
+      it('should not modify original tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        const originalRoot = tree.getRoot();
+        tree.setMinSize(['leading'], 100);
+
+        expect(tree.getRoot()).toBe(originalRoot);
+      });
+    });
   });
 
   describe('Path Navigation', () => {
@@ -1031,6 +1152,262 @@ describe('LayoutTree', () => {
           },
         });
         expect(tree.getPanelCount()).toBe(6);
+      });
+    });
+  });
+
+  describe('Constraint Methods', () => {
+    describe('isRegionLocked', () => {
+      it('should return false for root region', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.isRegionLocked([])).toBe(false);
+      });
+
+      it('should return false when no constraints', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        expect(tree.isRegionLocked(['leading'])).toBe(false);
+      });
+
+      it('should return true when region is locked', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { locked: true },
+          },
+        });
+
+        expect(tree.isRegionLocked(['leading'])).toBe(true);
+      });
+
+      it('should return false when region is not locked', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { locked: false },
+            trailing: { locked: true },
+          },
+        });
+
+        expect(tree.isRegionLocked(['leading'])).toBe(false);
+        expect(tree.isRegionLocked(['trailing'])).toBe(true);
+      });
+
+      it('should return false for invalid parent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.isRegionLocked(['leading'])).toBe(false);
+      });
+    });
+
+    describe('isRegionCollapsible', () => {
+      it('should return false for root region', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.isRegionCollapsible([])).toBe(false);
+      });
+
+      it('should return false when no constraints', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        expect(tree.isRegionCollapsible(['leading'])).toBe(false);
+      });
+
+      it('should return true when region is collapsible', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { collapsible: true },
+          },
+        });
+
+        expect(tree.isRegionCollapsible(['leading'])).toBe(true);
+      });
+
+      it('should return false when region is not collapsible', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { collapsible: false },
+            trailing: { collapsible: true },
+          },
+        });
+
+        expect(tree.isRegionCollapsible(['leading'])).toBe(false);
+        expect(tree.isRegionCollapsible(['trailing'])).toBe(true);
+      });
+    });
+
+    describe('getRegionConstraints', () => {
+      it('should return undefined for root region', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.getRegionConstraints([])).toBeUndefined();
+      });
+
+      it('should return undefined when no constraints', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        expect(tree.getRegionConstraints(['leading'])).toBeUndefined();
+      });
+
+      it('should return constraints when they exist', () => {
+        const constraints = {
+          minSize: 100,
+          maxSize: 500,
+          locked: true,
+          collapsible: false,
+        };
+
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: constraints,
+          },
+        });
+
+        expect(tree.getRegionConstraints(['leading'])).toEqual(constraints);
+      });
+
+      it('should return undefined for invalid parent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.getRegionConstraints(['leading'])).toBeUndefined();
+      });
+    });
+
+    describe('canResize', () => {
+      it('should return true when no constraints', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        expect(tree.canResize([], 60)).toBe(true);
+      });
+
+      it('should return false when leading region is locked', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            leading: { locked: true },
+          },
+        });
+
+        expect(tree.canResize([], 60)).toBe(false);
+      });
+
+      it('should return false when trailing region is locked', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+          constraints: {
+            trailing: { locked: true },
+          },
+        });
+
+        expect(tree.canResize([], 60)).toBe(false);
+      });
+
+      it('should return false for invalid path', () => {
+        const tree = new LayoutTree<string>('panel1');
+        expect(tree.canResize(['invalid' as any], 60)).toBe(false);
+      });
+
+      it('should return false for non-parent node', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        expect(tree.canResize(['leading'], 60)).toBe(false);
+      });
+    });
+
+    describe('movePanel', () => {
+      it('should move panel to replace another panel in simple case', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        const newTree = tree.movePanel(['leading'], [], 'replace');
+
+        // panel1 should replace the root, panel2 should be removed
+        expect(newTree.getRoot()).toBe('panel1');
+      });
+
+      it('should throw error when moving non-panel', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: {
+            direction: 'column',
+            leading: 'panel1',
+            trailing: 'panel2',
+          },
+          trailing: 'panel3',
+        });
+
+        expect(() => {
+          tree.movePanel([], ['trailing'], 'replace');
+        }).toThrow('Cannot move: path  does not point to a panel');
+      });
+
+      it('should throw error when moving from non-existent path', () => {
+        const tree = new LayoutTree<string>('panel1');
+
+        expect(() => {
+          tree.movePanel(['leading'], [], 'replace');
+        }).toThrow('Cannot move: path leading does not point to a panel');
+      });
+
+      it('should throw error for invalid insert position', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        expect(() => {
+          tree.movePanel(['leading'], ['trailing'], 'invalid' as any);
+        }).toThrow('Invalid insert position: invalid');
+      });
+
+      it('should not modify original tree', () => {
+        const tree = new LayoutTree<string>({
+          direction: 'row',
+          leading: 'panel1',
+          trailing: 'panel2',
+        });
+
+        const originalRoot = tree.getRoot();
+        tree.movePanel(['leading'], [], 'replace');
+
+        expect(tree.getRoot()).toBe(originalRoot);
       });
     });
   });

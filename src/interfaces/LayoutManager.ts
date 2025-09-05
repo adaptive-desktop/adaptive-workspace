@@ -62,7 +62,7 @@ export interface LayoutManager<T> {
   swapViewports(panelId1: T, panelId2: T): LayoutManager<T>;     // Clean exchange, no displacement complexity
 
   // Multi-viewport operations
-  insertViewport(viewportPositions: ViewportPosition[], newPanelId: T, direction: 'above' | 'below' | 'left' | 'right'): LayoutManager<T>;
+  insertViewport(viewportPositions: ViewportPosition[], newPanelId: T, direction?: 'above' | 'below' | 'left' | 'right'): LayoutManager<T>;
 
   // Utility operations
   isValidPosition(position: ViewportPosition): boolean;

@@ -85,20 +85,20 @@ class SimpleLayoutManager implements LayoutManager<string> {
   }
 
   // Single viewport operations
-  splitViewport(position: ViewportPosition, newPanelId: string, direction: 'horizontal' | 'vertical'): LayoutManager<string> {
+  splitViewport(_position: ViewportPosition, _newPanelId: string, _direction: 'horizontal' | 'vertical'): LayoutManager<string> {
     throw new Error('splitViewport not yet implemented');
   }
 
-  removeViewport(position: ViewportPosition): LayoutManager<string> {
+  removeViewport(_position: ViewportPosition): LayoutManager<string> {
     throw new Error('removeViewport not yet implemented');
   }
 
-  swapViewports(panelId1: string, panelId2: string): LayoutManager<string> {
+  swapViewports(_panelId1: string, _panelId2: string): LayoutManager<string> {
     throw new Error('swapViewports not yet implemented');
   }
 
   // Multi-viewport operations - direction is optional for empty layout
-  insertViewport(viewportPositions: ViewportPosition[], newPanelId: string, direction?: 'above' | 'below' | 'left' | 'right'): LayoutManager<string> {
+  insertViewport(viewportPositions: ViewportPosition[], newPanelId: string, _direction?: 'above' | 'below' | 'left' | 'right'): LayoutManager<string> {
     const newManager = new SimpleLayoutManager();
     
     // Special case: empty layout

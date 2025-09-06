@@ -6,7 +6,13 @@
  */
 
 import { LayoutTree } from '../layout/LayoutTree';
-import { PanelId, LayoutPath, LayoutDirection, InsertPosition, LayoutActions } from '../shared/types';
+import {
+  PanelId,
+  LayoutPath,
+  LayoutDirection,
+  InsertPosition,
+  LayoutActions,
+} from '../shared/types';
 
 /**
  * Create a layout actions object for a specific panel

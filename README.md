@@ -41,7 +41,10 @@ import { createWorkspace } from '@adaptive-desktop/adaptive-workspace';
 
 // Create a workspace
 const workspace = createWorkspace('main-workspace', {
-  x: 0, y: 0, width: 1920, height: 1080
+  x: 0,
+  y: 0,
+  width: 1920,
+  height: 1080,
 });
 
 // Start with empty layout, then add first viewport
@@ -52,10 +55,14 @@ layout = layout.insertViewport([], 'editor');
 layout = layout.splitViewport({ row: 0, column: 0 }, 'terminal', 'horizontal');
 
 // Insert a sidebar to the left
-layout = layout.insertViewport([
-  { row: 0, column: 0 },
-  { row: 1, column: 0 }
-], 'sidebar', 'left');
+layout = layout.insertViewport(
+  [
+    { row: 0, column: 0 },
+    { row: 1, column: 0 },
+  ],
+  'sidebar',
+  'left'
+);
 
 // Get all viewports
 const viewports = layout.getAllViewports(); // ['editor', 'terminal', 'sidebar']
@@ -69,6 +76,7 @@ const editorPos = layout.getPositionForPanel('editor'); // { row: 0, column: 1 }
 ### Workspace Layout Management
 
 Adaptive workspaces organize content using a coordinate-based system:
+
 - **Workspace** - The container with screen position and dimensions
 - **Layout** - Grid organization of viewports within the workspace
 - **Viewport** - Individual areas that contain panels
@@ -85,10 +93,14 @@ let layout = workspace.layout.insertViewport([], 'editor');
 layout = layout.splitViewport({ row: 0, column: 0 }, 'terminal', 'horizontal');
 
 // Add sidebar to the left
-layout = layout.insertViewport([
-  { row: 0, column: 0 },
-  { row: 1, column: 0 }
-], 'sidebar', 'left');
+layout = layout.insertViewport(
+  [
+    { row: 0, column: 0 },
+    { row: 1, column: 0 },
+  ],
+  'sidebar',
+  'left'
+);
 
 // Result: sidebar | editor
 //                 | terminal

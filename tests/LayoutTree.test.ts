@@ -5,8 +5,8 @@
  * including construction, basic operations, and immutability.
  */
 
-import { LayoutTree } from '../src/LayoutTree';
-import { LayoutParent, LayoutNode, LayoutPath } from '../src/types';
+import { LayoutTree } from '../src/layout/LayoutTree';
+import { LayoutParent, LayoutNode, LayoutPath } from '../src/shared/types';
 
 describe('LayoutTree', () => {
   describe('Construction', () => {

@@ -25,7 +25,7 @@ import {
   Dimensions,
   LayoutDirection,
   LayoutPath,
-} from '../src/types';
+} from '../src/shared/types';
 
 describe('Validation Utilities', () => {
   describe('validateChildConstraints', () => {

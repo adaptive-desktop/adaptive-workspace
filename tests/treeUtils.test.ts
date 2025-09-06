@@ -14,7 +14,7 @@ import {
   isValidSplitPercentage,
   normalizeSplitPercentage,
 } from '../src/utils/treeUtils';
-import { LayoutParent, LayoutNode, LayoutPath } from '../src/types';
+import { LayoutParent, LayoutNode, LayoutPath } from '../src/shared/types';
 
 describe('Tree Utilities', () => {
   // Sample tree structures for testing

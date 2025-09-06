@@ -22,7 +22,7 @@ import {
   isValidBounds,
   normalizeBounds,
 } from '../src/utils/boundsUtils';
-import { Bounds, Dimensions, WorkspaceBounds, LayoutPath } from '../src/types';
+import { Bounds, Dimensions, WorkspaceBounds, LayoutPath } from '../src/shared/types';
 
 describe('Bounds Utilities', () => {
   const testBounds: Bounds = { x: 10, y: 20, width: 100, height: 50 };

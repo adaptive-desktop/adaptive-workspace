@@ -15,8 +15,8 @@ import {
   calculateRemovalImpact,
   validateLayoutAction,
 } from '../src/utils/layoutActions';
-import { LayoutTree } from '../src/LayoutTree';
-import { LayoutActions, LayoutPath } from '../src/types';
+import { LayoutTree } from '../src/layout/LayoutTree';
+import { LayoutActions, LayoutPath } from '../src/shared/types';
 
 describe('Layout Actions Utilities', () => {
   describe('createLayoutActions', () => {

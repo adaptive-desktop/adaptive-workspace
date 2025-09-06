@@ -13,7 +13,7 @@ import {
   SERIALIZATION_VERSION,
   SerializableLayoutTree,
 } from '../src/utils/serialization';
-import { LayoutParent, LayoutNode } from '../src/types';
+import { LayoutParent, LayoutNode } from '../src/shared/types';
 
 describe('Serialization Utilities', () => {
   // Sample tree structures for testing

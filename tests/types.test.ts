@@ -12,7 +12,7 @@ import {
   LayoutPath,
   LayoutParent,
   LayoutNode,
-} from '../src/types';
+} from '../src/shared/types';
 
 describe('Core Types', () => {
   describe('PanelId', () => {

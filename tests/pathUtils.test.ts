@@ -13,7 +13,7 @@ import {
   getAllPaths,
   getTreeDepth,
 } from '../src/utils/pathUtils';
-import { LayoutParent, LayoutNode, LayoutPath } from '../src/types';
+import { LayoutParent, LayoutNode, LayoutPath } from '../src/shared/types';
 
 describe('Path Utilities', () => {
   // Sample tree structures for testing

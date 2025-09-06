@@ -1,17 +1,17 @@
 /**
  * @fileoverview Tests for core type definitions
- * 
+ *
  * These tests verify that the type system works correctly and provides
  * proper type safety and inference.
  */
 
-import { 
-  PanelId, 
-  LayoutDirection, 
-  LayoutBranch, 
-  LayoutPath, 
-  LayoutParent, 
-  LayoutNode 
+import {
+  PanelId,
+  LayoutDirection,
+  LayoutBranch,
+  LayoutPath,
+  LayoutParent,
+  LayoutNode,
 } from '../src/types';
 
 describe('Core Types', () => {
@@ -116,7 +116,7 @@ describe('Core Types', () => {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 60
+        splitPercentage: 60,
       };
 
       expect(parent.direction).toBe('row');
@@ -130,7 +130,7 @@ describe('Core Types', () => {
         direction: 'column',
         leading: 1,
         trailing: 2,
-        splitPercentage: 30
+        splitPercentage: 30,
       };
 
       expect(parent.direction).toBe('column');
@@ -143,7 +143,7 @@ describe('Core Types', () => {
       const parent: LayoutParent<string> = {
         direction: 'row',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
         // splitPercentage is optional
       };
 
@@ -161,9 +161,9 @@ describe('Core Types', () => {
           direction: 'column',
           leading: 'panel2',
           trailing: 'panel3',
-          splitPercentage: 40
+          splitPercentage: 40,
         },
-        splitPercentage: 70
+        splitPercentage: 70,
       };
 
       expect(nestedParent.direction).toBe('row');
@@ -188,7 +188,7 @@ describe('Core Types', () => {
       const parentNode: LayoutNode<string> = {
         direction: 'row',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
       };
 
       expect(typeof parentNode).toBe('object');
@@ -203,7 +203,7 @@ describe('Core Types', () => {
         leading: {
           direction: 'column',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         },
         trailing: {
           direction: 'column',
@@ -211,14 +211,14 @@ describe('Core Types', () => {
           trailing: {
             direction: 'row',
             leading: 'panel4',
-            trailing: 'panel5'
-          }
-        }
+            trailing: 'panel5',
+          },
+        },
       };
 
       expect(typeof complexNode).toBe('object');
       expect(complexNode).toHaveProperty('direction', 'row');
-      
+
       // Verify nested structure exists
       const leadingChild = (complexNode as LayoutParent<string>).leading;
       const trailingChild = (complexNode as LayoutParent<string>).trailing;
@@ -232,13 +232,13 @@ describe('Core Types', () => {
       const stringNode: LayoutNode<string> = {
         direction: 'row',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
       };
 
       const numberNode: LayoutNode<number> = {
         direction: 'column',
         leading: 1,
-        trailing: 2
+        trailing: 2,
       };
 
       expect(typeof stringNode).toBe('object');

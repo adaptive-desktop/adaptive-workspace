@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for the LayoutTree class
- * 
+ *
  * These tests verify the core functionality of the LayoutTree class,
  * including construction, basic operations, and immutability.
  */
@@ -39,7 +39,7 @@ describe('LayoutTree', () => {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 60
+        splitPercentage: 60,
       };
       const tree = new LayoutTree(parent);
       expect(tree.isEmpty()).toBe(false);
@@ -54,9 +54,9 @@ describe('LayoutTree', () => {
           direction: 'column',
           leading: 'panel2',
           trailing: 'panel3',
-          splitPercentage: 30
+          splitPercentage: 30,
         },
-        splitPercentage: 70
+        splitPercentage: 70,
       };
       const tree = new LayoutTree(complexRoot);
       expect(tree.isEmpty()).toBe(false);
@@ -74,7 +74,7 @@ describe('LayoutTree', () => {
     it('should correctly identify empty trees', () => {
       const emptyTree = new LayoutTree<string>();
       const nonEmptyTree = new LayoutTree<string>('panel');
-      
+
       expect(emptyTree.isEmpty()).toBe(true);
       expect(nonEmptyTree.isEmpty()).toBe(false);
     });
@@ -98,7 +98,7 @@ describe('LayoutTree', () => {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 50
+        splitPercentage: 50,
       };
       const tree = new LayoutTree(originalRoot);
 
@@ -127,7 +127,7 @@ describe('LayoutTree', () => {
       const root = 'panel1';
       const tree = new LayoutTree(root);
       const copy = tree.copy();
-      
+
       expect(copy).not.toBe(tree); // Different instances
       expect(copy.getRoot()).toBe(tree.getRoot()); // Same root reference
       expect(copy.isEmpty()).toBe(tree.isEmpty());
@@ -136,7 +136,7 @@ describe('LayoutTree', () => {
     it('should create copy of empty tree', () => {
       const tree = new LayoutTree<string>();
       const copy = tree.copy();
-      
+
       expect(copy).not.toBe(tree);
       expect(copy.isEmpty()).toBe(true);
       expect(copy.getRoot()).toBe(null);
@@ -149,12 +149,12 @@ describe('LayoutTree', () => {
         trailing: {
           direction: 'column',
           leading: 'panel2',
-          trailing: 'panel3'
-        }
+          trailing: 'panel3',
+        },
       };
       const tree = new LayoutTree(complexRoot);
       const copy = tree.copy();
-      
+
       expect(copy).not.toBe(tree);
       expect(copy.getRoot()).toBe(tree.getRoot()); // Same root reference
     });
@@ -164,7 +164,7 @@ describe('LayoutTree', () => {
     it('should consider empty trees equal', () => {
       const tree1 = new LayoutTree<string>();
       const tree2 = new LayoutTree<string>(null);
-      
+
       expect(tree1.equals(tree2)).toBe(true);
       expect(tree2.equals(tree1)).toBe(true);
     });
@@ -172,7 +172,7 @@ describe('LayoutTree', () => {
     it('should consider trees with same leaf equal', () => {
       const tree1 = new LayoutTree<string>('panel1');
       const tree2 = new LayoutTree<string>('panel1');
-      
+
       expect(tree1.equals(tree2)).toBe(true);
       expect(tree2.equals(tree1)).toBe(true);
     });
@@ -180,7 +180,7 @@ describe('LayoutTree', () => {
     it('should consider trees with different leaves unequal', () => {
       const tree1 = new LayoutTree<string>('panel1');
       const tree2 = new LayoutTree<string>('panel2');
-      
+
       expect(tree1.equals(tree2)).toBe(false);
       expect(tree2.equals(tree1)).toBe(false);
     });
@@ -188,7 +188,7 @@ describe('LayoutTree', () => {
     it('should consider empty and non-empty trees unequal', () => {
       const emptyTree = new LayoutTree<string>();
       const nonEmptyTree = new LayoutTree<string>('panel1');
-      
+
       expect(emptyTree.equals(nonEmptyTree)).toBe(false);
       expect(nonEmptyTree.equals(emptyTree)).toBe(false);
     });
@@ -198,18 +198,18 @@ describe('LayoutTree', () => {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 60
+        splitPercentage: 60,
       };
       const root2: LayoutParent<string> = {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 60
+        splitPercentage: 60,
       };
-      
+
       const tree1 = new LayoutTree(root1);
       const tree2 = new LayoutTree(root2);
-      
+
       expect(tree1.equals(tree2)).toBe(true);
       expect(tree2.equals(tree1)).toBe(true);
     });
@@ -218,17 +218,17 @@ describe('LayoutTree', () => {
       const root1: LayoutParent<string> = {
         direction: 'row',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
       };
       const root2: LayoutParent<string> = {
         direction: 'column',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
       };
-      
+
       const tree1 = new LayoutTree(root1);
       const tree2 = new LayoutTree(root2);
-      
+
       expect(tree1.equals(tree2)).toBe(false);
     });
 
@@ -237,18 +237,18 @@ describe('LayoutTree', () => {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 60
+        splitPercentage: 60,
       };
       const root2: LayoutParent<string> = {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 40
+        splitPercentage: 40,
       };
-      
+
       const tree1 = new LayoutTree(root1);
       const tree2 = new LayoutTree(root2);
-      
+
       expect(tree1.equals(tree2)).toBe(false);
     });
 
@@ -257,18 +257,18 @@ describe('LayoutTree', () => {
         direction: 'row',
         leading: 'panel1',
         trailing: 'panel2',
-        splitPercentage: 50
+        splitPercentage: 50,
       };
       const root2: LayoutParent<string> = {
         direction: 'row',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
         // splitPercentage undefined, should default to 50
       };
-      
+
       const tree1 = new LayoutTree(root1);
       const tree2 = new LayoutTree(root2);
-      
+
       expect(tree1.equals(tree2)).toBe(true);
     });
 
@@ -280,9 +280,9 @@ describe('LayoutTree', () => {
           direction: 'column',
           leading: 'panel2',
           trailing: 'panel3',
-          splitPercentage: 30
+          splitPercentage: 30,
         },
-        splitPercentage: 70
+        splitPercentage: 70,
       };
       const complexRoot2: LayoutParent<string> = {
         direction: 'row',
@@ -291,14 +291,14 @@ describe('LayoutTree', () => {
           direction: 'column',
           leading: 'panel2',
           trailing: 'panel3',
-          splitPercentage: 30
+          splitPercentage: 30,
         },
-        splitPercentage: 70
+        splitPercentage: 70,
       };
-      
+
       const tree1 = new LayoutTree(complexRoot1);
       const tree2 = new LayoutTree(complexRoot2);
-      
+
       expect(tree1.equals(tree2)).toBe(true);
     });
 
@@ -309,8 +309,8 @@ describe('LayoutTree', () => {
         trailing: {
           direction: 'column',
           leading: 'panel2',
-          trailing: 'panel3'
-        }
+          trailing: 'panel3',
+        },
       };
       const complexRoot2: LayoutParent<string> = {
         direction: 'row',
@@ -318,13 +318,13 @@ describe('LayoutTree', () => {
         trailing: {
           direction: 'column',
           leading: 'panel2',
-          trailing: 'panel4' // Different panel ID
-        }
+          trailing: 'panel4', // Different panel ID
+        },
       };
-      
+
       const tree1 = new LayoutTree(complexRoot1);
       const tree2 = new LayoutTree(complexRoot2);
-      
+
       expect(tree1.equals(tree2)).toBe(false);
     });
 
@@ -333,9 +333,9 @@ describe('LayoutTree', () => {
       const parentTree = new LayoutTree<string>({
         direction: 'row',
         leading: 'panel1',
-        trailing: 'panel2'
+        trailing: 'panel2',
       });
-      
+
       expect(leafTree.equals(parentTree)).toBe(false);
       expect(parentTree.equals(leafTree)).toBe(false);
     });
@@ -379,7 +379,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         const newTree = tree.splitRegion(['leading'], 'panel3', 'column');
@@ -401,8 +401,8 @@ describe('LayoutTree', () => {
           trailing: {
             direction: 'column',
             leading: 'panel2',
-            trailing: 'panel3'
-          }
+            trailing: 'panel3',
+          },
         });
 
         const newTree = complexTree.splitRegion(['trailing', 'leading'], 'panel4', 'row');
@@ -469,7 +469,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         const newTree = tree.removeRegion(['leading']);
@@ -480,7 +480,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         const newTree = tree.removeRegion(['trailing']);
@@ -494,8 +494,8 @@ describe('LayoutTree', () => {
           trailing: {
             direction: 'column',
             leading: 'panel2',
-            trailing: 'panel3'
-          }
+            trailing: 'panel3',
+          },
         });
 
         const newTree = tree.removeRegion(['trailing', 'leading']);
@@ -512,9 +512,9 @@ describe('LayoutTree', () => {
           leading: {
             direction: 'column',
             leading: 'panel1',
-            trailing: 'panel2'
+            trailing: 'panel2',
           },
-          trailing: 'panel3'
+          trailing: 'panel3',
         });
 
         const newTree = tree.removeRegion(['leading', 'trailing']);
@@ -545,10 +545,10 @@ describe('LayoutTree', () => {
             trailing: {
               direction: 'row',
               leading: 'panel2',
-              trailing: 'panel3'
-            }
+              trailing: 'panel3',
+            },
           },
-          trailing: 'panel4'
+          trailing: 'panel4',
         });
 
         // Remove a deeply nested node
@@ -567,7 +567,7 @@ describe('LayoutTree', () => {
         const originalRoot = {
           direction: 'row' as const,
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         };
         const tree = new LayoutTree<string>(originalRoot);
         const newTree = tree.removeRegion(['leading']);
@@ -583,7 +583,7 @@ describe('LayoutTree', () => {
           direction: 'row',
           leading: 'panel1',
           trailing: 'panel2',
-          splitPercentage: 50
+          splitPercentage: 50,
         });
 
         const newTree = tree.resizeRegion([], 70);
@@ -603,8 +603,8 @@ describe('LayoutTree', () => {
             direction: 'column',
             leading: 'panel2',
             trailing: 'panel3',
-            splitPercentage: 50
-          }
+            splitPercentage: 50,
+          },
         });
 
         const newTree = tree.resizeRegion(['trailing'], 25);
@@ -627,10 +627,10 @@ describe('LayoutTree', () => {
               direction: 'row',
               leading: 'panel2',
               trailing: 'panel3',
-              splitPercentage: 60
-            }
+              splitPercentage: 60,
+            },
           },
-          trailing: 'panel4'
+          trailing: 'panel4',
         });
 
         const newTree = tree.resizeRegion(['leading', 'trailing'], 80);
@@ -645,7 +645,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         // Test 0%
@@ -665,7 +665,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         expect(() => {
@@ -677,7 +677,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         expect(() => {
@@ -689,7 +689,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         expect(() => {
@@ -717,7 +717,7 @@ describe('LayoutTree', () => {
         const tree = new LayoutTree<string>({
           direction: 'row',
           leading: 'panel1',
-          trailing: 'panel2'
+          trailing: 'panel2',
         });
 
         expect(() => {
@@ -730,7 +730,7 @@ describe('LayoutTree', () => {
           direction: 'row' as const,
           leading: 'panel1',
           trailing: 'panel2',
-          splitPercentage: 50
+          splitPercentage: 50,
         };
         const tree = new LayoutTree<string>(originalRoot);
         const newTree = tree.resizeRegion([], 70);
@@ -1731,7 +1731,8 @@ describe('LayoutTree', () => {
 
     describe('fromJSON', () => {
       it('should create tree from JSON string', () => {
-        const json = '{"version":"0.2.0","tree":{"direction":"row","leading":"panel1","trailing":"panel2","splitPercentage":60}}';
+        const json =
+          '{"version":"0.2.0","tree":{"direction":"row","leading":"panel1","trailing":"panel2","splitPercentage":60}}';
         const tree = LayoutTree.fromJSON<string>(json);
         const root = tree.getRoot() as LayoutParent<string>;
         expect(root.direction).toBe('row');

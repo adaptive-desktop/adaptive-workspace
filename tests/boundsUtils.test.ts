@@ -79,14 +79,14 @@ describe('Bounds Utilities', () => {
       const bounds1 = { x: 0, y: 0, width: 50, height: 50 };
       const bounds2 = { x: 25, y: 25, width: 50, height: 50 };
       const intersection = getBoundsIntersection(bounds1, bounds2);
-      
+
       expect(intersection).toEqual({ x: 25, y: 25, width: 25, height: 25 });
     });
 
     it('should return null for non-intersecting bounds', () => {
       const bounds1 = { x: 0, y: 0, width: 50, height: 50 };
       const bounds2 = { x: 60, y: 60, width: 50, height: 50 };
-      
+
       expect(getBoundsIntersection(bounds1, bounds2)).toBeNull();
     });
   });
@@ -96,7 +96,7 @@ describe('Bounds Utilities', () => {
       const bounds1 = { x: 0, y: 0, width: 50, height: 50 };
       const bounds2 = { x: 25, y: 25, width: 50, height: 50 };
       const union = getBoundsUnion(bounds1, bounds2);
-      
+
       expect(union).toEqual({ x: 0, y: 0, width: 75, height: 75 });
     });
 
@@ -104,7 +104,7 @@ describe('Bounds Utilities', () => {
       const bounds1 = { x: 0, y: 0, width: 50, height: 50 };
       const bounds2 = { x: 100, y: 100, width: 50, height: 50 };
       const union = getBoundsUnion(bounds1, bounds2);
-      
+
       expect(union).toEqual({ x: 0, y: 0, width: 150, height: 150 });
     });
   });
@@ -178,7 +178,7 @@ describe('Bounds Utilities', () => {
         width: 1000,
         height: 800,
       };
-      
+
       const safeBounds = applySafeArea(workspaceNoSafe);
       expect(safeBounds).toEqual({
         x: 0,
@@ -224,7 +224,7 @@ describe('Bounds Utilities', () => {
     it('should create region bounds with path', () => {
       const path: LayoutPath = ['leading', 'trailing'];
       const regionBounds = createRegionBounds(path, testBounds);
-      
+
       expect(regionBounds).toEqual({
         ...testBounds,
         path,
@@ -248,7 +248,7 @@ describe('Bounds Utilities', () => {
     it('should normalize bounds with negative dimensions', () => {
       const negativeBounds = { x: 50, y: 60, width: -30, height: -20 };
       const normalized = normalizeBounds(negativeBounds);
-      
+
       expect(normalized).toEqual({
         x: 20, // 50 + (-30)
         y: 40, // 60 + (-20)

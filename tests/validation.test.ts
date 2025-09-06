@@ -46,7 +46,7 @@ describe('Validation Utilities', () => {
     it('should reject negative minSize', () => {
       const constraints: ChildConstraints = { minSize: -10 };
       const result = validateChildConstraints(constraints);
-      
+
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('minSize must be a non-negative number');
     });
@@ -54,7 +54,7 @@ describe('Validation Utilities', () => {
     it('should reject maxSize less than minSize', () => {
       const constraints: ChildConstraints = { minSize: 100, maxSize: 50 };
       const result = validateChildConstraints(constraints);
-      
+
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('maxSize must be greater than or equal to minSize');
     });
@@ -105,7 +105,7 @@ describe('Validation Utilities', () => {
     it('should validate correct bounds', () => {
       const bounds: Bounds = { x: 10, y: 20, width: 100, height: 50 };
       const result = validateBounds(bounds);
-      
+
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
@@ -131,7 +131,7 @@ describe('Validation Utilities', () => {
     it('should validate correct dimensions', () => {
       const dimensions: Dimensions = { width: 100, height: 50 };
       const result = validateDimensions(dimensions);
-      
+
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
@@ -313,11 +313,11 @@ describe('Validation Utilities', () => {
       const result = validateLayoutConfiguration(config);
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some(e => e.includes('width'))).toBe(true);
-      expect(result.errors.some(e => e.includes('height'))).toBe(true);
-      expect(result.errors.some(e => e.includes('direction'))).toBe(true);
-      expect(result.errors.some(e => e.includes('percentage'))).toBe(true);
-      expect(result.errors.some(e => e.includes('minSize'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('width'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('height'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('direction'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('percentage'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('minSize'))).toBe(true);
     });
   });
 });

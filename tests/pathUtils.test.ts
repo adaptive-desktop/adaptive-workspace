@@ -116,7 +116,9 @@ describe('Path Utilities', () => {
 
     it('should return node at complex path', () => {
       expect(getAndAssertNodeAtPathExists(complexTree, ['trailing', 'leading'])).toBe('panel2');
-      expect(getAndAssertNodeAtPathExists(complexTree, ['trailing', 'trailing', 'leading'])).toBe('panel3');
+      expect(getAndAssertNodeAtPathExists(complexTree, ['trailing', 'trailing', 'leading'])).toBe(
+        'panel3'
+      );
     });
 
     it('should throw error for null tree', () => {
@@ -160,7 +162,11 @@ describe('Path Utilities', () => {
     });
 
     it('should create balanced tree for three panels', () => {
-      const tree = createBalancedTreeFromLeaves(['panel1', 'panel2', 'panel3']) as LayoutParent<string>;
+      const tree = createBalancedTreeFromLeaves([
+        'panel1',
+        'panel2',
+        'panel3',
+      ]) as LayoutParent<string>;
       expect(tree.direction).toBe('row');
 
       // For 3 panels, Math.ceil(3/2) = 2, so split is [panel1, panel2] and [panel3]
@@ -173,14 +179,19 @@ describe('Path Utilities', () => {
     });
 
     it('should create balanced tree for four panels', () => {
-      const tree = createBalancedTreeFromLeaves(['panel1', 'panel2', 'panel3', 'panel4']) as LayoutParent<string>;
+      const tree = createBalancedTreeFromLeaves([
+        'panel1',
+        'panel2',
+        'panel3',
+        'panel4',
+      ]) as LayoutParent<string>;
       expect(tree.direction).toBe('row');
-      
+
       const leadingChild = tree.leading as LayoutParent<string>;
       expect(leadingChild.direction).toBe('row');
       expect(leadingChild.leading).toBe('panel1');
       expect(leadingChild.trailing).toBe('panel2');
-      
+
       const trailingChild = tree.trailing as LayoutParent<string>;
       expect(trailingChild.direction).toBe('row');
       expect(trailingChild.leading).toBe('panel3');
@@ -188,7 +199,10 @@ describe('Path Utilities', () => {
     });
 
     it('should use specified direction', () => {
-      const tree = createBalancedTreeFromLeaves(['panel1', 'panel2'], 'column') as LayoutParent<string>;
+      const tree = createBalancedTreeFromLeaves(
+        ['panel1', 'panel2'],
+        'column'
+      ) as LayoutParent<string>;
       expect(tree.direction).toBe('column');
       expect(tree.leading).toBe('panel1');
       expect(tree.trailing).toBe('panel2');
@@ -197,7 +211,7 @@ describe('Path Utilities', () => {
     it('should handle larger arrays', () => {
       const panels = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'];
       const tree = createBalancedTreeFromLeaves(panels);
-      
+
       // Verify all panels are present
       const allPanels = getAllLeaves(tree);
       expect(allPanels.sort()).toEqual(panels.sort());
@@ -207,7 +221,7 @@ describe('Path Utilities', () => {
       const panels = ['p1', 'p2', 'p3', 'p4', 'p5'];
       const tree = createBalancedTreeFromLeaves(panels);
       const depth = getTreeDepth(tree);
-      
+
       // For 5 panels, depth should be reasonable (not linear)
       expect(depth).toBeLessThanOrEqual(3);
     });
@@ -278,7 +292,7 @@ describe('Path Utilities', () => {
     it('should respect max depth', () => {
       const paths = getAllPaths(complexTree, 2);
       // Should not include paths longer than 2
-      const longPaths = paths.filter(path => path.length > 2);
+      const longPaths = paths.filter((path) => path.length > 2);
       expect(longPaths.length).toBe(0);
     });
 

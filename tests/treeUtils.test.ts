@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for tree utility functions
- * 
+ *
  * These tests verify the utility functions for tree traversal, type checking,
  * and basic tree operations.
  */
@@ -12,19 +12,19 @@ import {
   getOtherBranch,
   getOtherDirection,
   isValidSplitPercentage,
-  normalizeSplitPercentage
+  normalizeSplitPercentage,
 } from '../src/utils/treeUtils';
 import { LayoutParent, LayoutNode, LayoutPath } from '../src/types';
 
 describe('Tree Utilities', () => {
   // Sample tree structures for testing
   const sampleLeaf: LayoutNode<string> = 'panel1';
-  
+
   const sampleParent: LayoutParent<string> = {
     direction: 'row',
     leading: 'panel1',
     trailing: 'panel2',
-    splitPercentage: 60
+    splitPercentage: 60,
   };
 
   const complexTree: LayoutParent<string> = {
@@ -37,11 +37,11 @@ describe('Tree Utilities', () => {
         direction: 'row',
         leading: 'panel3',
         trailing: 'panel4',
-        splitPercentage: 25
+        splitPercentage: 25,
       },
-      splitPercentage: 75
+      splitPercentage: 75,
     },
-    splitPercentage: 40
+    splitPercentage: 40,
   };
 
   describe('isParent', () => {
@@ -110,8 +110,8 @@ describe('Tree Utilities', () => {
         trailing: {
           direction: 'column',
           leading: 'panel2',
-          trailing: 'panel2' // Duplicate panel ID
-        }
+          trailing: 'panel2', // Duplicate panel ID
+        },
       };
       const leaves = getLeaves(singleChildTree);
       expect(leaves).toEqual(['panel1', 'panel2', 'panel2']);
@@ -125,11 +125,11 @@ describe('Tree Utilities', () => {
           leading: {
             direction: 'row',
             leading: 1,
-            trailing: 2
+            trailing: 2,
           },
-          trailing: 3
+          trailing: 3,
         },
-        trailing: 4
+        trailing: 4,
       };
       const leaves = getLeaves(deepTree);
       expect(leaves).toEqual([1, 2, 3, 4]);
@@ -141,13 +141,13 @@ describe('Tree Utilities', () => {
         leading: {
           direction: 'row',
           leading: 'A',
-          trailing: 'B'
+          trailing: 'B',
         },
         trailing: {
           direction: 'row',
           leading: 'C',
-          trailing: 'D'
-        }
+          trailing: 'D',
+        },
       };
       const leaves = getLeaves(orderedTree);
       expect(leaves).toEqual(['A', 'B', 'C', 'D']);
@@ -185,7 +185,9 @@ describe('Tree Utilities', () => {
     it('should return null for invalid paths', () => {
       expect(getNodeAtPath(complexTree, ['invalid' as any])).toBe(null);
       expect(getNodeAtPath(complexTree, ['leading', 'invalid' as any])).toBe(null);
-      expect(getNodeAtPath(complexTree, ['trailing', 'trailing', 'trailing', 'invalid' as any])).toBe(null);
+      expect(
+        getNodeAtPath(complexTree, ['trailing', 'trailing', 'trailing', 'invalid' as any])
+      ).toBe(null);
     });
 
     it('should handle partial valid paths', () => {

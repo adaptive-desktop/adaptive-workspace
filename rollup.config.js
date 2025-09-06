@@ -10,23 +10,23 @@ module.exports = {
       file: pkg.main,
       format: 'cjs',
       sourcemap: true,
-      exports: 'named'
+      exports: 'named',
     },
     {
       file: pkg.module,
       format: 'esm',
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   ],
   plugins: [
     typescript({
       tsconfig: './tsconfig.json',
-      exclude: ['tests/**/*', '**/*.test.ts']
-    })
+      exclude: ['tests/**/*', '**/*.test.ts'],
+    }),
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
-    'react/jsx-runtime'
-  ]
+    'react/jsx-runtime',
+  ],
 };

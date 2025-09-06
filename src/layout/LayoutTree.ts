@@ -14,26 +14,26 @@ import {
   LayoutBranch,
   RegionConstraints,
   InsertPosition,
-} from './types';
+} from '../shared/types';
 import {
   getNodeAtPath,
   getOtherBranch,
   isValidSplitPercentage,
   getLeaves,
   isParent,
-} from './utils/treeUtils';
+} from '../utils/treeUtils';
 import {
   findPanelPath,
   getAndAssertNodeAtPathExists,
   getAllPaths,
   getTreeDepth,
-} from './utils/pathUtils';
+} from '../utils/pathUtils';
 import {
   serializeLayoutTree,
   deserializeLayoutTree,
   cloneLayoutTree,
   SerializableLayoutTree,
-} from './utils/serialization';
+} from '../utils/serialization';
 
 /**
  * Immutable binary tree class for managing layout structures.

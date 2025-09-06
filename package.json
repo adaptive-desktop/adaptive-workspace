@@ -42,7 +42,8 @@
     "url": "git@github.com:adaptive-desktop/adaptive-workspace.git"
   },
   "dependencies": {
-    "tslib": "^2.6.0"
+    "tslib": "^2.6.0",
+    "ulid": "^3.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.0",

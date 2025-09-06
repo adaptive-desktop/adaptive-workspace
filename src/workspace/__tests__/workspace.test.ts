@@ -90,5 +90,72 @@ describe('Workspace', () => {
     test('hasViewport returns false for non-existent viewport', () => {
       expect(workspace.hasViewport('non-existent')).toBe(false);
     });
+
+    test('splitViewport throws (not implemented)', () => {
+      const viewport = workspace.createViewport();
+
+      expect(() => workspace.splitViewport(viewport, 'horizontal')).toThrow(
+        'splitViewport not yet implemented'
+      );
+    });
+
+    test('removeViewport removes viewport and returns true', () => {
+      const viewport = workspace.createViewport();
+
+      // Verify viewport exists
+      expect(workspace.getViewports()).toHaveLength(1);
+      expect(workspace.hasViewport(viewport.id)).toBe(true);
+
+      // Remove viewport
+      const result = workspace.removeViewport(viewport);
+
+      // Should return true and remove viewport
+      expect(result).toBe(true);
+      expect(workspace.getViewports()).toHaveLength(0);
+      expect(workspace.hasViewport(viewport.id)).toBe(false);
+    });
+
+    test('swapViewports returns false (not implemented)', () => {
+      const viewport1 = workspace.createViewport({ x: 0, y: 0, width: 0.5, height: 1.0 });
+      const viewport2 = workspace.createViewport({ x: 0.5, y: 0, width: 0.5, height: 1.0 });
+
+      const result = workspace.swapViewports(viewport1, viewport2);
+
+      expect(result).toBe(false);
+    });
+
+    test('updatePosition updates workspace position and propagates to viewports', () => {
+      const viewport = workspace.createViewport();
+      const originalBounds = viewport.screenBounds;
+
+      const newPosition = { x: 100, y: 100, width: 1000, height: 800 };
+      workspace.updatePosition(newPosition);
+
+      // Workspace position should be updated
+      expect(workspace.position).toEqual(newPosition);
+
+      // Viewport screen bounds should be recalculated
+      const updatedViewport = workspace.getViewports()[0];
+      expect(updatedViewport.screenBounds).not.toEqual(originalBounds);
+      expect(updatedViewport.screenBounds.x).toBe(newPosition.x);
+      expect(updatedViewport.screenBounds.y).toBe(newPosition.y);
+    });
+
+    test('updatePosition handles multiple viewports', () => {
+      workspace.createViewport({ x: 0, y: 0, width: 0.5, height: 1.0 });
+      workspace.createViewport({ x: 0.5, y: 0, width: 0.5, height: 1.0 });
+
+      const newPosition = { x: 200, y: 150, width: 1200, height: 900 };
+      workspace.updatePosition(newPosition);
+
+      // Both viewports should have updated screen bounds
+      const viewports = workspace.getViewports();
+      expect(viewports).toHaveLength(2);
+
+      viewports.forEach((viewport) => {
+        expect(viewport.screenBounds.x).toBeGreaterThanOrEqual(newPosition.x);
+        expect(viewport.screenBounds.y).toBeGreaterThanOrEqual(newPosition.y);
+      });
+    });
   });
 });

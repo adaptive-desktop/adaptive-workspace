@@ -11,8 +11,5 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   // Skip failing LayoutTree tests until business logic is fixed
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '<rootDir>/tests/LayoutTree.test.ts'
-  ],
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/LayoutTree.test.ts'],
 };

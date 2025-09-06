@@ -5,8 +5,8 @@
  * layout actions and operations on the binary layout tree.
  */
 
-import { LayoutTree } from '../LayoutTree';
-import { PanelId, LayoutPath, LayoutDirection, InsertPosition, LayoutActions } from '../types';
+import { LayoutTree } from '../layout/LayoutTree';
+import { PanelId, LayoutPath, LayoutDirection, InsertPosition, LayoutActions } from '../shared/types';
 
 /**
  * Create a layout actions object for a specific panel

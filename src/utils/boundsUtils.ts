@@ -5,7 +5,7 @@
  * bounds, dimensions, and workspace areas in the layout system.
  */
 
-import { Bounds, Dimensions, WorkspaceBounds, RegionBounds, LayoutPath } from '../types';
+import { Bounds, Dimensions, WorkspaceBounds, RegionBounds, LayoutPath } from '../shared/types';
 
 /**
  * Calculate the area of a bounds rectangle

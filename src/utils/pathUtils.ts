@@ -5,7 +5,7 @@
  * validating paths, and creating balanced tree structures.
  */
 
-import { PanelId, LayoutNode, LayoutParent, LayoutPath } from '../types';
+import { PanelId, LayoutNode, LayoutParent, LayoutPath } from '../shared/types';
 import { isParent, getNodeAtPath } from './treeUtils';
 
 /**

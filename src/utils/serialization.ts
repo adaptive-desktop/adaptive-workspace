@@ -5,7 +5,7 @@
  * to/from JSON format, enabling persistence and data exchange.
  */
 
-import { PanelId, LayoutNode, LayoutParent, LayoutDirection, RegionConstraints } from '../types';
+import { PanelId, LayoutNode, LayoutParent, LayoutDirection, RegionConstraints } from '../shared/types';
 import { isParent, isValidSplitPercentage } from './treeUtils';
 
 /**

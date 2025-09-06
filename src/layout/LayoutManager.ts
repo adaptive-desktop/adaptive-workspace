@@ -5,7 +5,7 @@
  * This will eventually integrate with LayoutTree for full functionality.
  */
 
-import { LayoutManager as LayoutManagerInterface } from './types';
+import { LayoutManagerInterface } from './types';
 import { Viewport, ProportionalBounds, MutableViewport } from '../viewport';
 import { ScreenBounds } from '../workspace/types';
 import { ulid } from 'ulid';

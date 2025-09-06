@@ -34,7 +34,7 @@ interface ViewportBounds {
  * - swapViewports: Clean exchange of two viewports, no layout changes
  * - insertViewport: New viewport spans the range of specified positions
  */
-export interface LayoutManager<T> {
+export interface LayoutManagerInterface<T> {
   // Viewport management operations
   createViewport(proportionalBounds?: ProportionalBounds): Viewport;
   createAdjacentViewport(

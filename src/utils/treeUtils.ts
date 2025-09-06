@@ -12,7 +12,7 @@ import {
   LayoutPath,
   LayoutBranch,
   LayoutDirection,
-} from '../types';
+} from '../shared/types';
 
 /**
  * Type guard to check if a node is a parent node (has children).

@@ -5,7 +5,7 @@
  */
 
 import { WorkspaceInterface, WorkspaceConfig, ScreenBounds } from './types';
-import { LayoutManager as LayoutManagerInterface } from '../layout/types';
+import { LayoutManagerInterface } from '../layout/types';
 import { LayoutManager } from '../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../viewport';
 

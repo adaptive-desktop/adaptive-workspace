@@ -6,5 +6,5 @@
 
 // Re-export everything from this domain
 export * from './types';
-export * from './LayoutManager';
+export { LayoutManager } from './LayoutManager';
 export * from './LayoutTree';

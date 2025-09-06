@@ -4,7 +4,7 @@
  * Core workspace-related types and interfaces.
  */
 
-import { LayoutManager } from '../layout';
+import { LayoutManagerInterface } from '../layout';
 import { Viewport, ProportionalBounds } from '../viewport/types';
 
 /**
@@ -23,7 +23,7 @@ export interface ScreenBounds {
 export interface WorkspaceConfig {
   id: string;
   position: ScreenBounds;
-  layout?: LayoutManager<string>; // Optional, will use default if not provided
+  layout?: LayoutManagerInterface<string>; // Optional, will use default if not provided
 }
 
 /**
@@ -35,7 +35,7 @@ export interface WorkspaceConfig {
 export interface WorkspaceInterface {
   readonly id: string;
   readonly position: ScreenBounds;
-  readonly layout: LayoutManager<string>;
+  readonly layout: LayoutManagerInterface<string>;
 
   // Viewport operations - create/split return new viewport, others return success/failure
   /**

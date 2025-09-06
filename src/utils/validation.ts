@@ -13,7 +13,7 @@ import {
   LayoutDirection,
   LayoutPath,
   PanelId,
-} from '../types';
+} from '../shared/types';
 
 /**
  * Validate child constraints object

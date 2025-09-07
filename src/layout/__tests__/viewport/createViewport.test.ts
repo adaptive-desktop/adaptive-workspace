@@ -56,7 +56,7 @@ describe('LayoutManager - createViewport()', () => {
 
       it('should have correct proportional bounds (full workspace)', () => {
         const viewport = layoutManager.createViewport();
-        
+
         // Access proportional bounds through MutableViewport
         const mutableViewport = viewport as MutableViewport;
         expect(mutableViewport.proportionalBounds).toEqual({
@@ -69,9 +69,9 @@ describe('LayoutManager - createViewport()', () => {
 
       it('should update viewport count correctly', () => {
         expect(layoutManager.getViewportCount()).toBe(0);
-        
+
         layoutManager.createViewport();
-        
+
         expect(layoutManager.getViewportCount()).toBe(1);
       });
     });
@@ -94,10 +94,10 @@ describe('LayoutManager - createViewport()', () => {
 
         // Check screen bounds calculated from proportional bounds
         expect(viewport.screenBounds).toEqual({
-          x: 0 + (1000 * 0.25), // 0 + 250 = 250
-          y: 0 + (800 * 0.1),   // 0 + 80 = 80
-          width: 1000 * 0.5,    // 500
-          height: 800 * 0.6,    // 480
+          x: 0 + 1000 * 0.25, // 0 + 250 = 250
+          y: 0 + 800 * 0.1, // 0 + 80 = 80
+          width: 1000 * 0.5, // 500
+          height: 800 * 0.6, // 480
         });
       });
 

@@ -57,7 +57,9 @@ export class LayoutManager {
     }
 
     // Throw error if there are already viewports - space calculation not implemented yet
-    throw new Error('findLargestAvailableSpace not implemented for existing viewports. Please provide explicit proportional bounds.');
+    throw new Error(
+      'findLargestAvailableSpace not implemented for existing viewports. Please provide explicit proportional bounds.'
+    );
   }
 
   getViewports(): Viewport[] {
@@ -105,7 +107,7 @@ export class LayoutManager {
         // New viewport becomes bottom half
         newBounds = {
           x: currentBounds.x,
-          y: currentBounds.y + (currentBounds.height / 2),
+          y: currentBounds.y + currentBounds.height / 2,
           width: currentBounds.width,
           height: currentBounds.height / 2,
         };
@@ -115,7 +117,7 @@ export class LayoutManager {
         // Original viewport becomes bottom half
         originalBounds = {
           x: currentBounds.x,
-          y: currentBounds.y + (currentBounds.height / 2),
+          y: currentBounds.y + currentBounds.height / 2,
           width: currentBounds.width,
           height: currentBounds.height / 2,
         };
@@ -138,7 +140,7 @@ export class LayoutManager {
         };
         // New viewport becomes right half
         newBounds = {
-          x: currentBounds.x + (currentBounds.width / 2),
+          x: currentBounds.x + currentBounds.width / 2,
           y: currentBounds.y,
           width: currentBounds.width / 2,
           height: currentBounds.height,
@@ -148,7 +150,7 @@ export class LayoutManager {
       case 'left':
         // Original viewport becomes right half
         originalBounds = {
-          x: currentBounds.x + (currentBounds.width / 2),
+          x: currentBounds.x + currentBounds.width / 2,
           y: currentBounds.y,
           width: currentBounds.width / 2,
           height: currentBounds.height,

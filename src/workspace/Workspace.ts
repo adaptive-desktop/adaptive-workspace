@@ -46,7 +46,7 @@ export class Workspace implements WorkspaceInterface {
     size?: { width?: number; height?: number }
   ): Viewport {
     // Resolve any IDs to viewport objects
-    const existingViewports = existingViewportsOrIds.map(viewportOrId => {
+    const existingViewports = existingViewportsOrIds.map((viewportOrId) => {
       if (typeof viewportOrId === 'string') {
         const viewport = this.layout.findViewportById(viewportOrId);
         if (!viewport) {
@@ -63,10 +63,12 @@ export class Workspace implements WorkspaceInterface {
   /**
    * Split a viewport into two viewports
    */
-  splitViewport(viewportOrId: Viewport | string, direction: 'up' | 'down' | 'left' | 'right'): Viewport {
-    const viewport = typeof viewportOrId === 'string'
-      ? this.layout.findViewportById(viewportOrId)
-      : viewportOrId;
+  splitViewport(
+    viewportOrId: Viewport | string,
+    direction: 'up' | 'down' | 'left' | 'right'
+  ): Viewport {
+    const viewport =
+      typeof viewportOrId === 'string' ? this.layout.findViewportById(viewportOrId) : viewportOrId;
 
     if (!viewport) {
       throw new Error(`Viewport not found: ${viewportOrId}`);

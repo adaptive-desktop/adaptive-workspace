@@ -27,14 +27,14 @@ describe('Workspace - splitViewport with ID resolution', () => {
     it('should work with viewport object', () => {
       // Create initial viewport
       const originalViewport = workspace.createViewport();
-      
+
       // Split using viewport object
       const newViewport = workspace.splitViewport(originalViewport, 'down');
-      
+
       expect(newViewport).toBeDefined();
       expect(newViewport.id).toBeDefined();
       expect(newViewport.id).not.toBe(originalViewport.id);
-      
+
       // Check that both viewports exist
       const allViewports = workspace.getViewports();
       expect(allViewports).toHaveLength(2);
@@ -48,14 +48,14 @@ describe('Workspace - splitViewport with ID resolution', () => {
       // Create initial viewport
       const originalViewport = workspace.createViewport();
       const viewportId = originalViewport.id;
-      
+
       // Split using viewport ID
       const newViewport = workspace.splitViewport(viewportId, 'down');
-      
+
       expect(newViewport).toBeDefined();
       expect(newViewport.id).toBeDefined();
       expect(newViewport.id).not.toBe(originalViewport.id);
-      
+
       // Check that both viewports exist
       const allViewports = workspace.getViewports();
       expect(allViewports).toHaveLength(2);
@@ -86,7 +86,7 @@ describe('Workspace - splitViewport with ID resolution', () => {
         position: testWorkspaceBounds,
       });
       const workspace2 = new Workspace({
-        id: 'test-workspace-2', 
+        id: 'test-workspace-2',
         position: testWorkspaceBounds,
       });
 

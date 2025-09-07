@@ -91,12 +91,27 @@ describe('Workspace', () => {
       expect(workspace.hasViewport('non-existent')).toBe(false);
     });
 
-    test('splitViewport throws (not implemented)', () => {
+    test('splitViewport works correctly', () => {
       const viewport = workspace.createViewport();
 
-      expect(() => workspace.splitViewport(viewport, 'horizontal')).toThrow(
-        'splitViewport not yet implemented'
-      );
+      const newViewport = workspace.splitViewport(viewport, 'down');
+
+      expect(newViewport).toBeDefined();
+      expect(newViewport.id).toBeDefined();
+      expect(newViewport.id).not.toBe(viewport.id);
+      expect(workspace.getViewports()).toHaveLength(2);
+    });
+
+    test('splitViewport works with viewport ID', () => {
+      const viewport = workspace.createViewport();
+      const viewportId = viewport.id;
+
+      const newViewport = workspace.splitViewport(viewportId, 'down');
+
+      expect(newViewport).toBeDefined();
+      expect(newViewport.id).toBeDefined();
+      expect(newViewport.id).not.toBe(viewport.id);
+      expect(workspace.getViewports()).toHaveLength(2);
     });
 
     test('removeViewport removes viewport and returns true', () => {

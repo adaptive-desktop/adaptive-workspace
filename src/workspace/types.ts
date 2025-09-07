@@ -64,7 +64,10 @@ export interface WorkspaceInterface {
    * @param direction - Direction to split ('up' | 'down' | 'left' | 'right')
    * @returns The new viewport object (shared reference)
    */
-  splitViewport(viewportOrId: Viewport | string, direction: 'up' | 'down' | 'left' | 'right'): Viewport;
+  splitViewport(
+    viewportOrId: Viewport | string,
+    direction: 'up' | 'down' | 'left' | 'right'
+  ): Viewport;
 
   /**
    * Remove a viewport (adjacent viewports expand to fill space)

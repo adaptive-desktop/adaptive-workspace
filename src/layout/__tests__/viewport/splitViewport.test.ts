@@ -9,7 +9,6 @@
 
 import { LayoutManager } from '../../LayoutManager';
 import { MutableViewport } from '../../../viewport/MutableViewport';
-import { ProportionalBounds } from '../../../viewport/types';
 import { ScreenBounds } from '../../../workspace/types';
 
 describe('LayoutManager - splitViewport()', () => {
@@ -30,7 +29,7 @@ describe('LayoutManager - splitViewport()', () => {
     it('should create new viewport below original viewport', () => {
       // Create initial viewport (full workspace)
       const originalViewport = layoutManager.createViewport();
-      
+
       // Split down - new viewport should be below
       const newViewport = layoutManager.splitViewport(originalViewport, 'down');
 
@@ -52,7 +51,7 @@ describe('LayoutManager - splitViewport()', () => {
     it('should update original viewport bounds to top half', () => {
       // Create initial viewport (full workspace)
       const originalViewport = layoutManager.createViewport();
-      
+
       // Split down
       layoutManager.splitViewport(originalViewport, 'down');
 
@@ -68,10 +67,10 @@ describe('LayoutManager - splitViewport()', () => {
     it('should add both viewports to getViewports() result', () => {
       // Create initial viewport
       const originalViewport = layoutManager.createViewport();
-      
+
       // Split down
       const newViewport = layoutManager.splitViewport(originalViewport, 'down');
-      
+
       const allViewports = layoutManager.getViewports();
 
       expect(allViewports).toHaveLength(2);
@@ -82,10 +81,10 @@ describe('LayoutManager - splitViewport()', () => {
     it('should have correct proportional bounds for both viewports', () => {
       // Create initial viewport
       const originalViewport = layoutManager.createViewport();
-      
+
       // Split down
       const newViewport = layoutManager.splitViewport(originalViewport, 'down');
-      
+
       // Check original viewport proportional bounds (top half)
       const originalMutable = originalViewport as MutableViewport;
       expect(originalMutable.proportionalBounds).toEqual({
@@ -107,11 +106,11 @@ describe('LayoutManager - splitViewport()', () => {
 
     it('should update viewport count correctly', () => {
       expect(layoutManager.getViewportCount()).toBe(0);
-      
+
       // Create initial viewport
       const originalViewport = layoutManager.createViewport();
       expect(layoutManager.getViewportCount()).toBe(1);
-      
+
       // Split viewport
       layoutManager.splitViewport(originalViewport, 'down');
       expect(layoutManager.getViewportCount()).toBe(2);
@@ -121,7 +120,7 @@ describe('LayoutManager - splitViewport()', () => {
       // Create and split viewport
       const originalViewport = layoutManager.createViewport();
       const newViewport = layoutManager.splitViewport(originalViewport, 'down');
-      
+
       // Change workspace bounds
       const newWorkspaceBounds: ScreenBounds = {
         x: 100,

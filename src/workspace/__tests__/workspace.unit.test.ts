@@ -6,11 +6,11 @@
 
 import { Workspace } from '../Workspace';
 import { ScreenBounds } from '../types';
-import { LayoutManagerInterface } from '../../layout/types';
+import { LayoutManager } from '../../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../../viewport/types';
 
 // Mock the LayoutManager
-const mockLayoutManager: jest.Mocked<LayoutManagerInterface<string>> = {
+const mockLayoutManager: jest.Mocked<LayoutManager> = {
   // Viewport management operations
   createViewport: jest.fn(),
   createAdjacentViewport: jest.fn(),
@@ -19,6 +19,7 @@ const mockLayoutManager: jest.Mocked<LayoutManagerInterface<string>> = {
   removeViewportByObject: jest.fn(),
   swapViewports: jest.fn(),
   getViewports: jest.fn(),
+  findViewportById: jest.fn(),
   hasViewport: jest.fn(),
   setPosition: jest.fn(),
 
@@ -33,7 +34,14 @@ const mockLayoutManager: jest.Mocked<LayoutManagerInterface<string>> = {
   getPositionForViewport: jest.fn(),
   canSplitViewport: jest.fn(),
   canRemoveViewport: jest.fn(),
-};
+
+  // Private properties and methods (for LayoutManager compatibility)
+  viewports: new Map(),
+  workspaceBounds: { x: 0, y: 0, width: 1000, height: 800 },
+  createViewportInternal: jest.fn(),
+  findLargestAvailableSpace: jest.fn(),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any;
 
 // Mock viewport for testing
 const mockViewport: Viewport = {
@@ -118,11 +126,50 @@ describe('Workspace Unit Tests', () => {
       );
       expect(result).toBe(mockViewport);
     });
+
+    test('createAdjacentViewport should resolve IDs to viewport objects', () => {
+      const viewportId = 'test-viewport-id';
+      const existingViewportsOrIds = [mockViewport, viewportId]; // Mix of object and ID
+      const direction = 'left' as const;
+      const size = { width: 0.5 };
+
+      // Mock findViewportById to return the viewport
+      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
+      mockLayoutManager.createAdjacentViewport.mockReturnValue(mockViewport);
+
+      const result = workspace.createAdjacentViewport(existingViewportsOrIds, direction, size);
+
+      // Should call findViewportById with the ID
+      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      // Should call createAdjacentViewport with resolved viewport objects
+      expect(mockLayoutManager.createAdjacentViewport).toHaveBeenCalledWith(
+        [mockViewport, mockViewport], // Both should be viewport objects
+        direction,
+        size
+      );
+      expect(result).toBe(mockViewport);
+    });
+
+    test('createAdjacentViewport should throw error when viewport ID not found', () => {
+      const viewportId = 'non-existent-id';
+      const existingViewportsOrIds = [viewportId];
+      const direction = 'left' as const;
+
+      // Mock findViewportById to return null
+      mockLayoutManager.findViewportById.mockReturnValue(null);
+
+      expect(() => workspace.createAdjacentViewport(existingViewportsOrIds, direction)).toThrow(
+        'Viewport not found: non-existent-id'
+      );
+
+      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockLayoutManager.createAdjacentViewport).not.toHaveBeenCalled();
+    });
   });
 
   describe('Viewport Operations', () => {
-    test('splitViewport should delegate to layout manager', () => {
-      const direction = 'horizontal' as const;
+    test('splitViewport should delegate to layout manager with viewport object', () => {
+      const direction = 'down' as const;
       mockLayoutManager.splitViewport.mockReturnValue(mockViewport);
 
       const result = workspace.splitViewport(mockViewport, direction);
@@ -131,7 +178,39 @@ describe('Workspace Unit Tests', () => {
       expect(result).toBe(mockViewport);
     });
 
-    test('removeViewport should delegate to layout manager', () => {
+    test('splitViewport should resolve ID to viewport object before delegating', () => {
+      const viewportId = 'test-viewport-id';
+      const direction = 'down' as const;
+
+      // Mock findViewportById to return the viewport
+      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
+      mockLayoutManager.splitViewport.mockReturnValue(mockViewport);
+
+      const result = workspace.splitViewport(viewportId, direction);
+
+      // Should call findViewportById with the ID
+      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      // Should call splitViewport with the resolved viewport object
+      expect(mockLayoutManager.splitViewport).toHaveBeenCalledWith(mockViewport, direction);
+      expect(result).toBe(mockViewport);
+    });
+
+    test('splitViewport should throw error when viewport ID not found', () => {
+      const viewportId = 'non-existent-id';
+      const direction = 'down' as const;
+
+      // Mock findViewportById to return null
+      mockLayoutManager.findViewportById.mockReturnValue(null);
+
+      expect(() => workspace.splitViewport(viewportId, direction)).toThrow(
+        'Viewport not found: non-existent-id'
+      );
+
+      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockLayoutManager.splitViewport).not.toHaveBeenCalled();
+    });
+
+    test('removeViewport should delegate to layout manager with viewport objects', () => {
       mockLayoutManager.removeViewportByObject.mockReturnValue(true);
 
       const result = workspace.removeViewport(mockViewport);

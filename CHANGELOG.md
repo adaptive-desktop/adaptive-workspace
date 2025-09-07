@@ -31,6 +31,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet
 
+## [0.2.1] - 2025-01-07
+
+### Fixed
+
+#### 📚 Documentation Corrections
+
+- **Fixed README.md API Examples** - Corrected all code examples to use actual v0.2.0 API
+  - Replaced outdated `layout.insertViewport()` with `workspace.createViewport()`
+  - Updated `layout.splitViewport({ row: 0, column: 0 })` to `workspace.splitViewport(viewport, direction)`
+  - Fixed coordinate system examples to use viewport IDs and screen bounds
+  - Removed references to non-existent tree-based positioning methods
+
+#### 📖 Vue.js Integration Documentation
+
+- **Added Comprehensive Vue Integration Guide** - Complete `VUE_INTEGRATION_GUIDE.md` with:
+  - Working Vue component examples with TypeScript support
+  - Pinia store integration patterns for state management
+  - Custom composables (`useAdaptiveWorkspace`, `useWorkspaceEvents`, `useWorkspaceShortcuts`)
+  - Event handling patterns and keyboard shortcuts
+  - Responsive design with ResizeObserver integration
+  - Error handling and debugging tools
+  - Performance optimization techniques
+  - Common troubleshooting solutions
+
+- **Updated README.md Vue Section** - Added practical Vue integration examples
+  - Basic component setup with reactive state
+  - CSS positioning and styling patterns
+  - Event handling and method exposure
+
+### Technical Details
+
+- All documentation now accurately reflects the v0.2.0 simplified viewport-based architecture
+- Removed confusing references to removed tree-based APIs
+- Added 1,500+ lines of Vue-specific integration guidance
+- Provided copy-paste ready components and composables
+
 ## [0.2.0] - 2025-01-07
 
 ### Added
@@ -103,7 +139,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/adaptive-desktop/adaptive-workspace/releases/tag/v0.1.0

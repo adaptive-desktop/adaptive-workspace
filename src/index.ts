@@ -16,4 +16,4 @@ export * from './utils/boundsUtils';
 export * from './utils/validation';
 
 // Version information
-export const VERSION = '0.2.0';
+export const VERSION = '0.2.1';

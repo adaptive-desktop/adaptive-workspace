@@ -81,7 +81,7 @@ export class Workspace implements WorkspaceInterface {
    * Remove a viewport
    */
   removeViewport(viewport: Viewport): boolean {
-    return this.layout.removeViewportByObject(viewport);
+    return this.layout.removeViewport(viewport);
   }
 
   /**

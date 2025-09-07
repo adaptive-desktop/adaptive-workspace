@@ -5,7 +5,7 @@
  * bounds, dimensions, and workspace areas in the layout system.
  */
 
-import { Bounds, Dimensions, WorkspaceBounds, RegionBounds, LayoutPath } from '../shared/types';
+import { Bounds, Dimensions } from '../shared/types';
 
 /**
  * Calculate the area of a bounds rectangle
@@ -109,22 +109,7 @@ export function createBounds(x: number, y: number, dimensions: Dimensions): Boun
   };
 }
 
-/**
- * Apply safe area constraints to workspace bounds
- */
-export function applySafeArea(workspace: WorkspaceBounds): Bounds {
-  if (!workspace.safeArea) {
-    return workspace;
-  }
 
-  const { safeArea } = workspace;
-  return {
-    x: workspace.x + safeArea.left,
-    y: workspace.y + safeArea.top,
-    width: workspace.width - safeArea.left - safeArea.right,
-    height: workspace.height - safeArea.top - safeArea.bottom,
-  };
-}
 
 /**
  * Check if dimensions meet minimum size requirements
@@ -162,15 +147,7 @@ export function clampDimensions(
   return { width, height };
 }
 
-/**
- * Create a RegionBounds object
- */
-export function createRegionBounds(path: LayoutPath, bounds: Bounds): RegionBounds {
-  return {
-    ...bounds,
-    path,
-  };
-}
+
 
 /**
  * Check if bounds are valid (positive dimensions)

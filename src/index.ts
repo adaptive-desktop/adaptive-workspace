@@ -11,12 +11,8 @@ export * from './viewport';
 export * from './layout';
 export * from './shared';
 
-// Legacy utility functions (TODO: organize into domains)
-export * from './utils/treeUtils';
-export * from './utils/pathUtils';
-export * from './utils/serialization';
+// Utility functions
 export * from './utils/boundsUtils';
-export * from './utils/layoutActions';
 export * from './utils/validation';
 
 // Version information

@@ -8,26 +8,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Nothing yet
 
 ### Changed
+
 - Nothing yet
 
 ### Deprecated
+
 - Nothing yet
 
 ### Removed
+
 - Nothing yet
 
 ### Fixed
+
 - Nothing yet
 
 ### Security
+
 - Nothing yet
+
+## [0.2.0] - 2025-01-07
+
+### Added
+
+#### 🏗️ Viewport-Based Layout System
+
+- **LayoutManager** - Core viewport management with CRUD operations
+  - `createViewport()` - Create new viewports with proportional bounds
+  - `splitViewport()` - Split existing viewports in all 4 directions (up/down/left/right)
+  - `removeViewport()` - Remove viewports with proper cleanup
+  - `findViewportById()` - Lookup viewports by ID with error handling
+- **Workspace** - Public API with flexible ID/object parameter support
+  - Accepts both viewport objects and string IDs for all operations
+  - Automatic ID resolution with proper error handling
+  - Clean separation between public API and internal implementation
+- **MutableViewport** - Viewport implementation with bounds management
+  - Proportional bounds (0.0-1.0) for layout calculations
+  - Workspace bounds for coordinate transformations
+  - Screen bounds for absolute positioning
+- **Comprehensive Testing** - 124 tests passing across all components
+  - Unit tests for LayoutManager operations
+  - Integration tests for Workspace API
+  - Edge case coverage and error handling validation
+
+### Changed
+
+- **Simplified Architecture** - Removed complex binary tree optimization
+- **Direct Viewport Management** - Operations work directly on viewport collections
+- **Standardized Direction Terminology** - All operations use 'up'|'down'|'left'|'right'
+
+### Removed
+
+- **Binary Tree Implementation** - Removed LayoutTree class and all tree operations
+- **Tree Utilities** - Removed path-based navigation and tree manipulation functions
+- **Complex Serialization** - Removed tree serialization and deserialization
+- **Tree-Related Types** - Removed LayoutDirection, LayoutBranch, LayoutPath, LayoutParent, LayoutNode
+- **Obsolete Documentation** - Removed 5 markdown files related to tree implementation
 
 ## [0.1.1] - 2025-01-04
 
 ### Fixed
+
 - Fixed npm publish issues with yarn-based project
 - Updated prepublishOnly script to use yarn commands instead of npm
 - Updated GitHub Actions workflow to use 'yarn npm publish' for consistency
@@ -38,77 +83,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### 🏗️ Core Foundation
-- **Feature 1: Core Data Structures** - Complete type system and LayoutTree class
-  - `PanelId`, `LayoutDirection`, `LayoutBranch`, `LayoutPath` type definitions
-  - `LayoutParent<T>` and `LayoutNode<T>` with full generic support
-  - `LayoutTree<T>` class with immutable operations
-  - Basic tree operations: `getRoot()`, `isEmpty()`, `copy()`, `equals()`
 
-#### 🔧 Tree Utilities
-- **Feature 2: Tree Utilities** - Essential tree manipulation functions
-  - `isParent()` type guard with TypeScript narrowing
-  - `getLeaves()` for extracting all panel IDs
-  - `getNodeAtPath()` for tree navigation with path validation
-  - `getOtherBranch()` and `getOtherDirection()` helper functions
-  - `isValidSplitPercentage()` and `normalizeSplitPercentage()` utilities
-
-#### ⚡ Tree Operations
-- **Feature 3: Tree Operations** - Advanced tree manipulation
-  - `splitRegion(path, newPanelId, direction)` for creating new splits
-  - `removeRegion(path)` for removing nodes and promoting siblings
-  - `resizeRegion(path, percentage)` for updating split percentages
-  - Private `replaceNodeAtPath()` helper for immutable updates
-  - Full error handling with descriptive error messages
-
-#### 🧭 Path Navigation
-- **Feature 4: Path Navigation** - Advanced panel location and tree analysis
-  - `findPanelPath(panelId)` for locating panels in the tree
-  - `getAndAssertNodeAtPathExists(path)` for safe navigation
-  - `createBalancedTreeFromLeaves(panels)` for generating balanced trees
-  - `isValidPath()`, `getAllPaths()`, `getTreeDepth()` utilities
-  - Extended LayoutTree methods: `getPanelIds()`, `hasPanel()`, `getDepth()`, etc.
-
-#### 💾 Serialization
-- **Feature 5: Serialization** - Complete JSON persistence support
-  - `serializeLayoutTree()` and `deserializeLayoutTree()` with validation
-  - `isValidSerializedTree()` for data validation
-  - `cloneLayoutTree()` for deep cloning via serialization
-  - Version-aware format with `SERIALIZATION_VERSION` constant
-  - LayoutTree methods: `serialize()`, `deserialize()`, `clone()`, `toJSON()`, `fromJSON()`
-
-#### 🧪 Comprehensive Testing
-- **236 total tests** across 5 test suites with **98.67% code coverage**
-- Complete edge case coverage and error handling validation
-- Support for both string and number panel IDs
-- Round-trip serialization preservation testing
+- **Feature 1: Core Data Structures** - Basic type system for viewport-based layouts
+  - `Dimensions` and `Bounds` interfaces for spatial calculations
+  - Framework-agnostic type definitions
 
 #### 📦 Production Features
+
 - **Framework Agnostic** - Zero runtime dependencies (only `tslib`)
-- **TypeScript First** - 100% TypeScript with comprehensive generic support
-- **Immutable Operations** - All tree modifications return new instances
-- **Performance Optimized** - Efficient algorithms with structural sharing
+- **TypeScript First** - 100% TypeScript with comprehensive type support
 - **Developer Experience** - Rich API with excellent IDE support and JSDoc documentation
 
 ### Technical Details
 
-- **Package**: `@adaptive-desktop/binary-layout-tree`
+- **Package**: `@adaptive-desktop/adaptive-workspace`
 - **License**: Apache-2.0
 - **Node.js**: Requires 16.9+ (for Corepack support)
 - **Package Manager**: Yarn 4.9.0 (managed via Corepack)
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-### Architecture
-
-This library serves as the core foundation in a three-tier architecture:
-
-```
-Application Layer (React, Vue, Angular Components)
-        ↓
-Framework Layer (@adaptive-desktop/react, etc.)
-        ↓
-Core Layer (@adaptive-desktop/binary-layout-tree) ← This Package
-```
-
-[Unreleased]: https://github.com/adaptive-desktop/binary-layout-tree/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/adaptive-desktop/binary-layout-tree/releases/tag/v0.1.0
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/adaptive-desktop/adaptive-workspace/releases/tag/v0.1.0

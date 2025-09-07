@@ -15,14 +15,12 @@ import {
   translateBounds,
   boundsToDimensions,
   createBounds,
-  applySafeArea,
   meetsMinimumSize,
   clampDimensions,
-  createRegionBounds,
   isValidBounds,
   normalizeBounds,
 } from '../src/utils/boundsUtils';
-import { Bounds, Dimensions, WorkspaceBounds, LayoutPath } from '../src/shared/types';
+import { Bounds, Dimensions } from '../src/shared/types';
 
 describe('Bounds Utilities', () => {
   const testBounds: Bounds = { x: 10, y: 20, width: 100, height: 50 };
@@ -147,47 +145,7 @@ describe('Bounds Utilities', () => {
     });
   });
 
-  describe('applySafeArea', () => {
-    const workspace: WorkspaceBounds = {
-      x: 0,
-      y: 0,
-      width: 1000,
-      height: 800,
-      safeArea: {
-        top: 20,
-        bottom: 30,
-        left: 10,
-        right: 15,
-      },
-    };
 
-    it('should apply safe area constraints', () => {
-      const safeBounds = applySafeArea(workspace);
-      expect(safeBounds).toEqual({
-        x: 10,
-        y: 20,
-        width: 975, // 1000 - 10 - 15
-        height: 750, // 800 - 20 - 30
-      });
-    });
-
-    it('should return original bounds when no safe area', () => {
-      const workspaceNoSafe: WorkspaceBounds = {
-        x: 0,
-        y: 0,
-        width: 1000,
-        height: 800,
-      };
-
-      const safeBounds = applySafeArea(workspaceNoSafe);
-      expect(safeBounds).toEqual({
-        x: 0,
-        y: 0,
-        width: 1000,
-        height: 800,
-      });
-    });
-  });
 
   describe('meetsMinimumSize', () => {
     it('should return true when dimensions meet minimum', () => {
@@ -220,17 +178,7 @@ describe('Bounds Utilities', () => {
     });
   });
 
-  describe('createRegionBounds', () => {
-    it('should create region bounds with path', () => {
-      const path: LayoutPath = ['leading', 'trailing'];
-      const regionBounds = createRegionBounds(path, testBounds);
 
-      expect(regionBounds).toEqual({
-        ...testBounds,
-        path,
-      });
-    });
-  });
 
   describe('isValidBounds', () => {
     it('should return true for valid bounds', () => {

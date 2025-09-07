@@ -77,7 +77,7 @@ describe('LayoutManager - findViewportById()', () => {
       expect(layoutManager.findViewportById(viewportId)).toBe(viewport);
 
       // Remove viewport
-      layoutManager.removeViewport(viewportId);
+      layoutManager.removeViewport(viewport);
 
       // Should not find it anymore
       expect(layoutManager.findViewportById(viewportId)).toBeNull();

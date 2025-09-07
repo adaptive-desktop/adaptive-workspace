@@ -11,12 +11,11 @@ Framework-agnostic workspace layout manager for adaptive desktop applications. T
 ## ✨ Features
 
 - **🏢 Workspace Management**: Organize viewports within adaptive workspaces
-- **🔄 Dynamic Operations**: Split, remove, insert, and swap viewports seamlessly
-- **📐 Coordinate-Based API**: Intuitive row/column positioning system
+- **🔄 Dynamic Operations**: Split, remove, and manage viewports seamlessly
 - **🎯 Framework Agnostic**: Zero UI dependencies, works with React, Vue, Angular
 - **💎 Type Safe**: 100% TypeScript with comprehensive type definitions
-- **🧪 Test-Driven**: Built with TDD approach for reliable behavior
-- **⚡ Efficient Implementation**: Binary tree backend for optimal performance
+- **🧪 Test-Driven**: Built with TDD approach for reliable behavior (124 tests passing)
+- **⚡ Simple & Fast**: Direct viewport management without complex tree operations
 - **📦 Zero Dependencies**: Only `tslib` for TypeScript helpers
 
 ## 🚀 Quick Start

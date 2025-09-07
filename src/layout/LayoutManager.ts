@@ -177,13 +177,8 @@ export class LayoutManager {
     return newViewport;
   }
 
-  removeViewport(viewportId: string): boolean {
-    const removed = this.viewports.delete(viewportId);
-    return removed;
-  }
-
-  removeViewportByObject(viewport: Viewport): boolean {
-    return this.removeViewport(viewport.id);
+  removeViewport(viewport: Viewport): boolean {
+    return this.viewports.delete(viewport.id);
   }
 
   swapViewports(viewport1: Viewport, viewport2: Viewport): boolean {

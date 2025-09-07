@@ -16,7 +16,6 @@ const mockLayoutManager: jest.Mocked<LayoutManager> = {
   createAdjacentViewport: jest.fn(),
   splitViewport: jest.fn(),
   removeViewport: jest.fn(),
-  removeViewportByObject: jest.fn(),
   swapViewports: jest.fn(),
   getViewports: jest.fn(),
   findViewportById: jest.fn(),
@@ -211,11 +210,11 @@ describe('Workspace Unit Tests', () => {
     });
 
     test('removeViewport should delegate to layout manager with viewport objects', () => {
-      mockLayoutManager.removeViewportByObject.mockReturnValue(true);
+      mockLayoutManager.removeViewport.mockReturnValue(true);
 
       const result = workspace.removeViewport(mockViewport);
 
-      expect(mockLayoutManager.removeViewportByObject).toHaveBeenCalledWith(mockViewport);
+      expect(mockLayoutManager.removeViewport).toHaveBeenCalledWith(mockViewport);
       expect(result).toBe(true);
     });
 

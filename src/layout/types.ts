@@ -43,8 +43,7 @@ export interface LayoutManagerInterface<T> {
     size?: { width?: number; height?: number }
   ): Viewport;
   splitViewport(viewport: Viewport, direction: 'up' | 'down' | 'left' | 'right'): Viewport;
-  removeViewport(viewportId: string): boolean;
-  removeViewportByObject(viewport: Viewport): boolean;
+  removeViewport(viewport: Viewport): boolean;
   swapViewports(viewport1: Viewport, viewport2: Viewport): boolean;
   getViewports(): Viewport[];
   findViewportById(id: string): Viewport | null;

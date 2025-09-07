@@ -30,7 +30,7 @@ describe('LayoutManager - removeViewport()', () => {
     it('should remove viewport and return true when viewport exists', () => {
       // Create a viewport
       const viewport = layoutManager.createViewport();
-      
+
       // Verify it exists
       expect(layoutManager.getViewports()).toHaveLength(1);
       expect(layoutManager.hasViewport(viewport.id)).toBe(true);
@@ -79,13 +79,13 @@ describe('LayoutManager - removeViewport()', () => {
       expect(result).toBe(true);
       expect(layoutManager.getViewports()).toHaveLength(2);
       expect(layoutManager.getViewportCount()).toBe(2);
-      
+
       // Verify correct viewports remain
       const remainingViewports = layoutManager.getViewports();
       expect(remainingViewports).toContain(viewport1);
       expect(remainingViewports).toContain(viewport3);
       expect(remainingViewports).not.toContain(viewport2);
-      
+
       // Verify hasViewport works correctly
       expect(layoutManager.hasViewport(viewport1.id)).toBe(true);
       expect(layoutManager.hasViewport(viewport2.id)).toBe(false);
@@ -95,7 +95,7 @@ describe('LayoutManager - removeViewport()', () => {
     it('should handle removing the same viewport twice', () => {
       // Create a viewport
       const viewport = layoutManager.createViewport();
-      
+
       // Remove it once
       const firstResult = layoutManager.removeViewport(viewport);
       expect(firstResult).toBe(true);
@@ -146,10 +146,10 @@ describe('LayoutManager - removeViewport()', () => {
     it('should handle viewport with special characters in ID', () => {
       // Create viewport (ID will be generated automatically)
       const viewport = layoutManager.createViewport();
-      
+
       // Remove it
       const result = layoutManager.removeViewport(viewport);
-      
+
       expect(result).toBe(true);
       expect(layoutManager.getViewports()).toHaveLength(0);
     });

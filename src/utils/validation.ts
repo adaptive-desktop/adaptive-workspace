@@ -5,10 +5,7 @@
  * and ensuring layout integrity.
  */
 
-import {
-  Bounds,
-  Dimensions,
-} from '../shared/types';
+import { Bounds, Dimensions } from '../shared/types';
 
 /**
  * Validate bounds object
@@ -84,6 +81,3 @@ export function validateSplitPercentage(percentage: number): {
     errors,
   };
 }
-
-
-

@@ -109,8 +109,6 @@ export function createBounds(x: number, y: number, dimensions: Dimensions): Boun
   };
 }
 
-
-
 /**
  * Check if dimensions meet minimum size requirements
  */
@@ -146,8 +144,6 @@ export function clampDimensions(
 
   return { width, height };
 }
-
-
 
 /**
  * Check if bounds are valid (positive dimensions)

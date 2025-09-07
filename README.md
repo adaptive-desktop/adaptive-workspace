@@ -36,96 +36,104 @@ pnpm add @adaptive-desktop/adaptive-workspace
 ### Basic Usage
 
 ```typescript
-import { createWorkspace } from '@adaptive-desktop/adaptive-workspace';
+import { WorkspaceFactory } from '@adaptive-desktop/adaptive-workspace';
 
 // Create a workspace
-const workspace = createWorkspace('main-workspace', {
+const workspace = WorkspaceFactory.create({
   x: 0,
   y: 0,
   width: 1920,
   height: 1080,
 });
 
-// Start with empty layout, then add first viewport
-let layout = workspace.layout;
-layout = layout.insertViewport([], 'editor');
+// Create the first viewport (spans full workspace)
+const editorViewport = workspace.createViewport();
 
-// Split the viewport horizontally
-layout = layout.splitViewport({ row: 0, column: 0 }, 'terminal', 'horizontal');
+// Split the viewport to create a terminal below
+const terminalViewport = workspace.splitViewport(editorViewport, 'down');
 
-// Insert a sidebar to the left
-layout = layout.insertViewport(
-  [
-    { row: 0, column: 0 },
-    { row: 1, column: 0 },
-  ],
-  'sidebar',
-  'left'
-);
+// Split the editor viewport to create a sidebar on the left
+const sidebarViewport = workspace.splitViewport(editorViewport, 'left');
 
 // Get all viewports
-const viewports = layout.getAllViewports(); // ['editor', 'terminal', 'sidebar']
+const viewports = workspace.getViewports();
+console.log(`Created ${viewports.length} viewports`); // Created 3 viewports
 
-// Find viewport position
-const editorPos = layout.getPositionForPanel('editor'); // { row: 0, column: 1 }
+// Each viewport has an ID and screen bounds
+viewports.forEach(viewport => {
+  console.log(`Viewport ${viewport.id}:`, viewport.screenBounds);
+  // Example: { x: 0, y: 0, width: 640, height: 540 }
+});
 ```
 
 ## 📖 Core Concepts
 
 ### Workspace Layout Management
 
-Adaptive workspaces organize content using a coordinate-based system:
+Adaptive workspaces organize content using a viewport-based system:
 
 - **Workspace** - The container with screen position and dimensions
-- **Layout** - Grid organization of viewports within the workspace
-- **Viewport** - Individual areas that contain panels
-- **Panel** - The actual content (editors, terminals, sidebars, etc.)
+- **Viewport** - Individual areas with absolute screen coordinates
+- **Proportional Bounds** - Viewport positions as 0.0-1.0 ratios within workspace
+- **Screen Bounds** - Absolute pixel coordinates for rendering
 
 ```typescript
 // Create VS Code-style layout step by step
-const workspace = createWorkspace('ide', { x: 0, y: 0, width: 1920, height: 1080 });
+const workspace = WorkspaceFactory.create({ x: 0, y: 0, width: 1920, height: 1080 });
 
-// Start empty, add editor
-let layout = workspace.layout.insertViewport([], 'editor');
+// Create main editor viewport (full workspace initially)
+const editor = workspace.createViewport();
 
-// Split horizontally for terminal
-layout = layout.splitViewport({ row: 0, column: 0 }, 'terminal', 'horizontal');
+// Split to create terminal below (editor shrinks, terminal gets bottom half)
+const terminal = workspace.splitViewport(editor, 'down');
 
-// Add sidebar to the left
-layout = layout.insertViewport(
-  [
-    { row: 0, column: 0 },
-    { row: 1, column: 0 },
-  ],
-  'sidebar',
-  'left'
-);
+// Split editor to create sidebar on left (editor shrinks, sidebar gets left portion)
+const sidebar = workspace.splitViewport(editor, 'left');
 
-// Result: sidebar | editor
-//                 | terminal
+// Result layout:
+// ┌─────────┬─────────────┐
+// │ sidebar │   editor    │
+// ├─────────┼─────────────┤
+// │         │  terminal   │
+// └─────────┴─────────────┘
+
+// Each viewport has screen coordinates for rendering
+console.log(sidebar.screenBounds);   // { x: 0, y: 0, width: 640, height: 1080 }
+console.log(editor.screenBounds);    // { x: 640, y: 0, width: 1280, height: 540 }
+console.log(terminal.screenBounds);  // { x: 640, y: 540, width: 1280, height: 540 }
 ```
 
-### Layout Operations
+### Viewport Operations
 
 ```typescript
-import { createWorkspace } from '@adaptive-desktop/adaptive-workspace';
+import { WorkspaceFactory } from '@adaptive-desktop/adaptive-workspace';
 
-const workspace = createWorkspace('main', { x: 0, y: 0, width: 800, height: 600 });
-let layout = workspace.layout.insertViewport([], 'panel1');
+const workspace = WorkspaceFactory.create({ x: 0, y: 0, width: 800, height: 600 });
 
-// Split operations
-layout = layout.splitViewport({ row: 0, column: 0 }, 'panel2', 'vertical');
+// Create initial viewport
+const viewport1 = workspace.createViewport();
 
-// Insert operations (add new row/column)
-layout = layout.insertViewport([{ row: 0, column: 0 }], 'panel3', 'above');
+// Split operations (creates new viewport, resizes existing)
+const viewport2 = workspace.splitViewport(viewport1, 'right');  // Split vertically
+const viewport3 = workspace.splitViewport(viewport1, 'down');   // Split horizontally
 
-// Swap operations
-layout = layout.swapViewports('panel1', 'panel2');
+// Create viewport with specific proportional bounds (0.0-1.0)
+const customViewport = workspace.createViewport({
+  x: 0.25,      // 25% from left
+  y: 0.25,      // 25% from top
+  width: 0.5,   // 50% of workspace width
+  height: 0.5   // 50% of workspace height
+});
 
-// Remove operations
-layout = layout.removeViewport({ row: 1, column: 0 });
+// Viewport management
+const allViewports = workspace.getViewports();
+const hasViewport = workspace.hasViewport(viewport1.id);
 
-// All operations are immutable - return new layout instances
+// Remove viewport
+workspace.removeViewport(viewport2);
+
+// Swap viewport positions
+workspace.swapViewports(viewport1, viewport3);
 ```
 
 ## 🏗️ Architecture
@@ -154,6 +162,286 @@ This library serves as the **core layer** in a three-tier architecture:
 │                 (This Package)                              │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+## 🖼️ Vue.js Integration Guide
+
+### Installation & Setup
+
+```bash
+npm install @adaptive-desktop/adaptive-workspace
+# or
+yarn add @adaptive-desktop/adaptive-workspace
+```
+
+### Basic Vue Component
+
+```vue
+<template>
+  <div class="adaptive-workspace" :style="workspaceStyle">
+    <div
+      v-for="viewport in viewports"
+      :key="viewport.id"
+      class="viewport"
+      :style="getViewportStyle(viewport)"
+      @click="selectViewport(viewport)"
+    >
+      <!-- Your content components go here -->
+      <slot :viewport="viewport" :isSelected="selectedViewport?.id === viewport.id">
+        <div class="viewport-content">
+          <h3>Viewport {{ viewport.id.slice(-6) }}</h3>
+          <p>{{ viewport.screenBounds.width }}x{{ viewport.screenBounds.height }}</p>
+        </div>
+      </slot>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { WorkspaceFactory, type Viewport } from '@adaptive-desktop/adaptive-workspace';
+
+// Props
+interface Props {
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  width: 1200,
+  height: 800,
+  x: 0,
+  y: 0
+});
+
+// Reactive state
+const workspace = ref();
+const viewports = ref<Viewport[]>([]);
+const selectedViewport = ref<Viewport | null>(null);
+
+// Computed styles
+const workspaceStyle = computed(() => ({
+  position: 'relative',
+  width: `${props.width}px`,
+  height: `${props.height}px`,
+  border: '2px solid #ccc',
+  overflow: 'hidden'
+}));
+
+// Convert viewport screen bounds to CSS styles
+const getViewportStyle = (viewport: Viewport) => ({
+  position: 'absolute',
+  left: `${viewport.screenBounds.x - props.x}px`,
+  top: `${viewport.screenBounds.y - props.y}px`,
+  width: `${viewport.screenBounds.width}px`,
+  height: `${viewport.screenBounds.height}px`,
+  border: '1px solid #999',
+  backgroundColor: selectedViewport.value?.id === viewport.id ? '#e3f2fd' : '#f5f5f5'
+});
+
+// Methods
+const selectViewport = (viewport: Viewport) => {
+  selectedViewport.value = viewport;
+};
+
+const splitViewport = (direction: 'up' | 'down' | 'left' | 'right') => {
+  if (!selectedViewport.value) return;
+
+  const newViewport = workspace.value.splitViewport(selectedViewport.value, direction);
+  refreshViewports();
+  selectedViewport.value = newViewport;
+};
+
+const removeViewport = () => {
+  if (!selectedViewport.value || viewports.value.length <= 1) return;
+
+  workspace.value.removeViewport(selectedViewport.value);
+  refreshViewports();
+  selectedViewport.value = viewports.value[0] || null;
+};
+
+const refreshViewports = () => {
+  viewports.value = workspace.value.getViewports();
+};
+
+// Initialize workspace
+onMounted(() => {
+  workspace.value = WorkspaceFactory.create({
+    x: props.x,
+    y: props.y,
+    width: props.width,
+    height: props.height
+  });
+
+  // Create initial viewport
+  const initialViewport = workspace.value.createViewport();
+  refreshViewports();
+  selectedViewport.value = initialViewport;
+});
+
+// Expose methods for parent components
+defineExpose({
+  splitViewport,
+  removeViewport,
+  selectViewport,
+  workspace: () => workspace.value,
+  selectedViewport: () => selectedViewport.value
+});
+</script>
+
+<style scoped>
+.adaptive-workspace {
+  font-family: Arial, sans-serif;
+}
+
+.viewport {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewport:hover {
+  background-color: #e8f5e8 !important;
+}
+
+.viewport-content {
+  text-align: center;
+  pointer-events: none;
+}
+</style>
+```
+
+### Advanced Usage with Controls
+
+```vue
+<template>
+  <div class="workspace-container">
+    <!-- Control Panel -->
+    <div class="controls">
+      <button @click="splitUp" :disabled="!selectedViewport">Split Up</button>
+      <button @click="splitDown" :disabled="!selectedViewport">Split Down</button>
+      <button @click="splitLeft" :disabled="!selectedViewport">Split Left</button>
+      <button @click="splitRight" :disabled="!selectedViewport">Split Right</button>
+      <button @click="removeSelected" :disabled="!selectedViewport || viewports.length <= 1">
+        Remove
+      </button>
+    </div>
+
+    <!-- Workspace Component -->
+    <AdaptiveWorkspace
+      ref="workspaceRef"
+      :width="1200"
+      :height="600"
+      @viewport-selected="onViewportSelected"
+    >
+      <template #default="{ viewport, isSelected }">
+        <YourContentComponent
+          :viewport="viewport"
+          :is-selected="isSelected"
+        />
+      </template>
+    </AdaptiveWorkspace>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import AdaptiveWorkspace from './AdaptiveWorkspace.vue';
+
+const workspaceRef = ref();
+const selectedViewport = ref(null);
+const viewports = ref([]);
+
+const onViewportSelected = (viewport) => {
+  selectedViewport.value = viewport;
+};
+
+const splitUp = () => workspaceRef.value?.splitViewport('up');
+const splitDown = () => workspaceRef.value?.splitViewport('down');
+const splitLeft = () => workspaceRef.value?.splitViewport('left');
+const splitRight = () => workspaceRef.value?.splitViewport('right');
+const removeSelected = () => workspaceRef.value?.removeViewport();
+</script>
+```
+
+### Reactive State Management
+
+For complex applications, integrate with Pinia or Vuex:
+
+```typescript
+// stores/workspace.ts
+import { defineStore } from 'pinia';
+import { WorkspaceFactory, type Workspace, type Viewport } from '@adaptive-desktop/adaptive-workspace';
+
+export const useWorkspaceStore = defineStore('workspace', {
+  state: () => ({
+    workspace: null as Workspace | null,
+    viewports: [] as Viewport[],
+    selectedViewportId: null as string | null
+  }),
+
+  getters: {
+    selectedViewport: (state) =>
+      state.viewports.find(v => v.id === state.selectedViewportId) || null,
+
+    viewportCount: (state) => state.viewports.length
+  },
+
+  actions: {
+    initializeWorkspace(bounds: { x: number; y: number; width: number; height: number }) {
+      this.workspace = WorkspaceFactory.create(bounds);
+      const initialViewport = this.workspace.createViewport();
+      this.refreshViewports();
+      this.selectedViewportId = initialViewport.id;
+    },
+
+    splitViewport(direction: 'up' | 'down' | 'left' | 'right') {
+      if (!this.workspace || !this.selectedViewport) return;
+
+      const newViewport = this.workspace.splitViewport(this.selectedViewport, direction);
+      this.refreshViewports();
+      this.selectedViewportId = newViewport.id;
+    },
+
+    removeViewport(viewport?: Viewport) {
+      if (!this.workspace) return;
+
+      const targetViewport = viewport || this.selectedViewport;
+      if (!targetViewport || this.viewports.length <= 1) return;
+
+      this.workspace.removeViewport(targetViewport);
+      this.refreshViewports();
+
+      // Select first available viewport
+      if (this.selectedViewportId === targetViewport.id) {
+        this.selectedViewportId = this.viewports[0]?.id || null;
+      }
+    },
+
+    selectViewport(viewportId: string) {
+      this.selectedViewportId = viewportId;
+    },
+
+    refreshViewports() {
+      if (this.workspace) {
+        this.viewports = this.workspace.getViewports();
+      }
+    }
+  }
+});
+```
+
+### Key Integration Points
+
+1. **Reactivity**: Use Vue's `ref()` and `computed()` to make workspace state reactive
+2. **Styling**: Convert `screenBounds` to CSS `position: absolute` styles
+3. **Events**: Handle viewport selection, splitting, and removal through Vue events
+4. **State Management**: Use Pinia/Vuex for complex workspace state across components
+5. **Lifecycle**: Initialize workspace in `onMounted()` hook
+6. **Props**: Make workspace dimensions configurable through component props
 
 ## 🔧 Development
 

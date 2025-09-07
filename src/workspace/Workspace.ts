@@ -5,7 +5,6 @@
  */
 
 import { WorkspaceInterface, WorkspaceConfig, ScreenBounds } from './types';
-import { LayoutManagerInterface } from '../layout/types';
 import { LayoutManager } from '../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../viewport';
 
@@ -18,7 +17,7 @@ import { Viewport, ProportionalBounds } from '../viewport';
 export class Workspace implements WorkspaceInterface {
   public readonly id: string;
   public readonly position: ScreenBounds;
-  public readonly layout: LayoutManagerInterface<string>;
+  public readonly layout: LayoutManager;
 
   constructor(config: WorkspaceConfig) {
     this.id = config.id;
@@ -42,17 +41,37 @@ export class Workspace implements WorkspaceInterface {
    * Create a viewport adjacent to existing viewports
    */
   createAdjacentViewport(
-    existingViewports: Viewport[],
-    direction: 'above' | 'below' | 'left' | 'right',
+    existingViewportsOrIds: (Viewport | string)[],
+    direction: 'up' | 'down' | 'left' | 'right',
     size?: { width?: number; height?: number }
   ): Viewport {
+    // Resolve any IDs to viewport objects
+    const existingViewports = existingViewportsOrIds.map(viewportOrId => {
+      if (typeof viewportOrId === 'string') {
+        const viewport = this.layout.findViewportById(viewportOrId);
+        if (!viewport) {
+          throw new Error(`Viewport not found: ${viewportOrId}`);
+        }
+        return viewport;
+      }
+      return viewportOrId;
+    });
+
     return this.layout.createAdjacentViewport(existingViewports, direction, size);
   }
 
   /**
    * Split a viewport into two viewports
    */
-  splitViewport(viewport: Viewport, direction: 'horizontal' | 'vertical'): Viewport {
+  splitViewport(viewportOrId: Viewport | string, direction: 'up' | 'down' | 'left' | 'right'): Viewport {
+    const viewport = typeof viewportOrId === 'string'
+      ? this.layout.findViewportById(viewportOrId)
+      : viewportOrId;
+
+    if (!viewport) {
+      throw new Error(`Viewport not found: ${viewportOrId}`);
+    }
+
     return this.layout.splitViewport(viewport, direction);
   }
 
@@ -101,8 +120,8 @@ export class Workspace implements WorkspaceInterface {
    * Create default layout manager
    * @private
    */
-  private createDefaultLayout(): LayoutManagerInterface<string> {
+  private createDefaultLayout(): LayoutManager {
     // TODO: Replace with proper LayoutTree-based implementation
-    return new LayoutManager<string>();
+    return new LayoutManager();
   }
 }

@@ -4,7 +4,7 @@
  * Core workspace-related types and interfaces.
  */
 
-import { LayoutManagerInterface } from '../layout';
+import { LayoutManager } from '../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../viewport/types';
 
 /**
@@ -23,7 +23,7 @@ export interface ScreenBounds {
 export interface WorkspaceConfig {
   id: string;
   position: ScreenBounds;
-  layout?: LayoutManagerInterface<string>; // Optional, will use default if not provided
+  layout?: LayoutManager; // Optional, will use default if not provided
 }
 
 /**
@@ -35,7 +35,7 @@ export interface WorkspaceConfig {
 export interface WorkspaceInterface {
   readonly id: string;
   readonly position: ScreenBounds;
-  readonly layout: LayoutManagerInterface<string>;
+  readonly layout: LayoutManager;
 
   // Viewport operations - create/split return new viewport, others return success/failure
   /**
@@ -53,18 +53,18 @@ export interface WorkspaceInterface {
    * @returns The new viewport object (shared reference)
    */
   createAdjacentViewport(
-    existingViewports: Viewport[],
-    direction: 'above' | 'below' | 'left' | 'right',
+    existingViewportsOrIds: (Viewport | string)[],
+    direction: 'up' | 'down' | 'left' | 'right',
     size?: { width?: number; height?: number }
   ): Viewport;
 
   /**
    * Split a viewport into two viewports
-   * @param viewport - Viewport object to split (will be mutated with new bounds)
-   * @param direction - Direction to split ('horizontal' | 'vertical')
+   * @param viewportOrId - Viewport object or ID to split (will be mutated with new bounds)
+   * @param direction - Direction to split ('up' | 'down' | 'left' | 'right')
    * @returns The new viewport object (shared reference)
    */
-  splitViewport(viewport: Viewport, direction: 'horizontal' | 'vertical'): Viewport;
+  splitViewport(viewportOrId: Viewport | string, direction: 'up' | 'down' | 'left' | 'right'): Viewport;
 
   /**
    * Remove a viewport (adjacent viewports expand to fill space)

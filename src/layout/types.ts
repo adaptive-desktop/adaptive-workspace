@@ -39,14 +39,15 @@ export interface LayoutManagerInterface<T> {
   createViewport(proportionalBounds?: ProportionalBounds): Viewport;
   createAdjacentViewport(
     existingViewports: Viewport[],
-    direction: 'above' | 'below' | 'left' | 'right',
+    direction: 'up' | 'down' | 'left' | 'right',
     size?: { width?: number; height?: number }
   ): Viewport;
-  splitViewport(viewport: Viewport, direction: 'horizontal' | 'vertical'): Viewport;
+  splitViewport(viewport: Viewport, direction: 'up' | 'down' | 'left' | 'right'): Viewport;
   removeViewport(viewportId: string): boolean;
   removeViewportByObject(viewport: Viewport): boolean;
   swapViewports(viewport1: Viewport, viewport2: Viewport): boolean;
   getViewports(): Viewport[];
+  findViewportById(id: string): Viewport | null;
   hasViewport(viewportId: string): boolean;
   setPosition(position: ScreenBounds): void;
 
@@ -61,7 +62,7 @@ export interface LayoutManagerInterface<T> {
   insertViewport(
     viewportPositions: ViewportPosition[],
     newViewportId: T,
-    direction?: 'above' | 'below' | 'left' | 'right'
+    direction?: 'up' | 'down' | 'left' | 'right'
   ): boolean;
 
   // Utility operations

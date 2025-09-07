@@ -64,13 +64,20 @@ export class LayoutManager {
     return Array.from(this.viewports.values());
   }
 
+  findViewportById(id: string): Viewport | null {
+    if (!id) {
+      return null;
+    }
+    return this.viewports.get(id) || null;
+  }
+
   hasViewport(viewportId: string): boolean {
     return this.viewports.has(viewportId);
   }
 
   createAdjacentViewport(
     existingViewports: Viewport[],
-    direction: 'above' | 'below' | 'left' | 'right',
+    direction: 'up' | 'down' | 'left' | 'right',
     size?: { width?: number; height?: number }
   ): Viewport {
     // TODO: Implement adjacent viewport calculation
@@ -79,11 +86,93 @@ export class LayoutManager {
     throw new Error('createAdjacentViewport not yet implemented');
   }
 
-  splitViewport(viewport: Viewport, direction: 'horizontal' | 'vertical'): Viewport {
-    // TODO: Implement viewport splitting
-    // For now, return a placeholder
-    console.log('splitViewport called with:', { viewport: viewport.id, direction });
-    throw new Error('splitViewport not yet implemented');
+  splitViewport(viewport: Viewport, direction: 'up' | 'down' | 'left' | 'right'): Viewport {
+    const mutableViewport = viewport as MutableViewport;
+    const currentBounds = mutableViewport.proportionalBounds;
+
+    let originalBounds: ProportionalBounds;
+    let newBounds: ProportionalBounds;
+
+    switch (direction) {
+      case 'down':
+        // Original viewport becomes top half
+        originalBounds = {
+          x: currentBounds.x,
+          y: currentBounds.y,
+          width: currentBounds.width,
+          height: currentBounds.height / 2,
+        };
+        // New viewport becomes bottom half
+        newBounds = {
+          x: currentBounds.x,
+          y: currentBounds.y + (currentBounds.height / 2),
+          width: currentBounds.width,
+          height: currentBounds.height / 2,
+        };
+        break;
+
+      case 'up':
+        // Original viewport becomes bottom half
+        originalBounds = {
+          x: currentBounds.x,
+          y: currentBounds.y + (currentBounds.height / 2),
+          width: currentBounds.width,
+          height: currentBounds.height / 2,
+        };
+        // New viewport becomes top half
+        newBounds = {
+          x: currentBounds.x,
+          y: currentBounds.y,
+          width: currentBounds.width,
+          height: currentBounds.height / 2,
+        };
+        break;
+
+      case 'right':
+        // Original viewport becomes left half
+        originalBounds = {
+          x: currentBounds.x,
+          y: currentBounds.y,
+          width: currentBounds.width / 2,
+          height: currentBounds.height,
+        };
+        // New viewport becomes right half
+        newBounds = {
+          x: currentBounds.x + (currentBounds.width / 2),
+          y: currentBounds.y,
+          width: currentBounds.width / 2,
+          height: currentBounds.height,
+        };
+        break;
+
+      case 'left':
+        // Original viewport becomes right half
+        originalBounds = {
+          x: currentBounds.x + (currentBounds.width / 2),
+          y: currentBounds.y,
+          width: currentBounds.width / 2,
+          height: currentBounds.height,
+        };
+        // New viewport becomes left half
+        newBounds = {
+          x: currentBounds.x,
+          y: currentBounds.y,
+          width: currentBounds.width / 2,
+          height: currentBounds.height,
+        };
+        break;
+
+      default:
+        throw new Error(`Invalid split direction: ${direction}`);
+    }
+
+    // Update original viewport bounds
+    mutableViewport.updateProportionalBounds(originalBounds);
+
+    // Create new viewport with calculated bounds
+    const newViewport = this.createViewportInternal(newBounds);
+
+    return newViewport;
   }
 
   removeViewport(viewportId: string): boolean {

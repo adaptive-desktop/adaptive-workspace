@@ -9,19 +9,19 @@ import { ScreenBounds } from '../types';
 
 describe('Workspace', () => {
   let workspace: Workspace;
-  const testPosition: ScreenBounds = { x: 0, y: 0, width: 800, height: 600 };
+  const testScreenBounds: ScreenBounds = { x: 0, y: 0, width: 800, height: 600 };
 
   beforeEach(() => {
     workspace = new Workspace({
       id: 'test-workspace-id',
-      screenBounds: testPosition,
+      screenBounds: testScreenBounds,
     });
   });
 
   describe('Workspace properties', () => {
     test('has correct id and screenBounds', () => {
       expect(workspace.id).toBe('test-workspace-id');
-      expect(workspace.screenBounds).toEqual(testPosition);
+      expect(workspace.screenBounds).toEqual(testScreenBounds);
     });
 
     test('has layout manager', () => {
@@ -45,10 +45,10 @@ describe('Workspace', () => {
 
       // Should have calculated screen bounds matching workspace
       expect(viewport.screenBounds).toEqual({
-        x: testPosition.x,
-        y: testPosition.y,
-        width: testPosition.width,
-        height: testPosition.height,
+        x: testScreenBounds.x,
+        y: testScreenBounds.y,
+        width: testScreenBounds.width,
+        height: testScreenBounds.height,
       });
 
       // Should be in viewport list
@@ -68,10 +68,10 @@ describe('Workspace', () => {
 
       // Should have calculated screen bounds for right third
       expect(viewport.screenBounds).toEqual({
-        x: testPosition.x + testPosition.width * 0.6667, // ~533
-        y: testPosition.y, // 0
-        width: testPosition.width * 0.3333, // ~267
-        height: testPosition.height, // 600
+        x: testScreenBounds.x + testScreenBounds.width * 0.6667, // ~533
+        y: testScreenBounds.y, // 0
+        width: testScreenBounds.width * 0.3333, // ~267
+        height: testScreenBounds.height, // 600
       });
     });
 

@@ -22,7 +22,7 @@ describe('LayoutManager - splitViewport()', () => {
 
   beforeEach(() => {
     layoutManager = new LayoutManager();
-    layoutManager.setPosition(testWorkspaceBounds);
+    layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 
   describe('splitViewport() down direction', () => {
@@ -128,7 +128,7 @@ describe('LayoutManager - splitViewport()', () => {
         width: 1200,
         height: 900,
       };
-      layoutManager.setPosition(newWorkspaceBounds);
+      layoutManager.setScreenBounds(newWorkspaceBounds);
 
       // Check original viewport screen bounds recalculate (top half)
       expect(originalViewport.screenBounds).toEqual({

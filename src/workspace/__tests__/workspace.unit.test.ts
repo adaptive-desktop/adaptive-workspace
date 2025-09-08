@@ -20,7 +20,7 @@ const mockLayoutManager: jest.Mocked<LayoutManager> = {
   getViewports: jest.fn(),
   findViewportById: jest.fn(),
   hasViewport: jest.fn(),
-  setPosition: jest.fn(),
+  setScreenBounds: jest.fn(),
 
   // Legacy operations (for compatibility)
   getViewportAt: jest.fn(),
@@ -59,7 +59,7 @@ describe('Workspace Unit Tests', () => {
     // Create workspace with mocked layout manager
     workspace = new Workspace({
       id: 'test-workspace',
-      position: testPosition,
+      screenBounds: testPosition,
       layout: mockLayoutManager,
     });
   });
@@ -67,23 +67,23 @@ describe('Workspace Unit Tests', () => {
   describe('Constructor', () => {
     test('should initialize with provided configuration', () => {
       expect(workspace.id).toBe('test-workspace');
-      expect(workspace.position).toEqual(testPosition);
+      expect(workspace.screenBounds).toEqual(testPosition);
       expect(workspace.layout).toBe(mockLayoutManager);
     });
 
-    test('should call setPosition on layout manager during construction', () => {
-      expect(mockLayoutManager.setPosition).toHaveBeenCalledWith(testPosition);
+    test('should call setScreenBounds on layout manager during construction', () => {
+      expect(mockLayoutManager.setScreenBounds).toHaveBeenCalledWith(testPosition);
     });
 
     test('should create default layout manager when none provided', () => {
       // Create workspace without layout manager
       const workspaceWithoutLayout = new Workspace({
         id: 'test-workspace-no-layout',
-        position: testPosition,
+        screenBounds: testPosition,
       });
 
       expect(workspaceWithoutLayout.id).toBe('test-workspace-no-layout');
-      expect(workspaceWithoutLayout.position).toEqual(testPosition);
+      expect(workspaceWithoutLayout.screenBounds).toEqual(testPosition);
       expect(workspaceWithoutLayout.layout).toBeDefined();
       // Should be a real LayoutManager instance, not our mock
       expect(workspaceWithoutLayout.layout).not.toBe(mockLayoutManager);
@@ -259,8 +259,8 @@ describe('Workspace Unit Tests', () => {
 
       workspace.updateScreenBounds(newScreenBounds);
 
-      expect(workspace.position).toEqual(newScreenBounds);
-      expect(mockLayoutManager.setPosition).toHaveBeenCalledWith(newScreenBounds);
+      expect(workspace.screenBounds).toEqual(newScreenBounds);
+      expect(mockLayoutManager.setScreenBounds).toHaveBeenCalledWith(newScreenBounds);
     });
 
     test('updateScreenBounds should be called twice - once in constructor, once in method', () => {
@@ -269,9 +269,9 @@ describe('Workspace Unit Tests', () => {
       workspace.updateScreenBounds(newScreenBounds);
 
       // Should be called twice: once in constructor, once in updateScreenBounds
-      expect(mockLayoutManager.setPosition).toHaveBeenCalledTimes(2);
-      expect(mockLayoutManager.setPosition).toHaveBeenNthCalledWith(1, testPosition); // Constructor
-      expect(mockLayoutManager.setPosition).toHaveBeenNthCalledWith(2, newScreenBounds); // updateScreenBounds
+      expect(mockLayoutManager.setScreenBounds).toHaveBeenCalledTimes(2);
+      expect(mockLayoutManager.setScreenBounds).toHaveBeenNthCalledWith(1, testPosition); // Constructor
+      expect(mockLayoutManager.setScreenBounds).toHaveBeenNthCalledWith(2, newScreenBounds); // updateScreenBounds
     });
   });
 });

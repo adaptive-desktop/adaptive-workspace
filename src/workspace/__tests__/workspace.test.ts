@@ -14,14 +14,14 @@ describe('Workspace', () => {
   beforeEach(() => {
     workspace = new Workspace({
       id: 'test-workspace-id',
-      position: testPosition,
+      screenBounds: testPosition,
     });
   });
 
   describe('Workspace properties', () => {
-    test('has correct id and position', () => {
+    test('has correct id and screenBounds', () => {
       expect(workspace.id).toBe('test-workspace-id');
-      expect(workspace.position).toEqual(testPosition);
+      expect(workspace.screenBounds).toEqual(testPosition);
     });
 
     test('has layout manager', () => {
@@ -146,8 +146,8 @@ describe('Workspace', () => {
       const newScreenBounds = { x: 100, y: 100, width: 1000, height: 800 };
       workspace.updateScreenBounds(newScreenBounds);
 
-      // Workspace position should be updated
-      expect(workspace.position).toEqual(newScreenBounds);
+      // Workspace screen bounds should be updated
+      expect(workspace.screenBounds).toEqual(newScreenBounds);
 
       // Viewport screen bounds should be recalculated
       const updatedViewport = workspace.getViewports()[0];

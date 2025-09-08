@@ -17,10 +17,10 @@ import { ulid } from 'ulid';
  */
 export class LayoutManager {
   private viewports: Map<string, MutableViewport> = new Map();
-  private workspaceBounds!: ScreenBounds; // Will be set by setPosition()
+  private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
 
   constructor() {
-    // Position will be set by workspace via setPosition()
+    // Screen bounds will be set by workspace via setScreenBounds()
   }
 
   // Viewport management operations
@@ -188,10 +188,10 @@ export class LayoutManager {
     return false;
   }
 
-  setPosition(position: ScreenBounds): void {
-    this.workspaceBounds = position;
+  setScreenBounds(screenBounds: ScreenBounds): void {
+    this.workspaceBounds = screenBounds;
     this.viewports.forEach((viewport) => {
-      viewport.updateWorkspaceBounds(position);
+      viewport.updateWorkspaceBounds(screenBounds);
     });
   }
 

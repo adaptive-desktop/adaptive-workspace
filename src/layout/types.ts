@@ -48,7 +48,7 @@ export interface LayoutManagerInterface<T> {
   getViewports(): Viewport[];
   findViewportById(id: string): Viewport | null;
   hasViewport(viewportId: string): boolean;
-  setPosition(position: ScreenBounds): void;
+  setScreenBounds(screenBounds: ScreenBounds): void;
 
   // Legacy viewport query operations (for compatibility)
   getViewportAt(position: ViewportPosition): T | null;

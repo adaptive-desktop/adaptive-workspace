@@ -23,7 +23,7 @@ describe('LayoutManager - removeViewport()', () => {
 
   beforeEach(() => {
     layoutManager = new LayoutManager();
-    layoutManager.setPosition(testWorkspaceBounds);
+    layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 
   describe('removeViewport()', () => {

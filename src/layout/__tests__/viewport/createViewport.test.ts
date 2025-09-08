@@ -23,7 +23,7 @@ describe('LayoutManager - createViewport()', () => {
 
   beforeEach(() => {
     layoutManager = new LayoutManager();
-    layoutManager.setPosition(testWorkspaceBounds);
+    layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 
   describe('createViewport() with no parameters', () => {

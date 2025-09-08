@@ -16,16 +16,16 @@ import { Viewport, ProportionalBounds } from '../viewport';
  */
 export class Workspace implements WorkspaceInterface {
   public readonly id: string;
-  public readonly position: ScreenBounds;
+  public readonly screenBounds: ScreenBounds;
   public readonly layout: LayoutManager;
 
   constructor(config: WorkspaceConfig) {
     this.id = config.id;
-    this.position = config.position;
+    this.screenBounds = config.screenBounds;
     this.layout = config.layout || this.createDefaultLayout();
 
-    // Initialize layout manager with workspace position
-    this.layout.setPosition(this.position);
+    // Initialize layout manager with workspace screen bounds
+    this.layout.setScreenBounds(this.screenBounds);
   }
 
   // Viewport operations
@@ -111,11 +111,11 @@ export class Workspace implements WorkspaceInterface {
    * Update workspace screen bounds (position and size)
    */
   updateScreenBounds(newScreenBounds: ScreenBounds): void {
-    // Update workspace position
-    (this as { -readonly [K in keyof this]: this[K] }).position = newScreenBounds;
+    // Update workspace screen bounds
+    (this as { -readonly [K in keyof this]: this[K] }).screenBounds = newScreenBounds;
 
     // Let layout manager handle all viewport updates
-    this.layout.setPosition(newScreenBounds);
+    this.layout.setScreenBounds(newScreenBounds);
   }
 
   /**

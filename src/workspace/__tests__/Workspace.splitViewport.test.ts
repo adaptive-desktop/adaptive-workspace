@@ -19,7 +19,7 @@ describe('Workspace - splitViewport with ID resolution', () => {
   beforeEach(() => {
     workspace = new Workspace({
       id: 'test-workspace',
-      position: testWorkspaceBounds,
+      screenBounds: testWorkspaceBounds,
     });
   });
 
@@ -83,11 +83,11 @@ describe('Workspace - splitViewport with ID resolution', () => {
       // Create two identical workspaces
       const workspace1 = new Workspace({
         id: 'test-workspace-1',
-        position: testWorkspaceBounds,
+        screenBounds: testWorkspaceBounds,
       });
       const workspace2 = new Workspace({
         id: 'test-workspace-2',
-        position: testWorkspaceBounds,
+        screenBounds: testWorkspaceBounds,
       });
 
       // Create initial viewports

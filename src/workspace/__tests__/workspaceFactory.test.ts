@@ -14,7 +14,7 @@ describe('WorkspaceFactory', () => {
 
       expect(workspace.id).toBeDefined();
       expect(workspace.id.length).toBeGreaterThan(0);
-      expect(workspace.position).toEqual({ x: 100, y: 200, width: 800, height: 600 });
+      expect(workspace.screenBounds).toEqual({ x: 100, y: 200, width: 800, height: 600 });
       expect(workspace.layout.getViewportCount()).toBe(0);
     });
 
@@ -24,11 +24,11 @@ describe('WorkspaceFactory', () => {
       expect(workspace).toBeInstanceOf(Workspace);
     });
 
-    test('sets correct position', () => {
-      const position = { x: 100, y: 200, width: 1920, height: 1080 };
-      const workspace = WorkspaceFactory.create(position);
+    test('sets correct screenBounds', () => {
+      const screenBounds = { x: 100, y: 200, width: 1920, height: 1080 };
+      const workspace = WorkspaceFactory.create(screenBounds);
 
-      expect(workspace.position).toEqual(position);
+      expect(workspace.screenBounds).toEqual(screenBounds);
     });
 
     test('creates workspace with empty layout', () => {

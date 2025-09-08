@@ -22,7 +22,7 @@ export interface ScreenBounds {
  */
 export interface WorkspaceConfig {
   id: string;
-  position: ScreenBounds;
+  screenBounds: ScreenBounds;
   layout?: LayoutManager; // Optional, will use default if not provided
 }
 
@@ -34,7 +34,7 @@ export interface WorkspaceConfig {
  */
 export interface WorkspaceInterface {
   readonly id: string;
-  readonly position: ScreenBounds;
+  readonly screenBounds: ScreenBounds;
   readonly layout: LayoutManager;
 
   // Viewport operations - create/split return new viewport, others return success/failure

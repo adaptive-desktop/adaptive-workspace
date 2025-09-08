@@ -21,7 +21,7 @@ describe('LayoutManager - findViewportById()', () => {
 
   beforeEach(() => {
     layoutManager = new LayoutManager();
-    layoutManager.setPosition(testWorkspaceBounds);
+    layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 
   describe('findViewportById()', () => {

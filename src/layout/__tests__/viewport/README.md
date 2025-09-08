@@ -53,7 +53,7 @@ const testWorkspaceBounds: ScreenBounds = {
 
 beforeEach(() => {
   layoutManager = new LayoutManager<string>();
-  layoutManager.setPosition(testWorkspaceBounds);
+  layoutManager.setScreenBounds(testWorkspaceBounds);
 });
 ```
 
@@ -91,7 +91,7 @@ expect(layoutManager.getViewportCount()).toBe(expectedCount);
 ```typescript
 // Change workspace bounds
 const newWorkspaceBounds: ScreenBounds = { /* new bounds */ };
-layoutManager.setPosition(newWorkspaceBounds);
+layoutManager.setScreenBounds(newWorkspaceBounds);
 
 // Verify viewport screen bounds recalculate
 expect(viewport.screenBounds).toEqual(expectedNewBounds);

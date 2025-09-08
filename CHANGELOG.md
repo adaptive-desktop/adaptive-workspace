@@ -31,6 +31,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet
 
+## [0.3.0] - 2025-01-08
+
+### Changed
+
+#### 🔄 Breaking Changes
+
+- **BREAKING: Renamed `updatePosition` to `updateScreenBounds`** - Method name now accurately reflects that it updates both position and size
+  - `Workspace.updatePosition(newPosition: ScreenBounds)` → `Workspace.updateScreenBounds(newScreenBounds: ScreenBounds)`
+  - Updated parameter name from `newPosition` to `newScreenBounds` for semantic consistency
+  - Method functionality remains identical - only naming has changed
+  - Updated all tests and documentation to reflect the new naming
+
+#### 📚 Documentation Updates
+
+- Updated Vue.js integration guide examples to use `updateScreenBounds`
+- Updated JSDoc comments to clarify that method handles both position and size changes
+
+### Migration Guide
+
+To migrate from v0.2.x to v0.3.0:
+
+```typescript
+// Before (v0.2.x)
+workspace.updatePosition({ x: 100, y: 100, width: 800, height: 600 });
+
+// After (v0.3.0)
+workspace.updateScreenBounds({ x: 100, y: 100, width: 800, height: 600 });
+```
+
 ## [0.2.1] - 2025-01-07
 
 ### Fixed
@@ -139,7 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.0...v0.1.1

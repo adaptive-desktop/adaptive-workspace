@@ -31,6 +31,93 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet
 
+## [0.4.0] - 2025-01-08
+
+### Breaking Changes
+
+#### 🔄 Consistent ScreenBounds Naming
+
+- **BREAKING: Renamed `Workspace.position` to `Workspace.screenBounds`** - Property name now accurately reflects that it contains both position and size
+  - `workspace.position` → `workspace.screenBounds`
+  - Updated parameter name in `WorkspaceConfig.position` → `WorkspaceConfig.screenBounds`
+  - Method functionality remains identical - only naming has changed
+
+- **BREAKING: Renamed `LayoutManager.setPosition()` to `setScreenBounds()`** - Method name now consistent with property naming
+  - `layoutManager.setPosition(bounds)` → `layoutManager.setScreenBounds(bounds)`
+  - `LayoutManagerInterface.setPosition()` → `LayoutManagerInterface.setScreenBounds()`
+  - Updated parameter name from `position` to `screenBounds` for semantic consistency
+
+#### 🧹 Removed Unused Legacy Interfaces
+
+- **BREAKING: Removed unused `ViewportPosition` interface** - Legacy grid-based interface that was never implemented
+- **BREAKING: Removed unused `ViewportBounds` interface** - Legacy grid-based interface that was never implemented
+- **BREAKING: Removed generic type parameter from `LayoutManagerInterface<T>`** - Now simply `LayoutManagerInterface`
+- **BREAKING: Removed legacy/compatibility methods from `LayoutManagerInterface`:**
+  - `getViewportAt()` - Never implemented
+  - `getAllViewports()` - Never implemented
+  - `getLayoutTemplate()` - Never implemented
+  - `getViewportBounds()` - Never implemented
+  - `insertViewport()` - Never implemented
+  - `isValidPosition()` - Never implemented
+  - `getPositionForViewport()` - Never implemented
+  - `canSplitViewport()` - Never implemented
+  - `canRemoveViewport()` - Never implemented
+
+### Changed
+
+#### 📚 API Consistency Improvements
+
+- **Consistent Terminology**: All properties, methods, and parameters now use "screenBounds" terminology throughout the codebase
+- **Better Semantic Clarity**: The naming now clearly indicates these represent both position (x, y) and size (width, height)
+- **Simplified Interface**: `LayoutManagerInterface` now only contains methods that are actually implemented and used
+- **Improved Developer Experience**: More intuitive and self-documenting API with consistent naming patterns
+
+#### 🔧 Updated Documentation
+
+- Updated all test files to use consistent `screenBounds` terminology
+- Updated all JSDoc comments to reflect new naming conventions
+- Updated Vue.js integration guide examples
+- Updated README examples and documentation
+
+### Migration Guide
+
+To migrate from v0.3.x to v0.4.0:
+
+```typescript
+// Before (v0.3.x)
+const workspace = new Workspace({
+  id: 'my-workspace',
+  position: { x: 100, y: 100, width: 800, height: 600 }
+});
+console.log(workspace.position); // Access position property
+layoutManager.setPosition(bounds); // Set layout manager bounds
+
+// After (v0.4.0)
+const workspace = new Workspace({
+  id: 'my-workspace',
+  screenBounds: { x: 100, y: 100, width: 800, height: 600 }
+});
+console.log(workspace.screenBounds); // Access screenBounds property
+layoutManager.setScreenBounds(bounds); // Set layout manager bounds
+```
+
+**Factory Methods:**
+```typescript
+// Before (v0.3.x)
+const workspace = WorkspaceFactory.create(position);
+const workspaceWithViewport = WorkspaceFactory.createWithViewport(position);
+
+// After (v0.4.0)
+const workspace = WorkspaceFactory.create(screenBounds);
+const workspaceWithViewport = WorkspaceFactory.createWithViewport(screenBounds);
+```
+
+**Key Changes:**
+- Replace all `position` property/parameter references with `screenBounds`
+- Replace `setPosition()` method calls with `setScreenBounds()`
+- Remove any references to unused legacy interfaces (`ViewportPosition`, `ViewportBounds`)
+- Update generic type usage: `LayoutManagerInterface<T>` → `LayoutManagerInterface`
+
 ## [0.3.0] - 2025-01-08
 
 ### Changed
@@ -168,7 +255,8 @@ workspace.updateScreenBounds({ x: 100, y: 100, width: 800, height: 600 });
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.1.1...v0.2.0

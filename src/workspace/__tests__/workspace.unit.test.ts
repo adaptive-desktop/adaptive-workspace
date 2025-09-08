@@ -21,18 +21,7 @@ const mockLayoutManager: jest.Mocked<LayoutManager> = {
   findViewportById: jest.fn(),
   hasViewport: jest.fn(),
   setScreenBounds: jest.fn(),
-
-  // Legacy operations (for compatibility)
-  getViewportAt: jest.fn(),
-  getAllViewports: jest.fn(),
   getViewportCount: jest.fn(),
-  getLayoutTemplate: jest.fn(),
-  getViewportBounds: jest.fn(),
-  insertViewport: jest.fn(),
-  isValidPosition: jest.fn(),
-  getPositionForViewport: jest.fn(),
-  canSplitViewport: jest.fn(),
-  canRemoveViewport: jest.fn(),
 
   // Private properties and methods (for LayoutManager compatibility)
   viewports: new Map(),

@@ -100,8 +100,8 @@ export interface WorkspaceInterface {
 
   // Position operations
   /**
-   * Update the workspace position
-   * @param newPosition - New screen bounds
+   * Update the workspace screen bounds (position and size)
+   * @param newScreenBounds - New screen bounds
    */
-  updatePosition(newPosition: ScreenBounds): void;
+  updateScreenBounds(newScreenBounds: ScreenBounds): void;
 }

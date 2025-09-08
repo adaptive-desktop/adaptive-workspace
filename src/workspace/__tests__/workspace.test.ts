@@ -139,37 +139,37 @@ describe('Workspace', () => {
       expect(result).toBe(false);
     });
 
-    test('updatePosition updates workspace position and propagates to viewports', () => {
+    test('updateScreenBounds updates workspace position and propagates to viewports', () => {
       const viewport = workspace.createViewport();
       const originalBounds = viewport.screenBounds;
 
-      const newPosition = { x: 100, y: 100, width: 1000, height: 800 };
-      workspace.updatePosition(newPosition);
+      const newScreenBounds = { x: 100, y: 100, width: 1000, height: 800 };
+      workspace.updateScreenBounds(newScreenBounds);
 
       // Workspace position should be updated
-      expect(workspace.position).toEqual(newPosition);
+      expect(workspace.position).toEqual(newScreenBounds);
 
       // Viewport screen bounds should be recalculated
       const updatedViewport = workspace.getViewports()[0];
       expect(updatedViewport.screenBounds).not.toEqual(originalBounds);
-      expect(updatedViewport.screenBounds.x).toBe(newPosition.x);
-      expect(updatedViewport.screenBounds.y).toBe(newPosition.y);
+      expect(updatedViewport.screenBounds.x).toBe(newScreenBounds.x);
+      expect(updatedViewport.screenBounds.y).toBe(newScreenBounds.y);
     });
 
-    test('updatePosition handles multiple viewports', () => {
+    test('updateScreenBounds handles multiple viewports', () => {
       workspace.createViewport({ x: 0, y: 0, width: 0.5, height: 1.0 });
       workspace.createViewport({ x: 0.5, y: 0, width: 0.5, height: 1.0 });
 
-      const newPosition = { x: 200, y: 150, width: 1200, height: 900 };
-      workspace.updatePosition(newPosition);
+      const newScreenBounds = { x: 200, y: 150, width: 1200, height: 900 };
+      workspace.updateScreenBounds(newScreenBounds);
 
       // Both viewports should have updated screen bounds
       const viewports = workspace.getViewports();
       expect(viewports).toHaveLength(2);
 
       viewports.forEach((viewport) => {
-        expect(viewport.screenBounds.x).toBeGreaterThanOrEqual(newPosition.x);
-        expect(viewport.screenBounds.y).toBeGreaterThanOrEqual(newPosition.y);
+        expect(viewport.screenBounds.x).toBeGreaterThanOrEqual(newScreenBounds.x);
+        expect(viewport.screenBounds.y).toBeGreaterThanOrEqual(newScreenBounds.y);
       });
     });
   });

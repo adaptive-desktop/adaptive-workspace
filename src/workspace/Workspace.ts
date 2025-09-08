@@ -108,14 +108,14 @@ export class Workspace implements WorkspaceInterface {
 
   // Position operations
   /**
-   * Update workspace position
+   * Update workspace screen bounds (position and size)
    */
-  updatePosition(newPosition: ScreenBounds): void {
+  updateScreenBounds(newScreenBounds: ScreenBounds): void {
     // Update workspace position
-    (this as { -readonly [K in keyof this]: this[K] }).position = newPosition;
+    (this as { -readonly [K in keyof this]: this[K] }).position = newScreenBounds;
 
     // Let layout manager handle all viewport updates
-    this.layout.setPosition(newPosition);
+    this.layout.setPosition(newScreenBounds);
   }
 
   /**

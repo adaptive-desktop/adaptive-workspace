@@ -202,7 +202,7 @@ onMounted(() => {
 // Watch for prop changes
 watch([() => props.width, () => props.height, () => props.x, () => props.y], () => {
   if (workspace.value) {
-    workspace.value.updatePosition({
+    workspace.value.updateScreenBounds({
       x: props.x,
       y: props.y,
       width: props.width,
@@ -566,7 +566,7 @@ export const useWorkspaceStore = defineStore('workspace', {
       this.workspaceBounds = { ...this.workspaceBounds, ...bounds };
 
       if (this.workspace) {
-        this.workspace.updatePosition(this.workspaceBounds);
+        this.workspace.updateScreenBounds(this.workspaceBounds);
         this.refreshViewports();
       }
     },

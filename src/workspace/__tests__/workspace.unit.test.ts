@@ -254,24 +254,24 @@ describe('Workspace Unit Tests', () => {
   });
 
   describe('Position Operations', () => {
-    test('updatePosition should update workspace position and call layout manager', () => {
-      const newPosition: ScreenBounds = { x: 100, y: 100, width: 1000, height: 800 };
+    test('updateScreenBounds should update workspace position and call layout manager', () => {
+      const newScreenBounds: ScreenBounds = { x: 100, y: 100, width: 1000, height: 800 };
 
-      workspace.updatePosition(newPosition);
+      workspace.updateScreenBounds(newScreenBounds);
 
-      expect(workspace.position).toEqual(newPosition);
-      expect(mockLayoutManager.setPosition).toHaveBeenCalledWith(newPosition);
+      expect(workspace.position).toEqual(newScreenBounds);
+      expect(mockLayoutManager.setPosition).toHaveBeenCalledWith(newScreenBounds);
     });
 
-    test('updatePosition should be called twice - once in constructor, once in method', () => {
-      const newPosition: ScreenBounds = { x: 200, y: 200, width: 1200, height: 900 };
+    test('updateScreenBounds should be called twice - once in constructor, once in method', () => {
+      const newScreenBounds: ScreenBounds = { x: 200, y: 200, width: 1200, height: 900 };
 
-      workspace.updatePosition(newPosition);
+      workspace.updateScreenBounds(newScreenBounds);
 
-      // Should be called twice: once in constructor, once in updatePosition
+      // Should be called twice: once in constructor, once in updateScreenBounds
       expect(mockLayoutManager.setPosition).toHaveBeenCalledTimes(2);
       expect(mockLayoutManager.setPosition).toHaveBeenNthCalledWith(1, testPosition); // Constructor
-      expect(mockLayoutManager.setPosition).toHaveBeenNthCalledWith(2, newPosition); // updatePosition
+      expect(mockLayoutManager.setPosition).toHaveBeenNthCalledWith(2, newScreenBounds); // updateScreenBounds
     });
   });
 });

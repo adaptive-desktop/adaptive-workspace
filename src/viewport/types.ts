@@ -25,4 +25,7 @@ export interface ProportionalBounds {
 export interface Viewport {
   readonly id: string;
   readonly screenBounds: ScreenBounds;
+  readonly isMinimized: boolean;
+  readonly isMaximized: boolean;
+  readonly previousBounds?: ScreenBounds;
 }

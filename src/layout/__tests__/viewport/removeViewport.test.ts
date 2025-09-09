@@ -34,7 +34,7 @@ describe('LayoutManager - removeViewport()', () => {
 
       // Verify it exists
       expect(layoutManager.getViewports()).toHaveLength(1);
-      expect(layoutManager.hasViewport(viewport.id)).toBe(true);
+      expect(layoutManager.findViewportById(viewport.id)).toBe(viewport);
       expect(layoutManager.getViewportCount()).toBe(1);
 
       // Remove viewport
@@ -43,7 +43,7 @@ describe('LayoutManager - removeViewport()', () => {
       // Should return true and remove viewport
       expect(result).toBe(true);
       expect(layoutManager.getViewports()).toHaveLength(0);
-      expect(layoutManager.hasViewport(viewport.id)).toBe(false);
+      expect(layoutManager.findViewportById(viewport.id)).toBeNull();
       expect(layoutManager.getViewportCount()).toBe(0);
     });
 
@@ -52,6 +52,8 @@ describe('LayoutManager - removeViewport()', () => {
       const fakeViewport = {
         id: 'fake-viewport-id',
         screenBounds: { x: 0, y: 0, width: 500, height: 400 },
+        isMinimized: false,
+        isMaximized: false,
       };
 
       // Try to remove non-existent viewport
@@ -87,10 +89,10 @@ describe('LayoutManager - removeViewport()', () => {
       expect(remainingViewports).toContain(viewport3);
       expect(remainingViewports).not.toContain(viewport2);
 
-      // Verify hasViewport works correctly
-      expect(layoutManager.hasViewport(viewport1.id)).toBe(true);
-      expect(layoutManager.hasViewport(viewport2.id)).toBe(false);
-      expect(layoutManager.hasViewport(viewport3.id)).toBe(true);
+      // Verify lookup works correctly
+      expect(layoutManager.findViewportById(viewport1.id)).toBe(viewport1);
+      expect(layoutManager.findViewportById(viewport2.id)).toBeNull();
+      expect(layoutManager.findViewportById(viewport3.id)).toBe(viewport3);
     });
 
     it('should handle removing the same viewport twice', () => {

@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 
-Framework-agnostic workspace layout manager for adaptive desktop applications. The core foundation for building VS Code-style layouts with resizable viewports, dynamic panel organization, and flexible workspace management.
+Framework-agnostic workspace layout manager for adaptive desktop applications. The core foundation for building VS Code-style layouts with resizable viewports, dynamic viewport organization, and flexible workspace management.
 
 ## ✨ Features
 
@@ -360,7 +360,7 @@ defineExpose({
 ```vue
 <template>
   <div class="workspace-container">
-    <!-- Control Panel -->
+    <!-- Controls -->
     <div class="controls">
       <button @click="splitUp" :disabled="!selectedViewport">Split Up</button>
       <button @click="splitDown" :disabled="!selectedViewport">Split Down</button>

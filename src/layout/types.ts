@@ -14,26 +14,23 @@ import { ScreenBounds } from '../workspace/types';
  * The Workspace contains a Layout, and the LayoutManager handles the layout operations.
  * This is an internal interface - the public API is on the Workspace class.
  *
- * Operation Rules:
- * - removeViewport: Adjacent viewports expand proportionally (configurable in future)
- * - splitViewport: Original content position determined by implementation
- * - swapViewports: Clean exchange of two viewports, no layout changes
- * - insertViewport: New viewport spans the range of specified positions
+ * Viewport state operations (minimize/maximize/restore) return boolean success indicators.
  */
 export interface LayoutManagerInterface {
-  // Viewport management operations
-  createViewport(proportionalBounds?: ProportionalBounds): Viewport;
   createAdjacentViewport(
     existingViewports: Viewport[],
     direction: 'up' | 'down' | 'left' | 'right',
     size?: { width?: number; height?: number }
   ): Viewport;
+  createViewport(proportionalBounds?: ProportionalBounds): Viewport;
   splitViewport(viewport: Viewport, direction: 'up' | 'down' | 'left' | 'right'): Viewport;
-  removeViewport(viewport: Viewport): boolean;
-  swapViewports(viewport1: Viewport, viewport2: Viewport): boolean;
+
+  minimizeViewport(viewport: Viewport): boolean;
+  maximizeViewport(viewport: Viewport): boolean;
+  restoreViewport(viewport: Viewport): boolean;
+
   getViewports(): Viewport[];
   findViewportById(id: string): Viewport | null;
-  hasViewport(viewportId: string): boolean;
   setScreenBounds(screenBounds: ScreenBounds): void;
   getViewportCount(): number;
 }

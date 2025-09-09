@@ -62,21 +62,23 @@ export interface WorkspaceInterface {
 
   /**
    * Split a viewport into two viewports
-   * @param viewportOrId - Viewport object or ID to split (will be mutated with new bounds)
+   * @param viewport - Viewport object or ID to split
    * @param direction - Direction to split ('up' | 'down' | 'left' | 'right')
-   * @returns The new viewport object (shared reference)
+   * @param ratio - Split ratio (defaults to 0.5, will be clamped to respect minimum viewport sizes)
+   * @returns Object containing the ID of the newly created viewport
    */
   splitViewport(
-    viewportOrId: Viewport | string,
-    direction: 'up' | 'down' | 'left' | 'right'
+    viewport: Viewport | string,
+    direction: 'up' | 'down' | 'left' | 'right',
+    ratio?: number
   ): Viewport;
 
   /**
-   * Remove a viewport (adjacent viewports expand to fill space)
-   * @param viewport - Viewport object to remove
+   * Remove a viewport
+   * @param viewport - Viewport object or ID to remove
    * @returns Success/failure of the operation
    */
-  removeViewport(viewport: Viewport): boolean;
+  removeViewport(viewport: Viewport | string): boolean;
 
   /**
    * Swap the positions of two viewports
@@ -99,6 +101,27 @@ export interface WorkspaceInterface {
    * @returns True if viewport exists
    */
   hasViewport(viewportId: string): boolean;
+
+  /**
+   * Minimize a viewport (not supported yet)
+   * @param viewportId - ID of the viewport to minimize
+   * @returns Success/failure of the operation
+   */
+  minimizeViewport(viewport: Viewport | string): boolean;
+
+  /**
+   * Maximize a viewport (not supported yet)
+   * @param viewportId - ID of the viewport to maximize
+   * @returns Success/failure of the operation
+   */
+  maximizeViewport(viewport: Viewport | string): boolean;
+
+  /**
+   * Restore a viewport (not supported yet)
+   * @param viewportId - ID of the viewport to restore
+   * @returns Success/failure of the operation
+   */
+  restoreViewport(viewport: Viewport | string): boolean;
 
   // Position operations
   /**

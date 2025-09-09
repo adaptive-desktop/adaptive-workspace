@@ -96,11 +96,11 @@ describe('Workspace', () => {
     test('splitViewport works correctly', () => {
       const viewport = workspace.createViewport();
 
-      const newViewport = workspace.splitViewport(viewport, 'down');
+      const result = workspace.splitViewport(viewport, 'down');
 
-      expect(newViewport).toBeDefined();
-      expect(newViewport.id).toBeDefined();
-      expect(newViewport.id).not.toBe(viewport.id);
+      expect(result).toBeDefined();
+      expect(result.id).toBeDefined();
+      expect(result.id).not.toBe(viewport.id);
       expect(workspace.getViewports()).toHaveLength(2);
     });
 
@@ -108,11 +108,11 @@ describe('Workspace', () => {
       const viewport = workspace.createViewport();
       const viewportId = viewport.id;
 
-      const newViewport = workspace.splitViewport(viewportId, 'down');
+      const result = workspace.splitViewport(viewportId, 'down');
 
-      expect(newViewport).toBeDefined();
-      expect(newViewport.id).toBeDefined();
-      expect(newViewport.id).not.toBe(viewport.id);
+      expect(result).toBeDefined();
+      expect(result.id).toBeDefined();
+      expect(result.id).not.toBe(viewport.id);
       expect(workspace.getViewports()).toHaveLength(2);
     });
 

@@ -34,49 +34,12 @@ export class LayoutManager {
     return this.createViewportInternal(bounds);
   }
 
-  /**
-   * Private method to create a new viewport with specified proportional bounds
-   * Sets ID, workspace bounds, and adds to viewport collection
-   */
-  private createViewportInternal(proportionalBounds: ProportionalBounds): MutableViewport {
-    const id = this.idGenerator.generate();
-
-    const viewport = new MutableViewport({
-      id,
-      proportionalBounds,
-      workspaceBounds: this.workspaceBounds,
-    });
-
-    this.viewports.set(id, viewport);
-
-    return viewport;
-  }
-
-  private findLargestAvailableSpace(): ProportionalBounds {
-    if (this.viewports.size === 0) {
-      // No existing viewports - use full workspace
-      return { x: 0, y: 0, width: 1.0, height: 1.0 };
-    }
-
-    // Throw error if there are already viewports - space calculation not implemented yet
-    throw new Error(
-      'findLargestAvailableSpace not implemented for existing viewports. Please provide explicit proportional bounds.'
-    );
-  }
-
   getViewports(): Viewport[] {
     return Array.from(this.viewports.values());
   }
 
   findViewportById(id: string): Viewport | null {
-    if (!id) {
-      return null;
-    }
     return this.viewports.get(id) || null;
-  }
-
-  hasViewport(viewportId: string): boolean {
-    return this.viewports.has(viewportId);
   }
 
   createAdjacentViewport(
@@ -90,7 +53,11 @@ export class LayoutManager {
     throw new Error('createAdjacentViewport not yet implemented');
   }
 
-  splitViewport(viewport: Viewport, direction: 'up' | 'down' | 'left' | 'right'): Viewport {
+  splitViewport(
+    viewport: Viewport,
+    direction: 'up' | 'down' | 'left' | 'right',
+    _ratio?: number
+  ): Viewport {
     const mutableViewport = viewport as MutableViewport;
     const currentBounds = mutableViewport.proportionalBounds;
 
@@ -199,5 +166,50 @@ export class LayoutManager {
 
   getViewportCount(): number {
     return this.viewports.size;
+  }
+
+  minimizeViewport(_viewport: Viewport): boolean {
+    // Not implemented yet
+    return false;
+  }
+
+  maximizeViewport(_viewport: Viewport): boolean {
+    // Not implemented yet
+    return false;
+  }
+
+  restoreViewport(_viewport: Viewport): boolean {
+    // Not implemented yet
+    return false;
+  }
+
+  /**
+   * Private method to create a new viewport with specified proportional bounds
+   * Sets ID, workspace bounds, and adds to viewport collection
+   */
+  private createViewportInternal(proportionalBounds: ProportionalBounds): MutableViewport {
+    const id = this.idGenerator.generate();
+
+    const viewport = new MutableViewport({
+      id,
+      proportionalBounds,
+      workspaceBounds: this.workspaceBounds,
+    });
+
+    this.viewports.set(id, viewport);
+
+    return viewport;
+  }
+
+  private findLargestAvailableSpace(): ProportionalBounds {
+    if (this.viewports.size === 0) {
+      // No existing viewports - use full workspace
+      return { x: 0, y: 0, width: 1.0, height: 1.0 };
+    }
+
+    // Throw error if there are already viewports - space calculation not implemented yet
+    throw new Error(
+      'findLargestAvailableSpace not implemented for existing viewports. Please provide explicit proportional bounds.'
+    );
   }
 }

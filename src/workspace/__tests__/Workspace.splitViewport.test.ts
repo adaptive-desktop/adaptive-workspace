@@ -31,17 +31,20 @@ describe('Workspace - splitViewport with ID resolution', () => {
       const originalViewport = workspace.createViewport();
 
       // Split using viewport object
-      const newViewport = workspace.splitViewport(originalViewport, 'down');
+      const result = workspace.splitViewport(originalViewport, 'down');
 
-      expect(newViewport).toBeDefined();
-      expect(newViewport.id).toBeDefined();
-      expect(newViewport.id).not.toBe(originalViewport.id);
+      expect(result).toBeDefined();
+      expect(result.id).toBeDefined();
+      expect(result.id).not.toBe(originalViewport.id);
 
       // Check that both viewports exist
       const allViewports = workspace.getViewports();
       expect(allViewports).toHaveLength(2);
       expect(allViewports).toContain(originalViewport);
-      expect(allViewports).toContain(newViewport);
+
+      const newViewport = workspace.layout.findViewportById(result.id);
+      expect(newViewport).toBeDefined();
+      expect(allViewports).toContain(newViewport!);
     });
   });
 
@@ -52,17 +55,20 @@ describe('Workspace - splitViewport with ID resolution', () => {
       const viewportId = originalViewport.id;
 
       // Split using viewport ID
-      const newViewport = workspace.splitViewport(viewportId, 'down');
+      const result = workspace.splitViewport(viewportId, 'down');
 
-      expect(newViewport).toBeDefined();
-      expect(newViewport.id).toBeDefined();
-      expect(newViewport.id).not.toBe(originalViewport.id);
+      expect(result).toBeDefined();
+      expect(result.id).toBeDefined();
+      expect(result.id).not.toBe(originalViewport.id);
 
       // Check that both viewports exist
       const allViewports = workspace.getViewports();
       expect(allViewports).toHaveLength(2);
       expect(allViewports).toContain(originalViewport);
-      expect(allViewports).toContain(newViewport);
+
+      const newViewport = workspace.layout.findViewportById(result.id);
+      expect(newViewport).toBeDefined();
+      expect(allViewports).toContain(newViewport!);
     });
 
     it('should throw error for non-existent viewport ID', () => {
@@ -99,12 +105,15 @@ describe('Workspace - splitViewport with ID resolution', () => {
       const viewport2 = workspace2.createViewport();
 
       // Split one using object, one using ID
-      const newViewport1 = workspace1.splitViewport(viewport1, 'right');
-      const newViewport2 = workspace2.splitViewport(viewport2.id, 'right');
+      const result1 = workspace1.splitViewport(viewport1, 'right');
+      const result2 = workspace2.splitViewport(viewport2.id, 'right');
 
       // Both should have same proportional bounds
       expect(viewport1.screenBounds).toEqual(viewport2.screenBounds);
-      expect(newViewport1.screenBounds).toEqual(newViewport2.screenBounds);
+
+      const newViewport1 = workspace1.layout.findViewportById(result1.id);
+      const newViewport2 = workspace2.layout.findViewportById(result2.id);
+      expect(newViewport1?.screenBounds).toEqual(newViewport2?.screenBounds);
     });
   });
 });

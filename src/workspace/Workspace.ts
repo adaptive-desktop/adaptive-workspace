@@ -67,52 +67,48 @@ export class Workspace implements WorkspaceInterface {
    * Split a viewport into two viewports
    */
   splitViewport(
-    viewportOrId: Viewport | string,
-    direction: 'up' | 'down' | 'left' | 'right'
+    viewport: Viewport | string,
+    direction: 'up' | 'down' | 'left' | 'right',
+    ratio?: number
   ): Viewport {
-    const viewport =
-      typeof viewportOrId === 'string' ? this.layout.findViewportById(viewportOrId) : viewportOrId;
-
-    if (!viewport) {
-      throw new Error(`Viewport not found: ${viewportOrId}`);
-    }
-
-    return this.layout.splitViewport(viewport, direction);
+    const viewportObj = this.resolveViewport(viewport);
+    return this.layout.splitViewport(viewportObj, direction, ratio);
   }
 
-  /**
-   * Remove a viewport
-   */
-  removeViewport(viewport: Viewport): boolean {
-    return this.layout.removeViewport(viewport);
+  removeViewport(viewport: Viewport | string): boolean {
+    const viewportObj = this.resolveViewport(viewport);
+    return this.layout.removeViewport(viewportObj);
   }
 
-  /**
-   * Swap two viewports
-   */
-  swapViewports(viewport1: Viewport, viewport2: Viewport): boolean {
-    return this.layout.swapViewports(viewport1, viewport2);
+  swapViewports(viewport1: Viewport | string, viewport2: Viewport | string): boolean {
+    const viewport1Obj = this.resolveViewport(viewport1);
+    const viewport2Obj = this.resolveViewport(viewport2);
+    return this.layout.swapViewports(viewport1Obj, viewport2Obj);
   }
 
-  // Viewport queries
-  /**
-   * Get all viewports
-   */
   getViewports(): Viewport[] {
     return this.layout.getViewports();
   }
 
-  /**
-   * Check if viewport exists
-   */
   hasViewport(viewportId: string): boolean {
-    return this.layout.hasViewport(viewportId);
+    return this.layout.findViewportById(viewportId) !== null;
   }
 
-  // Position operations
-  /**
-   * Update workspace screen bounds (position and size)
-   */
+  minimizeViewport(viewport: Viewport | string): boolean {
+    const viewportObj = this.resolveViewport(viewport);
+    return this.layout.minimizeViewport(viewportObj);
+  }
+
+  maximizeViewport(viewport: Viewport | string): boolean {
+    const viewportObj = this.resolveViewport(viewport);
+    return this.layout.maximizeViewport(viewportObj);
+  }
+
+  restoreViewport(viewport: Viewport | string): boolean {
+    const viewportObj = this.resolveViewport(viewport);
+    return this.layout.restoreViewport(viewportObj);
+  }
+
   updateScreenBounds(newScreenBounds: ScreenBounds): void {
     // Update workspace screen bounds
     (this as { -readonly [K in keyof this]: this[K] }).screenBounds = newScreenBounds;
@@ -128,5 +124,16 @@ export class Workspace implements WorkspaceInterface {
   private createDefaultLayout(): LayoutManager {
     // TODO: Replace with proper LayoutTree-based implementation
     return new LayoutManager(this.idGenerator);
+  }
+
+  private resolveViewport(viewportOrId: Viewport | string): Viewport {
+    if (typeof viewportOrId === 'string') {
+      const viewport = this.layout.findViewportById(viewportOrId);
+      if (!viewport) {
+        throw new Error(`Viewport not found: ${viewportOrId}`);
+      }
+      return viewport;
+    }
+    return viewportOrId;
   }
 }

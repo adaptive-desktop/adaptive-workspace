@@ -18,6 +18,9 @@ export class MutableViewport implements Viewport {
   public id: string;
   public proportionalBounds: ProportionalBounds;
   public screenBounds!: ScreenBounds; // Regular property, initialized in updateScreenBounds()
+  public isMinimized: boolean = false;
+  public isMaximized: boolean = false;
+  public previousBounds?: ScreenBounds;
   private workspaceBounds: ScreenBounds;
 
   constructor(config: {
@@ -60,5 +63,45 @@ export class MutableViewport implements Viewport {
       width: this.workspaceBounds.width * this.proportionalBounds.width,
       height: this.workspaceBounds.height * this.proportionalBounds.height,
     };
+  }
+
+  /**
+   * Set viewport to minimized state
+   */
+  setMinimized(minimized: boolean): void {
+    this.isMinimized = minimized;
+    if (minimized) {
+      this.isMaximized = false;
+    }
+  }
+
+  /**
+   * Set viewport to maximized state and store previous bounds for restoration
+   */
+  setMaximized(maximized: boolean): void {
+    if (maximized && !this.isMaximized) {
+      // Store current bounds before maximizing
+      this.previousBounds = { ...this.screenBounds };
+    }
+    this.isMaximized = maximized;
+    if (maximized) {
+      this.isMinimized = false;
+    }
+  }
+
+  /**
+   * Restore viewport from minimized or maximized state
+   */
+  restore(): void {
+    this.isMinimized = false;
+    this.isMaximized = false;
+    // previousBounds will be used by layout manager to restore proportional bounds
+  }
+
+  /**
+   * Clear the stored previous bounds (used after restoration is complete)
+   */
+  clearPreviousBounds(): void {
+    this.previousBounds = undefined;
   }
 }

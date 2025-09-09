@@ -6,6 +6,7 @@
 
 import { LayoutManager } from '../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../viewport/types';
+import { IdGenerator } from '../shared/types';
 
 /**
  * Screen coordinates and dimensions
@@ -24,6 +25,7 @@ export interface WorkspaceConfig {
   id: string;
   screenBounds: ScreenBounds;
   layout?: LayoutManager; // Optional, will use default if not provided
+  idGenerator: IdGenerator; // Required - explicit ID generation strategy
 }
 
 /**

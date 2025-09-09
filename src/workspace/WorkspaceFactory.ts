@@ -4,9 +4,16 @@
  * Factory class for creating workspaces with auto-generated IDs.
  */
 
-import { ulid } from 'ulid';
 import { Workspace } from './Workspace';
 import { ScreenBounds } from './types';
+import { IdGenerator } from '../shared/types';
+
+/**
+ * Configuration for creating a workspace via WorkspaceFactory
+ */
+export interface WorkspaceFactoryConfig extends ScreenBounds {
+  idGenerator: IdGenerator; // Required - explicit ID generation strategy
+}
 
 /**
  * WorkspaceFactory class
@@ -17,16 +24,17 @@ export class WorkspaceFactory {
   /**
    * Create a new workspace
    *
-   * Creates a workspace with auto-generated ULID and starts empty (no viewports).
+   * Creates a workspace with the provided ID generator and starts empty (no viewports).
    *
-   * @param screenBounds - Screen bounds for the workspace
+   * @param config - Configuration including screen bounds and ID generator
    * @returns New workspace instance with auto-generated ID
    */
-  static create(screenBounds: ScreenBounds): Workspace {
-    const id = ulid();
+  static create(config: WorkspaceFactoryConfig): Workspace {
+    const id = config.idGenerator.generate();
     return new Workspace({
       id,
-      screenBounds,
+      screenBounds: { x: config.x, y: config.y, width: config.width, height: config.height },
+      idGenerator: config.idGenerator,
     });
   }
 
@@ -35,11 +43,11 @@ export class WorkspaceFactory {
    *
    * Creates a workspace and adds a single viewport that spans the full workspace.
    *
-   * @param screenBounds - Screen bounds for the workspace
+   * @param config - Configuration including screen bounds and ID generator
    * @returns New workspace instance with one viewport
    */
-  static createWithViewport(screenBounds: ScreenBounds): Workspace {
-    const workspace = WorkspaceFactory.create(screenBounds);
+  static createWithViewport(config: WorkspaceFactoryConfig): Workspace {
+    const workspace = WorkspaceFactory.create(config);
     // TODO: Add viewport when createViewport is implemented
     // workspace.createViewport();
     return workspace;

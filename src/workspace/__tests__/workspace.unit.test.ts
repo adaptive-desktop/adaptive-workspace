@@ -8,6 +8,7 @@ import { Workspace } from '../Workspace';
 import { ScreenBounds } from '../types';
 import { LayoutManager } from '../../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../../viewport/types';
+import { TestIdGenerator } from '../../shared/TestIdGenerator';
 
 // Mock the LayoutManager
 const mockLayoutManager: jest.Mocked<LayoutManager> = {
@@ -50,6 +51,7 @@ describe('Workspace Unit Tests', () => {
       id: 'test-workspace',
       screenBounds: testScreenBounds,
       layout: mockLayoutManager,
+      idGenerator: new TestIdGenerator('viewport'),
     });
   });
 
@@ -69,6 +71,7 @@ describe('Workspace Unit Tests', () => {
       const workspaceWithoutLayout = new Workspace({
         id: 'test-workspace-no-layout',
         screenBounds: testScreenBounds,
+        idGenerator: new TestIdGenerator('viewport'),
       });
 
       expect(workspaceWithoutLayout.id).toBe('test-workspace-no-layout');

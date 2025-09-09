@@ -6,6 +6,7 @@
 
 import { Workspace } from '../Workspace';
 import { ScreenBounds } from '../types';
+import { TestIdGenerator } from '../../shared/TestIdGenerator';
 
 describe('Workspace', () => {
   let workspace: Workspace;
@@ -15,6 +16,7 @@ describe('Workspace', () => {
     workspace = new Workspace({
       id: 'test-workspace-id',
       screenBounds: testScreenBounds,
+      idGenerator: new TestIdGenerator('viewport'),
     });
   });
 

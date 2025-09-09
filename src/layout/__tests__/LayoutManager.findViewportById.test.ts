@@ -9,6 +9,7 @@
 
 import { LayoutManager } from '../LayoutManager';
 import { ScreenBounds } from '../../workspace/types';
+import { TestIdGenerator } from '../../shared/TestIdGenerator';
 
 describe('LayoutManager - findViewportById()', () => {
   let layoutManager: LayoutManager;
@@ -20,7 +21,7 @@ describe('LayoutManager - findViewportById()', () => {
   };
 
   beforeEach(() => {
-    layoutManager = new LayoutManager();
+    layoutManager = new LayoutManager(new TestIdGenerator('viewport'));
     layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 

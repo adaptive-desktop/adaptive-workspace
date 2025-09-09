@@ -11,6 +11,7 @@ import { LayoutManager } from '../../LayoutManager';
 import { MutableViewport } from '../../../viewport/MutableViewport';
 import { ProportionalBounds } from '../../../viewport/types';
 import { ScreenBounds } from '../../../workspace/types';
+import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 
 describe('LayoutManager - createViewport()', () => {
   let layoutManager: LayoutManager;
@@ -22,7 +23,7 @@ describe('LayoutManager - createViewport()', () => {
   };
 
   beforeEach(() => {
-    layoutManager = new LayoutManager();
+    layoutManager = new LayoutManager(new TestIdGenerator('viewport'));
     layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 

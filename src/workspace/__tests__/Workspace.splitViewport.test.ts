@@ -6,6 +6,7 @@
 
 import { Workspace } from '../Workspace';
 import { ScreenBounds } from '../types';
+import { TestIdGenerator } from '../../shared/TestIdGenerator';
 
 describe('Workspace - splitViewport with ID resolution', () => {
   let workspace: Workspace;
@@ -20,6 +21,7 @@ describe('Workspace - splitViewport with ID resolution', () => {
     workspace = new Workspace({
       id: 'test-workspace',
       screenBounds: testWorkspaceBounds,
+      idGenerator: new TestIdGenerator('viewport'),
     });
   });
 
@@ -84,10 +86,12 @@ describe('Workspace - splitViewport with ID resolution', () => {
       const workspace1 = new Workspace({
         id: 'test-workspace-1',
         screenBounds: testWorkspaceBounds,
+        idGenerator: new TestIdGenerator('viewport1'),
       });
       const workspace2 = new Workspace({
         id: 'test-workspace-2',
         screenBounds: testWorkspaceBounds,
+        idGenerator: new TestIdGenerator('viewport2'),
       });
 
       // Create initial viewports

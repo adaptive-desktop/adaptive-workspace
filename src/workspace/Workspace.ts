@@ -7,6 +7,7 @@
 import { WorkspaceInterface, WorkspaceConfig, ScreenBounds } from './types';
 import { LayoutManager } from '../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../viewport';
+import { IdGenerator } from '../shared/types';
 
 /**
  * Workspace class
@@ -18,10 +19,12 @@ export class Workspace implements WorkspaceInterface {
   public readonly id: string;
   public readonly screenBounds: ScreenBounds;
   public readonly layout: LayoutManager;
+  private readonly idGenerator: IdGenerator;
 
   constructor(config: WorkspaceConfig) {
     this.id = config.id;
     this.screenBounds = config.screenBounds;
+    this.idGenerator = config.idGenerator;
     this.layout = config.layout || this.createDefaultLayout();
 
     // Initialize layout manager with workspace screen bounds
@@ -124,6 +127,6 @@ export class Workspace implements WorkspaceInterface {
    */
   private createDefaultLayout(): LayoutManager {
     // TODO: Replace with proper LayoutTree-based implementation
-    return new LayoutManager();
+    return new LayoutManager(this.idGenerator);
   }
 }

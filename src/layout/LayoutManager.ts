@@ -7,7 +7,7 @@
 
 import { Viewport, ProportionalBounds, MutableViewport } from '../viewport';
 import { ScreenBounds } from '../workspace/types';
-import { ulid } from 'ulid';
+import { IdGenerator } from '../shared/types';
 
 /**
  * Layout Manager class
@@ -18,8 +18,10 @@ import { ulid } from 'ulid';
 export class LayoutManager {
   private viewports: Map<string, MutableViewport> = new Map();
   private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
+  private idGenerator: IdGenerator;
 
-  constructor() {
+  constructor(idGenerator: IdGenerator) {
+    this.idGenerator = idGenerator;
     // Screen bounds will be set by workspace via setScreenBounds()
   }
 
@@ -37,7 +39,7 @@ export class LayoutManager {
    * Sets ID, workspace bounds, and adds to viewport collection
    */
   private createViewportInternal(proportionalBounds: ProportionalBounds): MutableViewport {
-    const id = ulid();
+    const id = this.idGenerator.generate();
 
     const viewport = new MutableViewport({
       id,

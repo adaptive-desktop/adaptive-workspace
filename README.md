@@ -36,14 +36,15 @@ pnpm add @adaptive-desktop/adaptive-workspace
 ### Basic Usage
 
 ```typescript
-import { WorkspaceFactory } from '@adaptive-desktop/adaptive-workspace';
+import { WorkspaceFactory, DefaultUlidGenerator } from '@adaptive-desktop/adaptive-workspace';
 
-// Create a workspace
+// Create a workspace with default ULID generator
 const workspace = WorkspaceFactory.create({
   x: 0,
   y: 0,
   width: 1920,
   height: 1080,
+  idGenerator: new DefaultUlidGenerator(),
 });
 
 // Create the first viewport (spans full workspace)
@@ -66,6 +67,40 @@ viewports.forEach(viewport => {
 });
 ```
 
+### Custom ID Generators
+
+The library supports custom ID generation strategies for different environments:
+
+```typescript
+import { WorkspaceFactory, IdGenerator } from '@adaptive-desktop/adaptive-workspace';
+
+// Custom ID generator for React Native
+class ReactNativeIdGenerator implements IdGenerator {
+  private counter = 0;
+  private timestamp = Date.now();
+
+  generate(): string {
+    const now = Date.now();
+    if (now !== this.timestamp) {
+      this.timestamp = now;
+      this.counter = 0;
+    }
+
+    const random = Math.floor(Math.random() * 0x10000).toString(16).padStart(4, '0');
+    return `${this.timestamp.toString(16)}-${(++this.counter).toString(16).padStart(4, '0')}-${random}`;
+  }
+}
+
+// Use custom generator
+const workspace = WorkspaceFactory.create({
+  x: 0,
+  y: 0,
+  width: 1920,
+  height: 1080,
+  idGenerator: new ReactNativeIdGenerator(),
+});
+```
+
 ## 📖 Core Concepts
 
 ### Workspace Layout Management
@@ -79,7 +114,13 @@ Adaptive workspaces organize content using a viewport-based system:
 
 ```typescript
 // Create VS Code-style layout step by step
-const workspace = WorkspaceFactory.create({ x: 0, y: 0, width: 1920, height: 1080 });
+const workspace = WorkspaceFactory.create({
+  x: 0,
+  y: 0,
+  width: 1920,
+  height: 1080,
+  idGenerator: new DefaultUlidGenerator()
+});
 
 // Create main editor viewport (full workspace initially)
 const editor = workspace.createViewport();

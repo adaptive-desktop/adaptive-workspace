@@ -10,6 +10,7 @@
 import { LayoutManager } from '../../LayoutManager';
 import { MutableViewport } from '../../../viewport/MutableViewport';
 import { ScreenBounds } from '../../../workspace/types';
+import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 
 describe('LayoutManager - splitViewport()', () => {
   let layoutManager: LayoutManager;
@@ -21,7 +22,7 @@ describe('LayoutManager - splitViewport()', () => {
   };
 
   beforeEach(() => {
-    layoutManager = new LayoutManager();
+    layoutManager = new LayoutManager(new TestIdGenerator('viewport'));
     layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 

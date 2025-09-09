@@ -31,6 +31,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet
 
+
+## [0.6.0] - 2025-09-09
+
+### Changed
+- Consistent terminology: replaced "panel" with "viewport" across code and docs
+- Organized tests: moved Workspace method delegation checks into workspace.unit.test
+- Simplified `LayoutManager.findViewportById` (removed redundant falsy guard)
+
+### Removed
+- `LayoutManager.hasViewport` (Workspace determines existence via `findViewportById`)
+- `panel-api.test.ts` (redundant functionality tests removed; delegation verified in unit tests)
+
+### Added
+- Delegation unit tests in Workspace for `minimizeViewport`, `maximizeViewport`, and `restoreViewport`
+
+### Notes
+- Viewport state operations (minimize/maximize/restore) are placeholders and currently return `false` without changing state; behavior to be implemented in a future release.
+
 ## [0.5.0] - 2025-01-09
 
 ### Breaking Changes
@@ -428,7 +446,8 @@ workspace.updateScreenBounds({ x: 100, y: 100, width: 800, height: 600 });
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.1...v0.3.0

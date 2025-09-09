@@ -17,7 +17,7 @@ describe('WorkspaceFactory', () => {
         y: 200,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       expect(workspace.id).toBeDefined();
@@ -32,7 +32,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       expect(workspace).toBeInstanceOf(Workspace);
@@ -42,7 +42,7 @@ describe('WorkspaceFactory', () => {
       const screenBounds = { x: 100, y: 200, width: 1920, height: 1080 };
       const workspace = WorkspaceFactory.create({
         ...screenBounds,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       expect(workspace.screenBounds).toEqual(screenBounds);
@@ -54,7 +54,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       expect(workspace.layout.getViewportCount()).toBe(0);
@@ -66,14 +66,14 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
       const workspace2 = WorkspaceFactory.create({
         x: 0,
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       expect(workspace1.id).not.toBe(workspace2.id);
@@ -89,7 +89,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       expect(workspace).toBeInstanceOf(Workspace);
@@ -105,7 +105,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: testIdGenerator
+        idGenerator: testIdGenerator,
       });
 
       expect(workspace.id).toBe('custom-1');
@@ -118,7 +118,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: testIdGenerator
+        idGenerator: testIdGenerator,
       });
 
       // Create a viewport to test viewport ID generation
@@ -132,7 +132,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new DefaultUlidGenerator()
+        idGenerator: new DefaultUlidGenerator(),
       });
 
       const testWorkspace = WorkspaceFactory.create({
@@ -140,7 +140,7 @@ describe('WorkspaceFactory', () => {
         y: 0,
         width: 800,
         height: 600,
-        idGenerator: new TestIdGenerator('test')
+        idGenerator: new TestIdGenerator('test'),
       });
 
       // ULID should be 26 characters

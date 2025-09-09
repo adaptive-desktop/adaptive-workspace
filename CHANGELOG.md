@@ -31,6 +31,179 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet
 
+## [0.5.0] - 2025-01-09
+
+### Breaking Changes
+
+#### 🔧 Configurable ID Generator System
+
+- **BREAKING: WorkspaceFactory.create() now requires idGenerator parameter** - Enables React Native compatibility and custom ID generation strategies
+  - `WorkspaceFactory.create({ x, y, width, height })` → `WorkspaceFactory.create({ x, y, width, height, idGenerator })`
+  - `WorkspaceFactory.createWithViewport({ x, y, width, height })` → `WorkspaceFactory.createWithViewport({ x, y, width, height, idGenerator })`
+  - All workspace creation now requires explicit ID generation strategy
+
+- **BREAKING: Workspace constructor now requires idGenerator parameter** - Dependency injection for ID generation throughout the system
+  - `new Workspace({ id, screenBounds })` → `new Workspace({ id, screenBounds, idGenerator })`
+  - `WorkspaceConfig` interface now includes required `idGenerator: IdGenerator` field
+
+- **BREAKING: LayoutManager constructor now requires idGenerator parameter** - Enables custom viewport ID generation
+  - `new LayoutManager()` → `new LayoutManager(idGenerator: IdGenerator)`
+  - All viewport creation now uses injected ID generator instead of direct ULID calls
+
+### Added
+
+#### 🆔 ID Generator Architecture
+
+- **IdGenerator Interface** - Clean abstraction for ID generation strategies
+  ```typescript
+  interface IdGenerator {
+    generate(): string;
+  }
+  ```
+
+- **DefaultUlidGenerator** - Backward-compatible ULID implementation
+  ```typescript
+  const workspace = WorkspaceFactory.create({
+    x: 0, y: 0, width: 1920, height: 1080,
+    idGenerator: new DefaultUlidGenerator()
+  });
+  ```
+
+- **TestIdGenerator** - Predictable ID generation for unit testing
+  ```typescript
+  const testGenerator = new TestIdGenerator('viewport');
+  // Generates: viewport-1, viewport-2, viewport-3, etc.
+  ```
+
+#### 🔧 React Native Compatibility
+
+- **Custom ID Generator Support** - Solves React Native PRNG_DETECT errors
+  ```typescript
+  class ReactNativeIdGenerator implements IdGenerator {
+    generate(): string {
+      const timestamp = Date.now().toString(16);
+      const random = Math.floor(Math.random() * 0x10000).toString(16);
+      return `${timestamp}-${random}`;
+    }
+  }
+  ```
+
+- **Framework-Agnostic Design** - Works with any ID generation strategy
+- **Zero Breaking Changes for Core Logic** - Only affects ID generation, all other APIs unchanged
+
+#### 📚 Enhanced Documentation
+
+- **Comprehensive README Updates** - Added custom ID generator examples and React Native integration guide
+- **API Migration Examples** - Clear before/after code samples for upgrading
+- **Custom Generator Patterns** - Best practices for implementing custom ID generators
+
+#### 🧪 Comprehensive Testing
+
+- **131 Tests Passing** - Full test coverage including new ID generator functionality
+- **TestIdGenerator Integration** - All existing tests updated to use predictable test IDs
+- **Custom Generator Testing** - Validation of different ID generation strategies
+- **Integration Test Coverage** - End-to-end testing of dependency injection pattern
+
+### Changed
+
+#### 🏗️ Architecture Improvements
+
+- **Dependency Injection Pattern** - Clean separation of concerns for ID generation
+- **Type Safety Enhancements** - Full TypeScript support for all new interfaces
+- **Consistent API Design** - All ID generation follows the same pattern throughout the codebase
+
+#### 📖 Documentation Updates
+
+- **Updated All Examples** - README and documentation now show required idGenerator parameter
+- **Migration Guide** - Step-by-step instructions for upgrading from v0.4.x
+- **React Native Integration** - Detailed examples for React Native compatibility
+
+### Migration Guide
+
+To migrate from v0.4.x to v0.5.0:
+
+#### Basic Usage
+```typescript
+// Before (v0.4.x)
+const workspace = WorkspaceFactory.create({ x: 0, y: 0, width: 1920, height: 1080 });
+
+// After (v0.5.0)
+import { WorkspaceFactory, DefaultUlidGenerator } from '@adaptive-desktop/adaptive-workspace';
+
+const workspace = WorkspaceFactory.create({
+  x: 0,
+  y: 0,
+  width: 1920,
+  height: 1080,
+  idGenerator: new DefaultUlidGenerator()
+});
+```
+
+#### Direct Workspace Construction
+```typescript
+// Before (v0.4.x)
+const workspace = new Workspace({
+  id: 'my-workspace',
+  screenBounds: { x: 0, y: 0, width: 800, height: 600 }
+});
+
+// After (v0.5.0)
+const workspace = new Workspace({
+  id: 'my-workspace',
+  screenBounds: { x: 0, y: 0, width: 800, height: 600 },
+  idGenerator: new DefaultUlidGenerator()
+});
+```
+
+#### React Native Usage
+```typescript
+// React Native compatible implementation
+import { WorkspaceFactory, IdGenerator } from '@adaptive-desktop/adaptive-workspace';
+
+class ReactNativeIdGenerator implements IdGenerator {
+  private counter = 0;
+  private timestamp = Date.now();
+
+  generate(): string {
+    const now = Date.now();
+    if (now !== this.timestamp) {
+      this.timestamp = now;
+      this.counter = 0;
+    }
+
+    const random = Math.floor(Math.random() * 0x10000).toString(16).padStart(4, '0');
+    return `${this.timestamp.toString(16)}-${(++this.counter).toString(16).padStart(4, '0')}-${random}`;
+  }
+}
+
+const workspace = WorkspaceFactory.create({
+  x: 0, y: 0, width: 1920, height: 1080,
+  idGenerator: new ReactNativeIdGenerator()
+});
+```
+
+#### Testing
+```typescript
+// Use TestIdGenerator for predictable test IDs
+import { TestIdGenerator } from '@adaptive-desktop/adaptive-workspace';
+
+const testGenerator = new TestIdGenerator('test-viewport');
+const workspace = WorkspaceFactory.create({
+  x: 0, y: 0, width: 800, height: 600,
+  idGenerator: testGenerator
+});
+// Workspace ID: test-viewport-1
+// First viewport ID: test-viewport-2
+```
+
+**Key Changes:**
+- Add `idGenerator` parameter to all `WorkspaceFactory.create()` calls
+- Add `idGenerator` parameter to all `WorkspaceFactory.createWithViewport()` calls
+- Add `idGenerator` parameter to direct `Workspace` constructor calls
+- Import and use `DefaultUlidGenerator` for backward compatibility
+- Use `TestIdGenerator` in unit tests for predictable IDs
+- Implement custom `IdGenerator` for React Native compatibility
+
 ## [0.4.0] - 2025-01-08
 
 ### Breaking Changes
@@ -255,7 +428,8 @@ workspace.updateScreenBounds({ x: 100, y: 100, width: 800, height: 600 });
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.2.0...v0.2.1

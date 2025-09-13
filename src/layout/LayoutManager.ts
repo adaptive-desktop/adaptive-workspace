@@ -8,6 +8,8 @@
 import { Viewport, ProportionalBounds, MutableViewport } from '../viewport';
 import { ScreenBounds } from '../workspace/types';
 import { IdGenerator } from '../shared/types';
+import { LayoutContext } from './types';
+import { LayoutContextDetector } from './context/LayoutContextDetector';
 
 /**
  * Layout Manager class
@@ -19,6 +21,8 @@ export class LayoutManager {
   private viewports: Map<string, MutableViewport> = new Map();
   private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
   private idGenerator: IdGenerator;
+
+  private currentContext?: LayoutContext;
 
   constructor(idGenerator: IdGenerator) {
     this.idGenerator = idGenerator;
@@ -159,9 +163,25 @@ export class LayoutManager {
 
   setScreenBounds(screenBounds: ScreenBounds): void {
     this.workspaceBounds = screenBounds;
+    // Update context using LayoutContextDetector
+    this.currentContext = LayoutContextDetector.detectContext(screenBounds);
     this.viewports.forEach((viewport) => {
       viewport.updateWorkspaceBounds(screenBounds);
     });
+  }
+
+  /**
+   * Returns the current layout context (orientation, aspect ratio, etc)
+   */
+  getCurrentContext(): LayoutContext {
+    if (!this.currentContext && this.workspaceBounds) {
+      // Fallback: compute if not set
+      this.currentContext = LayoutContextDetector.detectContext(this.workspaceBounds);
+    }
+    if (!this.currentContext) {
+      throw new Error('Screen bounds not set. Cannot determine current context.');
+    }
+    return this.currentContext;
   }
 
   getViewportCount(): number {

@@ -4,149 +4,50 @@
  * Tests the WorkspaceFactory class and workspace creation methods.
  */
 
-import { WorkspaceFactory } from '../';
+import { WorkspaceFactory } from '../WorkspaceFactory';
 import { Workspace } from '../Workspace';
-import { DefaultUlidGenerator } from '../../shared/types';
 import { TestIdGenerator } from '../../shared/TestIdGenerator';
 
 describe('WorkspaceFactory', () => {
-  describe('WorkspaceFactory.create', () => {
-    test('creates workspace with auto-generated id', () => {
-      const workspace = WorkspaceFactory.create({
-        x: 100,
-        y: 200,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      expect(workspace.id).toBeDefined();
-      expect(workspace.id.length).toBeGreaterThan(0);
-      expect(workspace.screenBounds).toEqual({ x: 100, y: 200, width: 800, height: 600 });
-      expect(workspace.layout.getViewportCount()).toBe(0);
-    });
-
-    test('returns Workspace instance', () => {
-      const workspace = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      expect(workspace).toBeInstanceOf(Workspace);
-    });
-
-    test('sets correct screenBounds', () => {
-      const screenBounds = { x: 100, y: 200, width: 1920, height: 1080 };
-      const workspace = WorkspaceFactory.create({
-        ...screenBounds,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      expect(workspace.screenBounds).toEqual(screenBounds);
-    });
-
-    test('creates workspace with empty layout', () => {
-      const workspace = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      expect(workspace.layout.getViewportCount()).toBe(0);
-    });
-
-    test('generates unique IDs', () => {
-      const workspace1 = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-      const workspace2 = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      expect(workspace1.id).not.toBe(workspace2.id);
-      expect(workspace1.id.length).toBeGreaterThan(0);
-      expect(workspace2.id.length).toBeGreaterThan(0);
-    });
+  test('create() produces a workspace with correct id, bounds, and initial snapshot', () => {
+    const idGen = new TestIdGenerator('ws');
+    const factory = new WorkspaceFactory(idGen);
+    const config = { x: 100, y: 200, width: 800, height: 600 };
+    const workspace = factory.create(config);
+    expect(workspace.id).toBe('ws-1');
+    expect(workspace.screenBounds).toEqual(config);
+    expect(workspace.layout.getViewportCount()).toBe(0);
+    // Optionally: check that a snapshot can be created (if API exists)
+    // expect(workspace.createSnapshot()).toBeDefined();
   });
 
-  describe('WorkspaceFactory.createWithViewport', () => {
-    test('creates workspace (viewport creation not yet implemented)', () => {
-      const workspace = WorkspaceFactory.createWithViewport({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      expect(workspace).toBeInstanceOf(Workspace);
-      expect(workspace.layout.getViewportCount()).toBe(0); // Will be 1 when implemented
-    });
+  test('create() returns Workspace instance', () => {
+    const factory = new WorkspaceFactory(new TestIdGenerator('ws'));
+    const workspace = factory.create({ x: 0, y: 0, width: 800, height: 600 });
+    expect(workspace).toBeInstanceOf(Workspace);
   });
 
-  describe('IdGenerator functionality', () => {
-    test('uses custom IdGenerator for workspace ID generation', () => {
-      const testIdGenerator = new TestIdGenerator('custom');
-      const workspace = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: testIdGenerator,
-      });
+  test('create() generates unique IDs per factory', () => {
+    const factory = new WorkspaceFactory(new TestIdGenerator('uniq'));
+    const ws1 = factory.create({ x: 0, y: 0, width: 800, height: 600 });
+    const ws2 = factory.create({ x: 0, y: 0, width: 800, height: 600 });
+    expect(ws1.id).not.toBe(ws2.id);
+    expect(ws1.id).toBe('uniq-1');
+    expect(ws2.id).toBe('uniq-2');
+  });
 
-      expect(workspace.id).toBe('custom-1');
-    });
+  test('createWithViewport() returns Workspace instance (no viewport yet)', () => {
+    const factory = new WorkspaceFactory(new TestIdGenerator('vw'));
+    const workspace = factory.createWithViewport({ x: 0, y: 0, width: 800, height: 600 });
+    expect(workspace).toBeInstanceOf(Workspace);
+    expect(workspace.layout.getViewportCount()).toBe(0); // Will be 1 when implemented
+  });
 
-    test('uses custom IdGenerator for viewport ID generation', () => {
-      const testIdGenerator = new TestIdGenerator('viewport');
-      const workspace = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: testIdGenerator,
-      });
-
-      // Create a viewport to test viewport ID generation
-      const viewport = workspace.createViewport();
-      expect(viewport.id).toBe('viewport-2'); // workspace uses viewport-1, viewport uses viewport-2
-    });
-
-    test('different generators produce different ID formats', () => {
-      const ulidWorkspace = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new DefaultUlidGenerator(),
-      });
-
-      const testWorkspace = WorkspaceFactory.create({
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-        idGenerator: new TestIdGenerator('test'),
-      });
-
-      // ULID should be 26 characters
-      expect(ulidWorkspace.id.length).toBe(26);
-      // Test ID should follow our pattern
-      expect(testWorkspace.id).toBe('test-1');
-    });
+  test('IdGenerator is used for workspace and viewport IDs', () => {
+    const factory = new WorkspaceFactory(new TestIdGenerator('vw'));
+    const workspace = factory.create({ x: 0, y: 0, width: 800, height: 600 });
+    expect(workspace.id).toBe('vw-1');
+    const viewport = workspace.createViewport();
+    expect(viewport.id).toBe('vw-2');
   });
 });

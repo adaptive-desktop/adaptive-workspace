@@ -17,6 +17,12 @@ describe('LayoutContextManager', () => {
     expect(context.screenBounds).toEqual(laptopBounds);
   });
 
+  it('should include a viewports property in the context', () => {
+    const context = manager.getContext(laptopBounds);
+    expect(context).toHaveProperty('viewports');
+    expect(Array.isArray(context.viewports)).toBe(true);
+  });
+
   it('should preserve the current context and create a new one for ultrawide bounds', () => {
     const laptopContext = manager.getContext(laptopBounds);
     const ultrawideContext = manager.getContext(ultrawideBounds);

@@ -1,0 +1,47 @@
+{
+  "workspaceId": "adaptive-workspace-demo",
+  "name": "Adaptive Workspace Example",
+  "contexts": {
+    "ultrawide": {
+      "id": "ultrawide",
+      "name": "Ultrawide Monitor",
+      
+      "viewports": [
+        { "id": "main", "bounds": { "x": 0, "y": 0, "width": 2560, "height": 1440 }, "type": "main" },
+        { "id": "side", "bounds": { "x": 1920, "y": 0, "width": 640, "height": 1440 }, "type": "secondary" }
+      ],
+      "layout": {
+        "type": "split",
+        "direction": "horizontal",
+        "children": [
+          { "type": "viewport", "viewportId": "main" },
+          { "type": "viewport", "viewportId": "side" }
+        ]
+      }
+    },
+    "laptop": {
+      "id": "laptop",
+      "name": "Laptop Display",
+      
+      "viewports": [
+        { "id": "main", "bounds": { "x": 0, "y": 0, "width": 1440, "height": 900 }, "type": "main" }
+      ],
+      "layout": {
+        "type": "viewport",
+        "viewportId": "main"
+      }
+    },
+    "phone": {
+      "id": "phone",
+      "name": "Phone Portrait",
+
+      "viewports": [
+        { "id": "main", "bounds": { "x": 0, "y": 0, "width": 375, "height": 812 }, "type": "main" }
+      ],
+      "layout": {
+        "type": "viewport",
+        "viewportId": "main"
+      }
+    }
+  }
+}

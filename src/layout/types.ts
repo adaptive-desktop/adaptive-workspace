@@ -19,6 +19,15 @@ export type LayoutEventType =
  */
 
 import { Viewport, ProportionalBounds } from '../viewport/types';
+/**
+ * Declarative descriptor for a viewport in a layout context
+ * Used to describe the desired arrangement, not the instance
+ */
+export interface ViewportDescriptor {
+  id: string;
+  bounds: ProportionalBounds;
+  // Optionally add more metadata (e.g., type, initial state)
+}
 import { ScreenBounds } from '../workspace/types';
 
 /**
@@ -43,6 +52,12 @@ export interface LayoutContext {
     | 'phablet'
     | 'foldable';
   screenBounds: ScreenBounds;
+
+  /**
+   * Declarative list of viewports for this context
+   * Used by LayoutManager to build actual viewport instances
+   */
+  viewports: ViewportDescriptor[];
 }
 
 /**

@@ -29,6 +29,24 @@ export class LayoutManager {
     // Screen bounds will be set by workspace via setScreenBounds()
   }
 
+  /**
+   * Rebuilds the internal viewport map from the given LayoutContext's viewports array.
+   * Destroys all existing viewports and creates new ones as described by the context.
+   */
+  applyLayoutContext(context: LayoutContext): void {
+    this.viewports.clear();
+    this.workspaceBounds = context.screenBounds;
+    for (const descriptor of context.viewports) {
+      const viewport = new MutableViewport({
+        id: descriptor.id,
+        proportionalBounds: descriptor.bounds,
+        workspaceBounds: context.screenBounds,
+      });
+      this.viewports.set(descriptor.id, viewport);
+    }
+    this.currentContext = context;
+  }
+
   // Viewport management operations
   createViewport(proportionalBounds?: ProportionalBounds): Viewport {
     // Use provided bounds or find optimal placement

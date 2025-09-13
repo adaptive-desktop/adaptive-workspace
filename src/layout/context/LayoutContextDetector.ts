@@ -25,6 +25,13 @@ export class LayoutContextDetector {
       sizeCategory,
       deviceType,
       screenBounds,
+      // Default: single viewport covering the whole screen
+      viewports: [
+        {
+          id: 'viewport-1',
+          bounds: { x: 0, y: 0, width: 1, height: 1 },
+        },
+      ],
     };
   }
 

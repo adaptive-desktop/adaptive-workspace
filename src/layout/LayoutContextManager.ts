@@ -1,5 +1,6 @@
 import { LayoutContext } from './types';
 import { LayoutContextDetector } from './context/LayoutContextDetector';
+import { LayoutSnapshotService } from './LayoutSnapshotService';
 import { LayoutEventEmitter, EventEmitter, LayoutEventType, LayoutEventPayloadMap } from '../event';
 import { ScreenBounds } from '../workspace/types';
 
@@ -41,15 +42,13 @@ export class LayoutContextManager {
   }
 
   createSnapshot(context: LayoutContext): object {
-    // Replace with actual snapshot logic as needed
-    const snapshot = { ...context };
+    const snapshot = LayoutSnapshotService.createSnapshot(context);
     this.emitter.emit('snapshotCreated', { snapshot });
     return snapshot;
   }
 
   restoreFromSnapshot(snapshot: object): void {
-    // Replace with actual restore logic as needed
-    const context = snapshot as LayoutContext;
+    const context = LayoutSnapshotService.restoreFromSnapshot(snapshot);
     const key = LayoutContextDetector.generateContextKey(context);
     this.contexts.set(key, context);
     this.emitter.emit('snapshotRestored', { snapshot });

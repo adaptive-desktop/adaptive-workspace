@@ -23,7 +23,6 @@ __metadata:
     tslib: "npm:^2.6.0"
     typedoc: "npm:^0.25.0"
     typescript: "npm:^5.2.0"
-    ulid: "npm:^3.0.1"
   languageName: unknown
   linkType: soft
 
@@ -4352,15 +4351,6 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 10c0/83b0a90eca35f778e07cad9622b80c448b6aad457c9ff8e568afed978212b42930a95f9e1be943a1ffa4258a3340fbb899f41461131c05bb1d0a9c303aed8479
-  languageName: node
-  linkType: hard
-
-"ulid@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "ulid@npm:3.0.1"
-  bin:
-    ulid: dist/cli.js
-  checksum: 10c0/3b3eba4bea0d22fee7a7465d1d239f0bb20f604325a72fdb273085f18a2eeecf4391a967e8446f6d4eaa39f32fabe320a6d87846bd6313aacd2cd294d6d2b858
   languageName: node
   linkType: hard
 

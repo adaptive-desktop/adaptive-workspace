@@ -2,6 +2,20 @@
  * @fileoverview Layout domain types and interfaces
  *
  * Core layout-related types and interfaces.
+// Event Emitter interface for layout context events
+export interface LayoutEventEmitter {
+  on(event: LayoutEventType, handler: (payload: any) => void): void;
+  off(event: LayoutEventType, handler: (payload: any) => void): void;
+  emit(event: LayoutEventType, payload: any): void;
+}
+
+// Event types for layout context management
+export type LayoutEventType =
+  | 'contextCreated'
+  | 'contextUpdated'
+  | 'contextRemoved'
+  | 'snapshotCreated'
+  | 'snapshotRestored';
  */
 
 import { Viewport, ProportionalBounds } from '../viewport/types';

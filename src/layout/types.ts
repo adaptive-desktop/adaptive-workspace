@@ -8,6 +8,30 @@ import { Viewport, ProportionalBounds } from '../viewport/types';
 import { ScreenBounds } from '../workspace/types';
 
 /**
+ * Layout context representing the current display environment
+ */
+export interface LayoutContext {
+  orientation: 'landscape' | 'portrait';
+  aspectRatio: number;
+  breakpoint: 'sm' | 'md' | 'lg' | 'xl';
+  sizeCategory: 'small' | 'medium' | 'large' | 'extra-large';
+  deviceType:
+    | 'small-tablet'
+    | 'large-tablet'
+    | 'compact-laptop'
+    | 'standard-laptop'
+    | 'large-laptop'
+    | 'desktop'
+    | 'ultrawide'
+    | 'wall-display'
+    | 'tv'
+    | 'phone'
+    | 'phablet'
+    | 'foldable';
+  screenBounds: ScreenBounds;
+}
+
+/**
  * Layout Manager Interface
  *
  * Manages the organization of viewports within a workspace.

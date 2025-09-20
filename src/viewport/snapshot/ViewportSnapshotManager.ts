@@ -12,23 +12,23 @@ export class ViewportSnapshotManager {
   private currentWorkspaceContext?: WorkspaceContext;
   private idGenerator: IdGenerator;
 
-  constructor(
-    contexts: WorkspaceContext[],
-    idGenerator: IdGenerator,
-  ) {
+  constructor(contexts: WorkspaceContext[], idGenerator: IdGenerator) {
     this.contexts = new WorkspaceContextCollection(contexts);
     this.idGenerator = idGenerator;
   }
 
   addAdjacentViewport(
-    existingViewports: Viewport[],
-    direction: 'up' | 'down' | 'left' | 'right',
+    _existingViewports: Viewport[],
+    _direction: 'up' | 'down' | 'left' | 'right'
   ): ViewportSnapshot {
     // existing viewports must be adjusted to make space for the new viewport before calling this.addViewport()
     throw new Error('Not implemented');
   }
 
-  splitViewport(viewport: Viewport, direction: 'up' | 'down' | 'left' | 'right'): ViewportSnapshot {
+  splitViewport(
+    _viewport: Viewport,
+    _direction: 'up' | 'down' | 'left' | 'right'
+  ): ViewportSnapshot {
     // viewport must be adjusted to make space for the new viewport before calling this.addViewport()
     throw new Error('Not implemented');
   }
@@ -45,12 +45,16 @@ export class ViewportSnapshotManager {
 
   restoreViewport(viewport: Viewport): boolean {
     // Restore means un-minimize and un-maximize
-    return this.contexts.updateViewport({ id: viewport.id, isMinimized: false, isMaximized: false });
+    return this.contexts.updateViewport({
+      id: viewport.id,
+      isMinimized: false,
+      isMaximized: false,
+    });
   }
 
   addViewport(bounds: ProportionalBounds, id?: string): ViewportSnapshot {
     if (!this.currentWorkspaceContext || !this.currentWorkspaceContext.id) {
-      throw new Error("The current WorkspaceContext must be set");
+      throw new Error('The current WorkspaceContext must be set');
     }
     // todo: validation and adjustments
     id = id ?? this.idGenerator.generate();

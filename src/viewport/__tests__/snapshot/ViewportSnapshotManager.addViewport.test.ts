@@ -29,11 +29,11 @@ describe('ViewportSnapshotManager.addViewport', () => {
     const ctx = makeContext(10000, 'A');
     const mgr = new ViewportSnapshotManager([ctx], idGen);
     mgr.setCurrentWorkspaceContext(ctx);
-    const snap = mgr.addViewport(bounds);
-  const all = ctx.snapshots.getAll();
-  expect(all.length).toBe(1);
-  expect(all[0].isMinimized).toBe(false);
-  expect(all[0].bounds).toBe(bounds);
+    mgr.addViewport(bounds);
+    const all = ctx.snapshots.getAll();
+    expect(all.length).toBe(1);
+    expect(all[0].isMinimized).toBe(false);
+    expect(all[0].bounds).toBe(bounds);
   });
 
   it('sets isMinimized and bounds correctly for smaller/larger contexts', () => {
@@ -41,15 +41,15 @@ describe('ViewportSnapshotManager.addViewport', () => {
     const small = makeContext(100, 'S');
     const mgr = new ViewportSnapshotManager([large, small], idGen);
     mgr.setCurrentWorkspaceContext(large);
-    const snap = mgr.addViewport(bounds);
+    mgr.addViewport(bounds);
     // Large context: not minimized
-  const largeSnap = large.snapshots.getAll()[0];
-  expect(largeSnap.isMinimized).toBe(false);
-  expect(largeSnap.bounds).toBe(bounds);
-  // Small context: minimized, no bounds
-  const smallSnap = small.snapshots.getAll()[0];
-  expect(smallSnap.isMinimized).toBe(true);
-  expect(smallSnap.bounds).toBeUndefined();
+    const largeSnap = large.snapshots.getAll()[0];
+    expect(largeSnap.isMinimized).toBe(false);
+    expect(largeSnap.bounds).toBe(bounds);
+    // Small context: minimized, no bounds
+    const smallSnap = small.snapshots.getAll()[0];
+    expect(smallSnap.isMinimized).toBe(true);
+    expect(smallSnap.bounds).toBeUndefined();
   });
 
   it('sets isMinimized and bounds correctly when current context is smaller', () => {
@@ -57,14 +57,14 @@ describe('ViewportSnapshotManager.addViewport', () => {
     const small = makeContext(100, 'S');
     const mgr = new ViewportSnapshotManager([large, small], idGen);
     mgr.setCurrentWorkspaceContext(small);
-    const snap = mgr.addViewport(bounds);
+    mgr.addViewport(bounds);
     // Small context: not minimized
-  const smallSnap = small.snapshots.getAll()[0];
-  expect(smallSnap.isMinimized).toBe(false);
-  expect(smallSnap.bounds).toBe(bounds);
-  // Large context: not minimized (since area is not smaller than itself)
-  const largeSnap = large.snapshots.getAll()[0];
-  expect(largeSnap.isMinimized).toBe(false);
-  expect(largeSnap.bounds).toBe(bounds);
+    const smallSnap = small.snapshots.getAll()[0];
+    expect(smallSnap.isMinimized).toBe(false);
+    expect(smallSnap.bounds).toBe(bounds);
+    // Large context: not minimized (since area is not smaller than itself)
+    const largeSnap = large.snapshots.getAll()[0];
+    expect(largeSnap.isMinimized).toBe(false);
+    expect(largeSnap.bounds).toBe(bounds);
   });
 });

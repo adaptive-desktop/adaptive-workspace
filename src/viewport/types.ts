@@ -30,7 +30,7 @@ export interface ViewportRequest {
   id?: string;
   bounds?: ProportionalBounds;
   from?: Viewport;
-  
+
   // Optionally add more metadata (e.g., type, initial state)
 }
 

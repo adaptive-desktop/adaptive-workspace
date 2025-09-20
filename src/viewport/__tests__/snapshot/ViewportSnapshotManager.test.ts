@@ -26,7 +26,11 @@ describe('ViewportSnapshotManager legacy scenarios', () => {
   }
 
   it('adds a full-workspace viewport snapshot to all contexts', () => {
-    const contexts = [makeContext(10000, 'phone'), makeContext(10000, 'laptop'), makeContext(10000, 'ultrawide')];
+    const contexts = [
+      makeContext(10000, 'phone'),
+      makeContext(10000, 'laptop'),
+      makeContext(10000, 'ultrawide'),
+    ];
     const manager = new ViewportSnapshotManager(contexts, idGen);
     manager.setCurrentWorkspaceContext(contexts[0]);
     manager.addViewport(bounds, 'A');

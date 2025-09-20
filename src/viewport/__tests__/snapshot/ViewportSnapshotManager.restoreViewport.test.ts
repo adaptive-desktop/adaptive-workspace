@@ -10,8 +10,8 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
   let bounds: ProportionalBounds;
 
   beforeEach(() => {
-  bounds = { x: 0, y: 0, width: 1, height: 1 };
-  idGenerator = new TestIdGenerator('v');
+    bounds = { x: 0, y: 0, width: 1, height: 1 };
+    idGenerator = new TestIdGenerator('v');
     context = {
       id: 'ctx1',
       screenBounds: bounds,
@@ -52,7 +52,7 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       isMinimized: true,
       isMaximized: true,
     };
-  expect(manager.restoreViewport(viewport)).toBe(true);
+    expect(manager.restoreViewport(viewport)).toBe(true);
   });
 
   it('should return false if updateViewport returns false', () => {
@@ -63,6 +63,6 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       isMinimized: true,
       isMaximized: true,
     };
-  expect(manager.restoreViewport(viewport)).toBe(false);
+    expect(manager.restoreViewport(viewport)).toBe(false);
   });
 });

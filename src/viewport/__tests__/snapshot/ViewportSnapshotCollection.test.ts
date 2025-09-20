@@ -27,7 +27,15 @@ describe('ViewportSnapshotCollection', () => {
 
   it('updates a snapshot by id', () => {
     const c = new ViewportSnapshotCollection();
-    c.add({ id: 'v1', isDefault: false, isMaximized: false, isMinimized: false, isRequired: false, workspaceContextId: 'ctx1', timestamp: 1 });
+    c.add({
+      id: 'v1',
+      isDefault: false,
+      isMaximized: false,
+      isMinimized: false,
+      isRequired: false,
+      workspaceContextId: 'ctx1',
+      timestamp: 1,
+    });
     const updated = c.update({ id: 'v1', isMinimized: true });
     expect(updated).toBe(true);
     expect(c.findById('v1')?.isMinimized).toBe(true);
@@ -35,7 +43,15 @@ describe('ViewportSnapshotCollection', () => {
 
   it('removes a snapshot by id', () => {
     const c = new ViewportSnapshotCollection();
-    c.add({ id: 'v1', isDefault: false, isMaximized: false, isMinimized: false, isRequired: false, workspaceContextId: 'ctx1', timestamp: 1 });
+    c.add({
+      id: 'v1',
+      isDefault: false,
+      isMaximized: false,
+      isMinimized: false,
+      isRequired: false,
+      workspaceContextId: 'ctx1',
+      timestamp: 1,
+    });
     expect(c.remove('v1')).toBe(true);
     expect(c.getAll()).toHaveLength(0);
   });

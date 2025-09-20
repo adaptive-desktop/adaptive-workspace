@@ -19,7 +19,6 @@ describe('getWorkspaceContextArea', () => {
     expect(getWorkspaceContextArea(ctx)).toBe(5000);
   });
 
-
   it('returns 0 if width or height is 0', () => {
     const ctx: WorkspaceContext = {
       id: '3',

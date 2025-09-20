@@ -1,6 +1,6 @@
 import { WorkspaceContextCollection } from '../../context/WorkspaceContextCollection';
 import { WorkspaceContext } from '../../types';
-import { ViewportSnapshotCollection } from '../../../viewport/ViewportSnapshotCollection';
+import { ViewportSnapshotCollection } from '../../../viewport/snapshot/ViewportSnapshotCollection';
 
 describe('WorkspaceContextCollection', () => {
   function makeContext(id: string, snapId?: string): WorkspaceContext {

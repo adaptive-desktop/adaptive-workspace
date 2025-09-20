@@ -1,7 +1,8 @@
-import { ViewportSnapshotManager } from '../ViewportSnapshotManager';
-import { WorkspaceContext } from '../../workspace/types';
-import { TestIdGenerator } from '../../shared/TestIdGenerator';
-import { ProportionalBounds } from '../../workspace/types';
+import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager';
+import { WorkspaceContext } from '../../../workspace/types';
+import { TestIdGenerator } from '../../../shared/TestIdGenerator';
+import { ProportionalBounds } from '../../../workspace/types';
+import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 
 describe('ViewportSnapshotManager legacy scenarios', () => {
   const bounds: ProportionalBounds = { x: 0, y: 0, width: 1, height: 1 };
@@ -12,7 +13,7 @@ describe('ViewportSnapshotManager legacy scenarios', () => {
     return {
       id,
       name: id,
-      viewportState: { viewportSnapshots: [] },
+      snapshots: new ViewportSnapshotCollection([]),
       screenBounds: { x: 0, y: 0, width: size, height: size },
       orientation: 'landscape',
       aspectRatio: 1,
@@ -30,7 +31,7 @@ describe('ViewportSnapshotManager legacy scenarios', () => {
     manager.setCurrentWorkspaceContext(contexts[0]);
     manager.addViewport(bounds, 'A');
     for (const context of contexts) {
-      const snaps = context.viewportState.viewportSnapshots;
+      const snaps = context.snapshots.getAll();
       expect(snaps.length).toBe(1);
       expect(snaps[0].id).toBe('A');
       expect(snaps[0].bounds).toEqual(bounds);

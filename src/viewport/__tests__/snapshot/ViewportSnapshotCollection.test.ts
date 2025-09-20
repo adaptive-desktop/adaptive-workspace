@@ -1,7 +1,14 @@
-import { ViewportSnapshot } from '../types';
-import { ViewportSnapshotCollection } from '../ViewportSnapshotCollection';
+import { ViewportSnapshot } from '../../types';
+import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 
 describe('ViewportSnapshotCollection', () => {
+  const fixedTimestamp = 1234567890;
+  beforeAll(() => {
+    jest.spyOn(Date, 'now').mockReturnValue(fixedTimestamp);
+  });
+  afterAll(() => {
+    jest.spyOn(Date, 'now').mockRestore && jest.spyOn(Date, 'now').mockRestore();
+  });
   it('adds and retrieves snapshots', () => {
     const c = new ViewportSnapshotCollection();
     const snap: ViewportSnapshot = {
@@ -11,7 +18,7 @@ describe('ViewportSnapshotCollection', () => {
       isMinimized: false,
       isRequired: false,
       workspaceContextId: 'ctx1',
-      timestamp: 123,
+      timestamp: fixedTimestamp,
     };
     c.add(snap);
     expect(c.getAll()).toHaveLength(1);

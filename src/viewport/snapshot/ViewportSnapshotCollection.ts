@@ -1,4 +1,4 @@
-import { ViewportSnapshot } from '../viewport/types';
+import { ViewportSnapshot } from '../types';
 
 export class ViewportSnapshotCollection {
   private snapshots: ViewportSnapshot[] = [];

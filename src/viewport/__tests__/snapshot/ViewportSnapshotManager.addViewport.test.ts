@@ -1,7 +1,8 @@
-import { ViewportSnapshotManager } from '../ViewportSnapshotManager';
-import { WorkspaceContext } from '../../workspace/types';
-import { TestIdGenerator } from '../../shared/TestIdGenerator';
-import { ProportionalBounds } from '../../workspace/types';
+import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager';
+import { WorkspaceContext } from '../../../workspace/types';
+import { TestIdGenerator } from '../../../shared/TestIdGenerator';
+import { ProportionalBounds } from '../../../workspace/types';
+import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 
 describe('ViewportSnapshotManager.addViewport', () => {
   const bounds: ProportionalBounds = { x: 0, y: 0, width: 1, height: 1 };
@@ -12,7 +13,7 @@ describe('ViewportSnapshotManager.addViewport', () => {
     return {
       id,
       name: id,
-      viewportState: { viewportSnapshots: [] },
+      snapshots: new ViewportSnapshotCollection([]),
       screenBounds: { x: 0, y: 0, width: size, height: size },
       orientation: 'landscape',
       aspectRatio: 1,
@@ -29,9 +30,10 @@ describe('ViewportSnapshotManager.addViewport', () => {
     const mgr = new ViewportSnapshotManager([ctx], idGen);
     mgr.setCurrentWorkspaceContext(ctx);
     const snap = mgr.addViewport(bounds);
-    expect(ctx.viewportState.viewportSnapshots.length).toBe(1);
-    expect(snap.isMinimized).toBe(false);
-    expect(snap.bounds).toBe(bounds);
+  const all = ctx.snapshots.getAll();
+  expect(all.length).toBe(1);
+  expect(all[0].isMinimized).toBe(false);
+  expect(all[0].bounds).toBe(bounds);
   });
 
   it('sets isMinimized and bounds correctly for smaller/larger contexts', () => {
@@ -41,13 +43,13 @@ describe('ViewportSnapshotManager.addViewport', () => {
     mgr.setCurrentWorkspaceContext(large);
     const snap = mgr.addViewport(bounds);
     // Large context: not minimized
-    const largeSnap = large.viewportState.viewportSnapshots[0];
-    expect(largeSnap.isMinimized).toBe(false);
-    expect(largeSnap.bounds).toBe(bounds);
-    // Small context: minimized, no bounds
-    const smallSnap = small.viewportState.viewportSnapshots[0];
-    expect(smallSnap.isMinimized).toBe(true);
-    expect(smallSnap.bounds).toBeUndefined();
+  const largeSnap = large.snapshots.getAll()[0];
+  expect(largeSnap.isMinimized).toBe(false);
+  expect(largeSnap.bounds).toBe(bounds);
+  // Small context: minimized, no bounds
+  const smallSnap = small.snapshots.getAll()[0];
+  expect(smallSnap.isMinimized).toBe(true);
+  expect(smallSnap.bounds).toBeUndefined();
   });
 
   it('sets isMinimized and bounds correctly when current context is smaller', () => {
@@ -57,12 +59,12 @@ describe('ViewportSnapshotManager.addViewport', () => {
     mgr.setCurrentWorkspaceContext(small);
     const snap = mgr.addViewport(bounds);
     // Small context: not minimized
-    const smallSnap = small.viewportState.viewportSnapshots[0];
-    expect(smallSnap.isMinimized).toBe(false);
-    expect(smallSnap.bounds).toBe(bounds);
-    // Large context: not minimized (since area is not smaller than itself)
-    const largeSnap = large.viewportState.viewportSnapshots[0];
-    expect(largeSnap.isMinimized).toBe(false);
-    expect(largeSnap.bounds).toBe(bounds);
+  const smallSnap = small.snapshots.getAll()[0];
+  expect(smallSnap.isMinimized).toBe(false);
+  expect(smallSnap.bounds).toBe(bounds);
+  // Large context: not minimized (since area is not smaller than itself)
+  const largeSnap = large.snapshots.getAll()[0];
+  expect(largeSnap.isMinimized).toBe(false);
+  expect(largeSnap.bounds).toBe(bounds);
   });
 });

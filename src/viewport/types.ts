@@ -42,6 +42,7 @@ export interface ViewportSnapshot {
   readonly isMinimized: boolean;
   readonly isRequired: boolean;
   readonly workspaceContextId: string;
+  readonly timestamp: number;
 }
 
 export interface ViewportState {

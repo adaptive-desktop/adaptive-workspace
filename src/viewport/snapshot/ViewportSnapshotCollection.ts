@@ -1,35 +1,36 @@
 import { ViewportSnapshot } from '../types';
 
 export class ViewportSnapshotCollection {
-  private snapshots: ViewportSnapshot[] = [];
+  private snapshots: Map<string, ViewportSnapshot> = new Map();
 
   constructor(snapshots?: ViewportSnapshot[]) {
-    if (snapshots) this.snapshots = [...snapshots];
+    if (snapshots) {
+      for (const snap of snapshots) {
+        this.snapshots.set(snap.id, snap);
+      }
+    }
   }
 
   getAll(): ViewportSnapshot[] {
-    return [...this.snapshots];
+    return Array.from(this.snapshots.values());
   }
 
   findById(id: string): ViewportSnapshot | undefined {
-    return this.snapshots.find((s) => s.id === id);
+    return this.snapshots.get(id);
   }
 
   update(partial: Partial<ViewportSnapshot> & { id: string }): boolean {
-    const snap = this.snapshots.find((s) => s.id === partial.id);
+    const snap = this.snapshots.get(partial.id);
     if (!snap) return false;
     Object.assign(snap, partial);
     return true;
   }
 
   add(snapshot: ViewportSnapshot): void {
-    this.snapshots.push(snapshot);
+    this.snapshots.set(snapshot.id, snapshot);
   }
 
-  remove(id: string): boolean {
-    const idx = this.snapshots.findIndex((s) => s.id === id);
-    if (idx === -1) return false;
-    this.snapshots.splice(idx, 1);
-    return true;
+  remove(snapshot: ViewportSnapshot): boolean {
+    return this.snapshots.delete(snapshot.id);
   }
 }

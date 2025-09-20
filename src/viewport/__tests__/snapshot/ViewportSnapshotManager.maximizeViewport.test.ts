@@ -1,6 +1,7 @@
 import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager';
 import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 import { ProportionalBounds, WorkspaceContext } from '../../../workspace/types';
+import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 
 describe('ViewportSnapshotManager.maximizeViewport', () => {
   let manager: ViewportSnapshotManager;
@@ -11,6 +12,11 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
   beforeEach(() => {
     bounds = { x: 0, y: 0, width: 1, height: 1 };
     idGenerator = new TestIdGenerator('v');
+    const snapshots = new ViewportSnapshotCollection();
+    jest.spyOn(snapshots, 'add').mockImplementation(jest.fn());
+    jest.spyOn(snapshots, 'update').mockImplementation(() => true);
+    jest.spyOn(snapshots, 'remove').mockImplementation(jest.fn());
+    jest.spyOn(snapshots, 'getAll').mockImplementation(() => []);
     context = {
       id: 'ctx1',
       screenBounds: bounds,
@@ -21,12 +27,7 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
       deviceType: 'desktop',
       minimumViewportScreenHeight: 0,
       minimumViewportScreenWidth: 0,
-      snapshots: {
-        add: jest.fn(),
-        update: jest.fn(() => true),
-        remove: jest.fn(),
-        getAll: jest.fn(() => []),
-      },
+      snapshots,
     };
     manager = new ViewportSnapshotManager([context], idGenerator);
     manager.setCurrentWorkspaceContext(context);

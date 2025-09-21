@@ -18,9 +18,11 @@ import { ScreenBounds } from '../workspace/types';
 export class MutableViewport implements Viewport {
   public id: string;
   public proportionalBounds: ProportionalBounds;
-  public screenBounds!: ScreenBounds;
+  public isDefault: boolean = false;
   public isMinimized: boolean = false;
   public isMaximized: boolean = false;
+  public isRequired: boolean = false;
+  public screenBounds!: ScreenBounds;
 
   constructor(config: {
     id: string;

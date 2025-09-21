@@ -1,14 +1,13 @@
 import { WorkspaceContextCollection } from '../../context/WorkspaceContextCollection';
 import { WorkspaceContext } from '../../types';
 import { ViewportSnapshotCollection } from '../../../viewport/snapshot/ViewportSnapshotCollection';
-import { addRemoveViewportToContext } from '../../context/WorkspaceContextImpl';
 
 describe('WorkspaceContextCollection.removeViewport', () => {
-  function makeContext(id: string, snapId?: string): WorkspaceContext {
+  function makeContext(id: string, snapshotId?: string): WorkspaceContext {
     const snapshots = new ViewportSnapshotCollection();
-    if (snapId) {
+    if (snapshotId) {
       snapshots.add({
-        id: snapId,
+        id: snapshotId,
         isDefault: false,
         isMaximized: false,
         isMinimized: false,
@@ -17,7 +16,7 @@ describe('WorkspaceContextCollection.removeViewport', () => {
         timestamp: 1,
       });
     }
-    return addRemoveViewportToContext({
+    return {
       id,
       name: id,
       snapshots,
@@ -29,22 +28,42 @@ describe('WorkspaceContextCollection.removeViewport', () => {
       deviceType: 'desktop',
       minimumViewportScreenHeight: 10,
       minimumViewportScreenWidth: 10,
-    });
+    };
   }
 
   it('removes a viewport snapshot from all contexts', () => {
-    const c1 = makeContext('A', 'v1');
-    const c2 = makeContext('B', 'v1');
-    const collection = new WorkspaceContextCollection([c1, c2]);
-    expect(collection.removeViewport('v1')).toBe(true);
-    expect(c1.snapshots.getAll().length).toBe(0);
-    expect(c2.snapshots.getAll().length).toBe(0);
+    const contextA = makeContext('A', 'v1');
+    const contextB = makeContext('B', 'v1');
+    const collection = new WorkspaceContextCollection([contextA, contextB]);
+    // Create a snapshot object to remove
+    const snapshot = {
+      id: 'v1',
+      isDefault: false,
+      isMaximized: false,
+      isMinimized: false,
+      isRequired: false,
+      workspaceContextId: 'A',
+      timestamp: 1,
+    };
+    expect(collection.removeViewport(snapshot)).toBe(true);
+    expect(contextA.snapshots.getAll().length).toBe(0);
+    expect(contextB.snapshots.getAll().length).toBe(0);
   });
 
   it('returns false if no context removes the viewport', () => {
-    const c1 = makeContext('A');
-    const c2 = makeContext('B');
-    const collection = new WorkspaceContextCollection([c1, c2]);
-    expect(collection.removeViewport('notfound')).toBe(false);
+    const contextA = makeContext('A');
+    const contextB = makeContext('B');
+    const collection = new WorkspaceContextCollection([contextA, contextB]);
+    // Try to remove a snapshot that doesn't exist
+    const fakeSnapshot = {
+      id: 'notfound',
+      isDefault: false,
+      isMaximized: false,
+      isMinimized: false,
+      isRequired: false,
+      workspaceContextId: 'A',
+      timestamp: 1,
+    };
+    expect(collection.removeViewport(fakeSnapshot)).toBe(false);
   });
 });

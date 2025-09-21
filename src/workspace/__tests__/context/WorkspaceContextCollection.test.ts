@@ -41,10 +41,12 @@ describe('WorkspaceContextCollection', () => {
 
   it('removes a context by id', () => {
     const c = new WorkspaceContextCollection();
-    c.addContext(makeContext('A'));
-    expect(c.removeContext('A')).toBe(true);
+    const ctx = makeContext('A');
+    c.addContext(ctx);
+    expect(c.removeContext(ctx)).toBe(true);
     expect(c.getAll()).toHaveLength(0);
-    expect(c.removeContext('A')).toBe(false);
+    // Try to remove again
+    expect(c.removeContext(ctx)).toBe(false);
   });
 
   it('updates a viewport snapshot in all contexts', () => {

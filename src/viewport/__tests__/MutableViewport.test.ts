@@ -12,6 +12,10 @@ describe('MutableViewport', () => {
     viewport = new MutableViewport({
       id: defaultId,
       proportionalBounds: defaultProportionalBounds,
+      isDefault: false,
+      isMinimized: false,
+      isMaximized: false,
+      isRequired: false,
     });
     viewport.screenBounds = defaultScreenBounds;
   });
@@ -30,17 +34,21 @@ describe('MutableViewport', () => {
 
   describe('mutate', () => {
     it('should update viewport properties from a snapshot', () => {
-      const targetViewport = new MutableViewport({
+      const viewport = new MutableViewport({
         id: 'target',
         proportionalBounds: { x: 0, y: 0, width: 0.25, height: 0.25 },
+        isDefault: true,
+        isMaximized: true,
+        isMinimized: false,
+        isRequired: true,
       });
       
       const snapshot: ViewportSnapshot = {
         id: 'target',
         bounds: { x: 0.1, y: 0.2, width: 0.3, height: 0.4 },
-        isMinimized: true,
-        isMaximized: false,
         isDefault: false,
+        isMaximized: false,
+        isMinimized: true,
         isRequired: false,
         workspaceContextId: 'test-context',
         timestamp: 1234567890,
@@ -48,13 +56,14 @@ describe('MutableViewport', () => {
       
       const newScreenBounds: ScreenBounds = { x: 100, y: 200, width: 300, height: 400 };
       
-      viewport.mutate(targetViewport, snapshot, newScreenBounds);
+      viewport.mutate(snapshot, newScreenBounds);
       
-      expect(targetViewport.proportionalBounds).toEqual(snapshot.bounds);
-      expect(targetViewport.isDefault).toBe(snapshot.isDefault);
-      expect(targetViewport.isMinimized).toBe(snapshot.isMinimized);
-      expect(targetViewport.isRequired).toBe(snapshot.isRequired);
-      expect(targetViewport.screenBounds).toEqual(newScreenBounds);
+      expect(viewport.proportionalBounds).toEqual(snapshot.bounds);
+      expect(viewport.isDefault).toBe(false);
+      expect(viewport.isMaximized).toBe(false);
+      expect(viewport.isMinimized).toBe(true);
+      expect(viewport.isRequired).toBe(false);
+      expect(viewport.screenBounds).toEqual(newScreenBounds);
     });
   });
 

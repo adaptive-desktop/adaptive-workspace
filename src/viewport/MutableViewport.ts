@@ -27,16 +27,26 @@ export class MutableViewport implements Viewport {
   constructor(config: {
     id: string;
     proportionalBounds: ProportionalBounds;
+    isDefault: boolean;
+    isMinimized: boolean;
+    isMaximized: boolean;
+    isRequired: boolean;
   }) {
     this.id = config.id;
     this.proportionalBounds = config.proportionalBounds;
+    this.isDefault = config.isDefault;
+    this.isMaximized = config.isMaximized;
+    this.isMinimized = config.isMinimized;
+    this.isRequired = config.isRequired;
   }
 
-  mutate(viewport: MutableViewport, viewportSnapshot: ViewportSnapshot, screenBounds: ScreenBounds): void {
-    viewport.proportionalBounds = viewportSnapshot.bounds!;
-    viewport.isMinimized = viewportSnapshot.isMinimized;
-    viewport.isMaximized = viewportSnapshot.isMaximized;
-    viewport.screenBounds = screenBounds;
+  mutate(viewportSnapshot: ViewportSnapshot, screenBounds: ScreenBounds): void {
+    this.proportionalBounds = viewportSnapshot.bounds!;
+    this.isDefault = viewportSnapshot.isDefault;
+    this.isMinimized = viewportSnapshot.isMinimized;
+    this.isMaximized = viewportSnapshot.isMaximized;
+    this.isRequired = viewportSnapshot.isRequired;
+    this.screenBounds = screenBounds;
   }
 
   setMinimized(minimized: boolean): void {

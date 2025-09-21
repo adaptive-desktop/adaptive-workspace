@@ -6,10 +6,10 @@
 
 import { Viewport, ViewportRequest, MutableViewport } from '.';
 import { ProportionalBounds, ScreenBounds } from '../workspace/types';
-import { IdGenerator } from '../shared/types';
+import { IdGenerator } from '../shared/types'; 
 import { WorkspaceContext } from '../workspace/types';
 import { WorkspaceContextDetector } from '../workspace/context/WorkspaceContextDetector';
-import { ViewportStateManager } from './snapshot/ViewportSnapshotManager';
+import { ViewportSnapshotManager } from './snapshot/ViewportSnapshotManager';
 
 /**
  * Viewport Manager class
@@ -21,13 +21,13 @@ export class ViewportManager {
   private viewports: Map<string, MutableViewport> = new Map();
   private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
   private idGenerator: IdGenerator;
-  private viewportStateManager: ViewportStateManager;
+  private viewportSnapshotManager: ViewportSnapshotManager;
 
   private currentContext?: WorkspaceContext;
 
-  constructor(idGenerator: IdGenerator, contexts) {
+  constructor(contexts: WorkspaceContext[], idGenerator: IdGenerator) {
     this.idGenerator = idGenerator;
-    this.viewportStateManager = new ViewportStateManager(contexts);
+    this.viewportSnapshotManager = new ViewportSnapshotManager(contexts, idGenerator);
   }
 
   /**
@@ -63,11 +63,14 @@ export class ViewportManager {
   createViewport(proportionalBounds?: ProportionalBounds): Viewport {
     // Use provided bounds or find optimal placement
     const bounds = proportionalBounds || this.findLargestAvailableSpace();
-    const viewportRequest: ViewportRequest = {
-      bounds,
-    };
-    // Create viewport with the determined bounds
-    return this.createViewportInternal(viewportRequest);
+    const snapshot = this.viewportSnapshotManager.addViewport(bounds);
+    this.mutateViewports();
+
+    return this.findViewportById(snapshot.id)!;
+  }
+
+  private mutateViewports(): boolean {
+    // use 
   }
 
   getViewports(): Viewport[] {
@@ -242,7 +245,7 @@ export class ViewportManager {
   private createViewportInternal(viewportRequest: ViewportRequest) {
     viewportRequest.id = viewportRequest.id ?? this.idGenerator.generate();
 
-    const viewportState = this.viewportStateManager.add(viewportRequest);
+    const viewportState = this.viewportSnapshotManager.addViewport(viewportRequest);
 
     return viewportState;
   }

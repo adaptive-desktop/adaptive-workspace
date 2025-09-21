@@ -7,3 +7,4 @@
 // Re-export everything from this domain
 export * from './types';
 export * from './MutableViewport';
+export * from './ViewportManager';

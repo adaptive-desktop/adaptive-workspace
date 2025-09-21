@@ -40,6 +40,8 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       screenBounds: bounds,
       isMinimized: true,
       isMaximized: true,
+      isDefault: false,
+      isRequired: false,
     };
     const spy = jest.spyOn(context.snapshots, 'update');
     manager.restoreViewport(viewport);
@@ -52,6 +54,8 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       screenBounds: bounds,
       isMinimized: true,
       isMaximized: true,
+      isDefault: false,
+      isRequired: false,
     };
     expect(manager.restoreViewport(viewport)).toBe(true);
   });
@@ -63,6 +67,8 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       screenBounds: bounds,
       isMinimized: true,
       isMaximized: true,
+      isDefault: false,
+      isRequired: false,
     };
     expect(manager.restoreViewport(viewport)).toBe(false);
   });

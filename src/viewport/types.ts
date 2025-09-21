@@ -2,9 +2,11 @@ import { ProportionalBounds, ScreenBounds } from '../workspace';
 
 export interface Viewport {
   readonly id: string;
-  readonly screenBounds: ScreenBounds;
+  readonly isDefault: boolean;
   readonly isMinimized: boolean;
   readonly isMaximized: boolean;
+  readonly isRequired: boolean;
+  readonly screenBounds: ScreenBounds;
 }
 
 export interface ViewportManagerInterface {

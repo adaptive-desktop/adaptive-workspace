@@ -40,6 +40,8 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
       screenBounds: { x: 0, y: 0, width: 1, height: 1 },
       isMinimized: false,
       isMaximized: false,
+      isDefault: false,
+      isRequired: false,
     });
     expect(result).toBe(true);
     snap = ctx.snapshots.getAll()[0];
@@ -57,6 +59,8 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
       screenBounds: { x: 0, y: 0, width: 1, height: 1 },
       isMinimized: false,
       isMaximized: false,
+      isDefault: false,
+      isRequired: false,
     });
     expect(result).toBe(false);
   });

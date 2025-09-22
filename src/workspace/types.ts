@@ -8,18 +8,16 @@ import { ViewportSnapshotCollection } from '../viewport/snapshot/ViewportSnapsho
 
 /**
  * WorkspaceContext: describes the current display environment and viewport arrangement.
- *
- * id and name are optional for compatibility with legacy code.
  */
 export interface WorkspaceContext {
   id?: string;
   name?: string;
-  snapshots: ViewportSnapshotCollection;
-  screenBounds: ScreenBounds;
+  maxScreenBounds: ScreenBounds;
   orientation: 'landscape' | 'portrait';
   aspectRatio: number;
   breakpoint: 'sm' | 'md' | 'lg' | 'xl';
   sizeCategory: 'small' | 'medium' | 'large' | 'extra-large';
+  snapshots: ViewportSnapshotCollection;
   deviceType:
     | 'small-tablet'
     | 'large-tablet'
@@ -69,10 +67,28 @@ export interface WorkspaceSnapshot {
 }
 
 export interface WorkspaceContextSnapshot {
+  aspectRatio: number;
+  breakpoint: 'sm' | 'md' | 'lg' | 'xl';
+  deviceType:
+    | 'small-tablet'
+    | 'large-tablet'
+    | 'compact-laptop'
+    | 'standard-laptop'
+    | 'large-laptop'
+    | 'desktop'
+    | 'ultrawide'
+    | 'wall-display'
+    | 'tv'
+    | 'phone'
+    | 'phablet'
+    | 'foldable';
   id: string;
-  name: string;
+  maxScreenBounds: ScreenBounds;
   minimumViewportScreenHeight: number;
   minimumViewportScreenWidth: number;
+  name: string;
+  orientation: 'landscape' | 'portrait';
+  sizeCategory: 'small' | 'medium' | 'large' | 'extra-large';
   snapshots: ViewportSnapshot[];
 }
 

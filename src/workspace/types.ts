@@ -63,6 +63,12 @@ export interface WorkspaceConfig {
   screenBounds: ScreenBounds;
 }
 
+export interface WorkspaceSnapshot {
+  id: string;
+  name: string;
+  workspaceContexts: WorkspaceContextSnapshot[];
+}
+
 export interface WorkspaceContextSnapshot {
   id: string;
   name: string;

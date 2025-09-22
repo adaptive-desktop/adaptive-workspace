@@ -1,7 +1,11 @@
-import { WorkspaceContextSnapshot } from "../workspace";
+import { WorkspaceSnapshot } from "../workspace";
 
 export interface DesktopSnapshot {
   id: string;
   name: string;
-  workspaceContexts: WorkspaceContextSnapshot[];
+  bottomDrawer: { enabled: boolean; };
+  leftSidebar: { enabled: boolean; };
+  rightSidebar: { enabled: boolean; };
+  topBar: { enabled: boolean; };
+  workspace: WorkspaceSnapshot[];
 }

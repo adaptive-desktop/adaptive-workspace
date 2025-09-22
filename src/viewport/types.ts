@@ -28,14 +28,6 @@ export interface ViewportManagerInterface {
   getViewportCount(): number;
 }
 
-export interface ViewportRequest {
-  id?: string;
-  bounds?: ProportionalBounds;
-  from?: Viewport;
-
-  // Optionally add more metadata (e.g., type, initial state)
-}
-
 export interface ViewportSnapshot {
   readonly bounds?: ProportionalBounds;
   readonly id: string;
@@ -45,8 +37,4 @@ export interface ViewportSnapshot {
   readonly isRequired: boolean;
   readonly workspaceContextId: string;
   readonly timestamp: number;
-}
-
-export interface ViewportState {
-  viewportSnapshots: ViewportSnapshot[];
 }

@@ -1,7 +1,6 @@
 import { Workspace } from './Workspace';
-import { ScreenBounds } from './types';
+import { ScreenBounds, WorkspaceSnapshot } from './types';
 import { IdGenerator } from '../shared/types';
-import type { LayoutContext } from '../layout/types';
 
 /**
  * Configuration for creating a workspace via WorkspaceFactory
@@ -33,47 +32,17 @@ export class WorkspaceFactory {
     });
   }
 
-  /**
-   * Create a workspace with an initial viewport
-   *
-   * Creates a workspace and adds a single viewport that spans the full workspace.
-   *
-   * @param config - Configuration including screen bounds
-   * @returns New workspace instance with one viewport
-   */
-  createWithViewport(config: WorkspaceFactoryConfig): Workspace {
-    const workspace = this.create(config);
-    // TODO: Add viewport when createViewport is implemented
-    // workspace.createViewport();
-    return workspace;
-  }
-
-  fromSnapshot(
-    snapshot: unknown,
-    screenBounds: { x: number; y: number; width: number; height: number }
-  ): Workspace {
-    // Define the expected snapshot structure
-    type SnapshotType = {
-      workspaceId?: string;
-      contexts: Record<string, LayoutContext>;
-    };
-    const snap = snapshot as SnapshotType;
-    const contextKeys = Object.keys(snap.contexts);
-    if (contextKeys.length === 0) throw new Error('No contexts in snapshot');
-    const context = snap.contexts[contextKeys[0]];
-
-    // Import LayoutManager directly (avoids require)
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { LayoutManager } = require('../layout/LayoutManager');
-    const layoutManager = new LayoutManager(this.idGenerator);
-    layoutManager.setScreenBounds(screenBounds);
-    layoutManager.applyLayoutContext({ ...context, screenBounds });
-
-    return new Workspace({
-      id: snap.workspaceId || this.idGenerator.generate(),
-      screenBounds,
-      layout: layoutManager,
-      idGenerator: this.idGenerator,
-    });
+  fromSnapshot(snapshot: WorkspaceSnapshot, screenBounds: ScreenBounds): Workspace {
+    //
+    // you haved to create each WorkspaceContext, in WorkspaceContextCollection
+    // you need to determine the current WorkspaceContext,
+    // then create the ViewportSnapshotCollection,
+    // add the ViewportSnapshotCollection to each WorkspaceContext
+    // and finally create and return the Workspace with the provided screen
+    // bounds, workspace contexts and the ViewportManager
+    //
+    // it will be the responsibility of the calling code to call
+    // Workspace.updateWorkspace(currentContext: WorkspaceConext)
+    // to create the screen bounds for the viewports
   }
 }

@@ -25,31 +25,43 @@ export class ViewportSnapshotManager {
     throw new Error('Not implemented');
   }
 
-  splitViewport(
-    _viewport: Viewport,
-    _direction: 'up' | 'down' | 'left' | 'right'
-  ): ViewportSnapshot {
-    // viewport must be adjusted to make space for the new viewport before calling this.addViewport()
-    throw new Error('Not implemented');
+  importSnapshot(snapshot: ViewportSnapshot): boolean {
+    this.addSnapshot(snapshot);
   }
 
   minimizeViewport(viewport: Viewport): boolean {
     // Use the collection to update isMinimized, leave bounds as is
-    return this.contexts.updateViewport({ id: viewport.id, isMinimized: true });
+    return this.contexts.updateViewport({
+      id: viewport.id,
+      isMaximized: false,
+      isMinimized: true,
+    });
   }
 
   maximizeViewport(viewport: Viewport): boolean {
     // Set isMaximized true and isMinimized false
-    return this.contexts.updateViewport({ id: viewport.id, isMaximized: true, isMinimized: false });
+    return this.contexts.updateViewport({
+      id: viewport.id,
+      isMaximized: true,
+      isMinimized: false,
+    });
   }
 
   restoreViewport(viewport: Viewport): boolean {
     // Restore means un-minimize and un-maximize
     return this.contexts.updateViewport({
       id: viewport.id,
-      isMinimized: false,
       isMaximized: false,
+      isMinimized: false,
     });
+  }
+
+  splitViewport(
+    _viewport: Viewport,
+    _direction: 'up' | 'down' | 'left' | 'right'
+  ): ViewportSnapshot {
+    // viewport must be adjusted to make space for the new viewport before calling this.addViewport()
+    throw new Error('Not implemented');
   }
 
   addViewport(bounds: ProportionalBounds, id?: string): ViewportSnapshot {

@@ -37,7 +37,6 @@ export interface WorkspaceContext {
   minimumViewportScreenWidth: number;
 }
 
-
 export interface ProportionalBounds {
   x: number; // 0.0 to 1.0 (0% to 100% of workspace width)
   y: number; // 0.0 to 1.0 (0% to 100% of workspace height)

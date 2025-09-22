@@ -43,14 +43,14 @@ export class ViewportMutator {
     return viewport;
   }
 
-  private recalculateScreenBoundsForViewports(snapshots: ViewportSnapshotCollection) { 
+  private recalculateScreenBoundsForViewports(snapshots: ViewportSnapshotCollection) {
     const screenBoundsMap = new Map<string, ScreenBounds>();
-    
+
     // Calculate screen bounds for all snapshots
     for (const snapshot of snapshots.getAll()) {
       screenBoundsMap.set(snapshot.id, this.calculateScreenBounds(snapshot));
     }
-    
+
     // Update viewports with new screen bounds
     for (const [id, viewport] of this.viewports) {
       const snapshot = snapshots.findById(id);
@@ -64,15 +64,20 @@ export class ViewportMutator {
     if (!snapshot.bounds) {
       throw new Error('Cannot calculate screen bounds without proportional bounds');
     }
-    
+
     const { x, y, width, height } = snapshot.bounds;
-    const { x: workspaceX, y: workspaceY, width: workspaceWidth, height: workspaceHeight } = this.workspaceBounds;
-    
+    const {
+      x: workspaceX,
+      y: workspaceY,
+      width: workspaceWidth,
+      height: workspaceHeight,
+    } = this.workspaceBounds;
+
     return {
       x: workspaceX + x * workspaceWidth,
       y: workspaceY + y * workspaceHeight,
       width: width * workspaceWidth,
-      height: height * workspaceHeight
+      height: height * workspaceHeight,
     };
   }
 

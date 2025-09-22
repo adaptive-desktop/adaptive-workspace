@@ -42,7 +42,7 @@ describe('MutableViewport', () => {
         isMinimized: false,
         isRequired: true,
       });
-      
+
       const snapshot: ViewportSnapshot = {
         id: 'target',
         bounds: { x: 0.1, y: 0.2, width: 0.3, height: 0.4 },
@@ -53,11 +53,11 @@ describe('MutableViewport', () => {
         workspaceContextId: 'test-context',
         timestamp: 1234567890,
       };
-      
+
       const newScreenBounds: ScreenBounds = { x: 100, y: 200, width: 300, height: 400 };
-      
+
       viewport.mutate(snapshot, newScreenBounds);
-      
+
       expect(viewport.proportionalBounds).toEqual(snapshot.bounds);
       expect(viewport.isDefault).toBe(false);
       expect(viewport.isMaximized).toBe(false);

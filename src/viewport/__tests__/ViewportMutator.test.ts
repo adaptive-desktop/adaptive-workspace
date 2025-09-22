@@ -16,11 +16,16 @@ describe('ViewportMutator', () => {
 
   function makeSnapshot(
     id: string,
-    bounds: { x: number; y: number; width: number; height: number } = { x: 0, y: 0, width: 1, height: 1 },
+    bounds: { x: number; y: number; width: number; height: number } = {
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    },
     isDefault = false,
     isMinimized = false,
     isMaximized = false,
-    isRequired = false,
+    isRequired = false
   ) {
     return {
       id,
@@ -35,18 +40,16 @@ describe('ViewportMutator', () => {
   }
 
   it('adds new MutableViewport for new snapshot', () => {
-    const snapshots = new ViewportSnapshotCollection([
-      makeSnapshot('v1'),
-    ]);
+    const snapshots = new ViewportSnapshotCollection([makeSnapshot('v1')]);
     mutator.mutateFromSnapshots(snapshots);
     expect(viewports.size).toBe(1);
     expect(viewports.get('v1')).toBeDefined();
   });
 
   it('removes MutableViewport not in snapshot', () => {
-    const v1 = new MutableViewport({ 
-      id: 'v1', 
-      proportionalBounds: { x: 0, y: 0, width: 1, height: 1 }, 
+    const v1 = new MutableViewport({
+      id: 'v1',
+      proportionalBounds: { x: 0, y: 0, width: 1, height: 1 },
       isDefault: false,
       isMinimized: false,
       isMaximized: false,
@@ -79,14 +82,14 @@ describe('ViewportMutator', () => {
   });
 
   it('updates proportionalBounds and recalculates screenBounds', () => {
-    const v1 = new MutableViewport({ 
-        id: 'v1', 
-        proportionalBounds: { x: 0, y: 0, width: 0.5, height: 0.5 },
-        isDefault: false,
-        isMinimized: false,
-        isMaximized: false,
-        isRequired: false,
-     });
+    const v1 = new MutableViewport({
+      id: 'v1',
+      proportionalBounds: { x: 0, y: 0, width: 0.5, height: 0.5 },
+      isDefault: false,
+      isMinimized: false,
+      isMaximized: false,
+      isRequired: false,
+    });
     viewports.set('v1', v1);
     const snapshots = new ViewportSnapshotCollection([
       makeSnapshot('v1', { x: 0.1, y: 0.2, width: 0.3, height: 0.4 }),

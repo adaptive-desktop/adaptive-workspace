@@ -6,12 +6,12 @@
 
 import { Workspace } from '../Workspace';
 import { ScreenBounds } from '../types';
-import { LayoutManager } from '../../layout/LayoutManager';
 import { Viewport, ProportionalBounds } from '../../viewport/types';
 import { TestIdGenerator } from '../../shared/TestIdGenerator';
+import { ViewportManager } from '../../viewport';
 
-// Mock the LayoutManager
-const mockLayoutManager: jest.Mocked<LayoutManager> = {
+// Mock the ViewportManager
+const mockViewportManager: jest.Mocked<ViewportManager> = {
   // Viewport management operations
   createViewport: jest.fn(),
   createAdjacentViewport: jest.fn(),
@@ -26,7 +26,7 @@ const mockLayoutManager: jest.Mocked<LayoutManager> = {
   maximizeViewport: jest.fn(),
   restoreViewport: jest.fn(),
 
-  // Private properties and methods (for LayoutManager compatibility)
+  // Private properties and methods (for ViewportManager compatibility)
   viewports: new Map(),
   workspaceBounds: { x: 0, y: 0, width: 1000, height: 800 },
   createViewportInternal: jest.fn(),
@@ -40,6 +40,8 @@ const mockViewport: Viewport = {
   screenBounds: { x: 0, y: 0, width: 800, height: 600 },
   isMinimized: false,
   isMaximized: false,
+  isDefault: false,
+  isRequired: false,
 };
 
 describe('Workspace Unit Tests', () => {
@@ -54,7 +56,7 @@ describe('Workspace Unit Tests', () => {
     workspace = new Workspace({
       id: 'test-workspace',
       screenBounds: testScreenBounds,
-      layout: mockLayoutManager,
+      layout: mockViewportManager,
       idGenerator: new TestIdGenerator('viewport'),
     });
   });
@@ -63,11 +65,11 @@ describe('Workspace Unit Tests', () => {
     test('should initialize with provided configuration', () => {
       expect(workspace.id).toBe('test-workspace');
       expect(workspace.screenBounds).toEqual(testScreenBounds);
-      expect(workspace.layout).toBe(mockLayoutManager);
+      expect(workspace.layout).toBe(mockViewportManager);
     });
 
     test('should call setScreenBounds on layout manager during construction', () => {
-      expect(mockLayoutManager.setScreenBounds).toHaveBeenCalledWith(testScreenBounds);
+      expect(mockViewportManager.setScreenBounds).toHaveBeenCalledWith(testScreenBounds);
     });
 
     test('should create default layout manager when none provided', () => {
@@ -81,28 +83,28 @@ describe('Workspace Unit Tests', () => {
       expect(workspaceWithoutLayout.id).toBe('test-workspace-no-layout');
       expect(workspaceWithoutLayout.screenBounds).toEqual(testScreenBounds);
       expect(workspaceWithoutLayout.layout).toBeDefined();
-      // Should be a real LayoutManager instance, not our mock
-      expect(workspaceWithoutLayout.layout).not.toBe(mockLayoutManager);
+      // Should be a real ViewportManager instance, not our mock
+      expect(workspaceWithoutLayout.layout).not.toBe(mockViewportManager);
     });
   });
 
   describe('Viewport Creation', () => {
     test('createViewport should delegate to layout manager', () => {
       const bounds: ProportionalBounds = { x: 0, y: 0, width: 1.0, height: 1.0 };
-      mockLayoutManager.createViewport.mockReturnValue(mockViewport);
+      mockViewportManager.createViewport.mockReturnValue(mockViewport);
 
       const result = workspace.createViewport(bounds);
 
-      expect(mockLayoutManager.createViewport).toHaveBeenCalledWith(bounds);
+      expect(mockViewportManager.createViewport).toHaveBeenCalledWith(bounds);
       expect(result).toBe(mockViewport);
     });
 
     test('createViewport should work without bounds parameter', () => {
-      mockLayoutManager.createViewport.mockReturnValue(mockViewport);
+      mockViewportManager.createViewport.mockReturnValue(mockViewport);
 
       const result = workspace.createViewport();
 
-      expect(mockLayoutManager.createViewport).toHaveBeenCalledWith(undefined);
+      expect(mockViewportManager.createViewport).toHaveBeenCalledWith(undefined);
       expect(result).toBe(mockViewport);
     });
 
@@ -110,11 +112,11 @@ describe('Workspace Unit Tests', () => {
       const existingViewports = [mockViewport];
       const direction = 'left' as const;
       const size = { width: 0.5 };
-      mockLayoutManager.createAdjacentViewport.mockReturnValue(mockViewport);
+      mockViewportManager.createAdjacentViewport.mockReturnValue(mockViewport);
 
       const result = workspace.createAdjacentViewport(existingViewports, direction, size);
 
-      expect(mockLayoutManager.createAdjacentViewport).toHaveBeenCalledWith(
+      expect(mockViewportManager.createAdjacentViewport).toHaveBeenCalledWith(
         existingViewports,
         direction,
         size
@@ -129,15 +131,15 @@ describe('Workspace Unit Tests', () => {
       const size = { width: 0.5 };
 
       // Mock findViewportById to return the viewport
-      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
-      mockLayoutManager.createAdjacentViewport.mockReturnValue(mockViewport);
+      mockViewportManager.findViewportById.mockReturnValue(mockViewport);
+      mockViewportManager.createAdjacentViewport.mockReturnValue(mockViewport);
 
       const result = workspace.createAdjacentViewport(existingViewportsOrIds, direction, size);
 
       // Should call findViewportById with the ID
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
       // Should call createAdjacentViewport with resolved viewport objects
-      expect(mockLayoutManager.createAdjacentViewport).toHaveBeenCalledWith(
+      expect(mockViewportManager.createAdjacentViewport).toHaveBeenCalledWith(
         [mockViewport, mockViewport], // Both should be viewport objects
         direction,
         size
@@ -151,14 +153,14 @@ describe('Workspace Unit Tests', () => {
       const direction = 'left' as const;
 
       // Mock findViewportById to return null
-      mockLayoutManager.findViewportById.mockReturnValue(null);
+      mockViewportManager.findViewportById.mockReturnValue(null);
 
       expect(() => workspace.createAdjacentViewport(existingViewportsOrIds, direction)).toThrow(
         'Viewport not found: non-existent-id'
       );
 
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
-      expect(mockLayoutManager.createAdjacentViewport).not.toHaveBeenCalled();
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.createAdjacentViewport).not.toHaveBeenCalled();
     });
   });
 
@@ -166,11 +168,11 @@ describe('Workspace Unit Tests', () => {
     test('splitViewport should delegate to layout manager with viewport object', () => {
       const direction = 'down' as const;
       const expectedResult = mockViewport;
-      mockLayoutManager.splitViewport.mockReturnValue(expectedResult);
+      mockViewportManager.splitViewport.mockReturnValue(expectedResult);
 
       const result = workspace.splitViewport(mockViewport, direction);
 
-      expect(mockLayoutManager.splitViewport).toHaveBeenCalledWith(
+      expect(mockViewportManager.splitViewport).toHaveBeenCalledWith(
         mockViewport,
         direction,
         undefined
@@ -184,15 +186,15 @@ describe('Workspace Unit Tests', () => {
       const expectedResult = mockViewport;
 
       // Mock findViewportById to return the viewport
-      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
-      mockLayoutManager.splitViewport.mockReturnValue(expectedResult);
+      mockViewportManager.findViewportById.mockReturnValue(mockViewport);
+      mockViewportManager.splitViewport.mockReturnValue(expectedResult);
 
       const result = workspace.splitViewport(viewportId, direction);
 
       // Should call findViewportById with the ID
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
       // Should call splitViewport with the resolved viewport object
-      expect(mockLayoutManager.splitViewport).toHaveBeenCalledWith(
+      expect(mockViewportManager.splitViewport).toHaveBeenCalledWith(
         mockViewport,
         direction,
         undefined
@@ -205,22 +207,22 @@ describe('Workspace Unit Tests', () => {
       const direction = 'down' as const;
 
       // Mock findViewportById to return null
-      mockLayoutManager.findViewportById.mockReturnValue(null);
+      mockViewportManager.findViewportById.mockReturnValue(null);
 
       expect(() => workspace.splitViewport(viewportId, direction)).toThrow(
         'Viewport not found: non-existent-id'
       );
 
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
-      expect(mockLayoutManager.splitViewport).not.toHaveBeenCalled();
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.splitViewport).not.toHaveBeenCalled();
     });
 
     test('removeViewport should delegate to layout manager with viewport objects', () => {
-      mockLayoutManager.removeViewport.mockReturnValue(true);
+      mockViewportManager.removeViewport.mockReturnValue(true);
 
       const result = workspace.removeViewport(mockViewport);
 
-      expect(mockLayoutManager.removeViewport).toHaveBeenCalledWith(mockViewport);
+      expect(mockViewportManager.removeViewport).toHaveBeenCalledWith(mockViewport);
       expect(result).toBe(true);
     });
 
@@ -231,47 +233,47 @@ describe('Workspace Unit Tests', () => {
         isMinimized: false,
         isMaximized: false,
       };
-      mockLayoutManager.swapViewports.mockReturnValue(true);
+      mockViewportManager.swapViewports.mockReturnValue(true);
 
       const result = workspace.swapViewports(mockViewport, viewport2);
 
-      expect(mockLayoutManager.swapViewports).toHaveBeenCalledWith(mockViewport, viewport2);
+      expect(mockViewportManager.swapViewports).toHaveBeenCalledWith(mockViewport, viewport2);
       expect(result).toBe(true);
     });
 
     test('minimizeViewport should resolve ID and delegate to layout manager', () => {
       const viewportId = 'test-viewport-id';
-      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
-      mockLayoutManager.minimizeViewport.mockReturnValue(false);
+      mockViewportManager.findViewportById.mockReturnValue(mockViewport);
+      mockViewportManager.minimizeViewport.mockReturnValue(false);
 
       const result = workspace.minimizeViewport(viewportId);
 
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
-      expect(mockLayoutManager.minimizeViewport).toHaveBeenCalledWith(mockViewport);
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.minimizeViewport).toHaveBeenCalledWith(mockViewport);
       expect(result).toBe(false);
     });
 
     test('maximizeViewport should resolve ID and delegate to layout manager', () => {
       const viewportId = 'test-viewport-id';
-      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
-      mockLayoutManager.maximizeViewport.mockReturnValue(false);
+      mockViewportManager.findViewportById.mockReturnValue(mockViewport);
+      mockViewportManager.maximizeViewport.mockReturnValue(false);
 
       const result = workspace.maximizeViewport(viewportId);
 
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
-      expect(mockLayoutManager.maximizeViewport).toHaveBeenCalledWith(mockViewport);
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.maximizeViewport).toHaveBeenCalledWith(mockViewport);
       expect(result).toBe(false);
     });
 
     test('restoreViewport should resolve ID and delegate to layout manager', () => {
       const viewportId = 'test-viewport-id';
-      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
-      mockLayoutManager.restoreViewport.mockReturnValue(false);
+      mockViewportManager.findViewportById.mockReturnValue(mockViewport);
+      mockViewportManager.restoreViewport.mockReturnValue(false);
 
       const result = workspace.restoreViewport(viewportId);
 
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith(viewportId);
-      expect(mockLayoutManager.restoreViewport).toHaveBeenCalledWith(mockViewport);
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith(viewportId);
+      expect(mockViewportManager.restoreViewport).toHaveBeenCalledWith(mockViewport);
       expect(result).toBe(false);
     });
   });
@@ -279,20 +281,20 @@ describe('Workspace Unit Tests', () => {
   describe('Viewport Queries', () => {
     test('getViewports should delegate to layout manager', () => {
       const mockViewports = [mockViewport];
-      mockLayoutManager.getViewports.mockReturnValue(mockViewports);
+      mockViewportManager.getViewports.mockReturnValue(mockViewports);
 
       const result = workspace.getViewports();
 
-      expect(mockLayoutManager.getViewports).toHaveBeenCalled();
+      expect(mockViewportManager.getViewports).toHaveBeenCalled();
       expect(result).toBe(mockViewports);
     });
 
     test('hasViewport should use findViewportById under the hood', () => {
-      mockLayoutManager.findViewportById.mockReturnValue(mockViewport);
+      mockViewportManager.findViewportById.mockReturnValue(mockViewport);
 
       const result = workspace.hasViewport('test-id');
 
-      expect(mockLayoutManager.findViewportById).toHaveBeenCalledWith('test-id');
+      expect(mockViewportManager.findViewportById).toHaveBeenCalledWith('test-id');
       expect(result).toBe(true);
     });
   });
@@ -304,7 +306,7 @@ describe('Workspace Unit Tests', () => {
       workspace.updateScreenBounds(newScreenBounds);
 
       expect(workspace.screenBounds).toEqual(newScreenBounds);
-      expect(mockLayoutManager.setScreenBounds).toHaveBeenCalledWith(newScreenBounds);
+      expect(mockViewportManager.setScreenBounds).toHaveBeenCalledWith(newScreenBounds);
     });
 
     test('updateScreenBounds should be called twice - once in constructor, once in method', () => {
@@ -313,9 +315,9 @@ describe('Workspace Unit Tests', () => {
       workspace.updateScreenBounds(newScreenBounds);
 
       // Should be called twice: once in constructor, once in updateScreenBounds
-      expect(mockLayoutManager.setScreenBounds).toHaveBeenCalledTimes(2);
-      expect(mockLayoutManager.setScreenBounds).toHaveBeenNthCalledWith(1, testScreenBounds); // Constructor
-      expect(mockLayoutManager.setScreenBounds).toHaveBeenNthCalledWith(2, newScreenBounds); // updateScreenBounds
+      expect(mockViewportManager.setScreenBounds).toHaveBeenCalledTimes(2);
+      expect(mockViewportManager.setScreenBounds).toHaveBeenNthCalledWith(1, testScreenBounds); // Constructor
+      expect(mockViewportManager.setScreenBounds).toHaveBeenNthCalledWith(2, newScreenBounds); // updateScreenBounds
     });
   });
 });

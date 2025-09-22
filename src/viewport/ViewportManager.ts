@@ -1,12 +1,6 @@
-/**
- * @fileoverview Viewport Manager class
- *
- * Concrete implementation of layout management functionality.
- */
-
-import { Viewport, ViewportRequest, MutableViewport } from '.';
+import { Viewport, MutableViewport } from '.';
 import { ProportionalBounds, ScreenBounds } from '../workspace/types';
-import { IdGenerator } from '../shared/types'; 
+import { IdGenerator } from '../shared/types';
 import { WorkspaceContext } from '../workspace/types';
 import { WorkspaceContextDetector } from '../workspace/context/WorkspaceContextDetector';
 import { ViewportSnapshotManager } from './snapshot/ViewportSnapshotManager';
@@ -46,19 +40,6 @@ export class ViewportManager {
     this.currentContext = context;
   }
 
-  /**
-   * Helper to create a MutableViewport from a ViewportState
-   */
-  private createViewportFromState(
-    state: import('../viewport/types').ViewportState
-  ): MutableViewport {
-    return new MutableViewport({
-      id: state.viewportId,
-      proportionalBounds: state.bounds || { x: 0, y: 0, width: 1, height: 1 },
-      workspaceBounds: this.workspaceBounds,
-    });
-  }
-
   // Viewport management operations
   createViewport(proportionalBounds?: ProportionalBounds): Viewport {
     // Use provided bounds or find optimal placement
@@ -67,10 +48,6 @@ export class ViewportManager {
     this.mutateViewports();
 
     return this.findViewportById(snapshot.id)!;
-  }
-
-  private mutateViewports(): boolean {
-    // use 
   }
 
   getViewports(): Viewport[] {

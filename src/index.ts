@@ -8,7 +8,6 @@
 // Domain exports
 export * from './workspace';
 export * from './viewport';
-export * from './layout';
 export * from './shared';
 
 // Utility functions

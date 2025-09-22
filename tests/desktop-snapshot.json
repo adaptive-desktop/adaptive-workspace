@@ -1,0 +1,84 @@
+{
+  "id": "adaptive-desktop-snapshot",
+  "name": "Adaptive Desktop Snapshot Example",
+  "workspaceContexts": [
+    {
+      "id": "ultrawide",
+      "name": "Ultrawide Monitor",
+      "minimumViewportScreenHeight": 300,
+      "minimumViewportScreenWidth": 300,
+      "snapshots": [
+        { 
+          "id": "main", 
+          "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
+          "isDefault": false,
+          "isMaximized": false,
+          "isMinimized": false,
+          "isRequired": true,
+          "timestamp": 1639547653210
+        },
+        { 
+          "id": "side", 
+          "bounds": { "x": 0.75, "y": 0, "width": 0.25, "height": 1 }, 
+          "isDefault": false,
+          "isMaximized": false,
+          "isMinimized": false,
+          "isRequired": false,
+          "timestamp": 1639547653211
+        }
+      ]
+    },
+    {
+      "id": "laptop",
+      "name": "Laptop Display",
+      "minimumViewportScreenHeight": 300,
+      "minimumViewportScreenWidth": 300,
+      "snapshots": [
+        { 
+          "id": "main", 
+          "bounds": { "x": 0, "y": 0, "width": 1, "height": 1 }, 
+          "isDefault": true,
+          "isMaximized": false,
+          "isMinimized": false,
+          "isRequired": true,
+          "timestamp": 1639547653212
+        },
+        { 
+          "id": "side", 
+          "bounds": { "x": 0, "y": 0, "width": 0.25, "height": 1 },
+          "isDefault": false,
+          "isMaximized": false,
+          "isMinimized": true,
+          "isRequired": false,
+          "timestamp": 1639547653213
+        }
+      ]
+    },
+    {
+      "id": "phone",
+      "name": "Phone Portrait",
+      "minimumViewportScreenHeight": 300,
+      "minimumViewportScreenWidth": 300,
+      "snapshots": [
+        { 
+          "id": "main", 
+          "bounds": { "x": 0, "y": 0, "width": 1, "height": 1 }, 
+          "isDefault": true,
+          "isMaximized": false,
+          "isMinimized": false,
+          "isRequired": true,
+          "timestamp": 1639547653214
+        },
+        { 
+          "id": "side", 
+          "bounds": { "x": 0, "y": 0, "width": 0.25, "height": 1 },
+          "isDefault": false,
+          "isMaximized": false,
+          "isMinimized": true,
+          "isRequired": false,
+          "timestamp": 1639547653215
+        }
+      ]
+    }
+  ]
+}

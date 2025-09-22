@@ -1,12 +1,49 @@
+import { Viewport, ViewportSnapshot } from '../viewport/types';
+import { ViewportSnapshotCollection } from '../viewport/snapshot/ViewportSnapshotCollection';
 /**
  * @fileoverview Workspace types and interfaces
  *
  * Core workspace-related types and interfaces.
  */
 
-import { LayoutManager } from '../layout/LayoutManager';
-import { Viewport, ProportionalBounds } from '../viewport/types';
-import { IdGenerator } from '../shared/types';
+/**
+ * WorkspaceContext: describes the current display environment and viewport arrangement.
+ *
+ * id and name are optional for compatibility with legacy code.
+ */
+export interface WorkspaceContext {
+  id?: string;
+  name?: string;
+  snapshots: ViewportSnapshotCollection;
+  screenBounds: ScreenBounds;
+  orientation: 'landscape' | 'portrait';
+  aspectRatio: number;
+  breakpoint: 'sm' | 'md' | 'lg' | 'xl';
+  sizeCategory: 'small' | 'medium' | 'large' | 'extra-large';
+  deviceType:
+    | 'small-tablet'
+    | 'large-tablet'
+    | 'compact-laptop'
+    | 'standard-laptop'
+    | 'large-laptop'
+    | 'desktop'
+    | 'ultrawide'
+    | 'wall-display'
+    | 'tv'
+    | 'phone'
+    | 'phablet'
+    | 'foldable';
+  minimumViewportScreenHeight: number;
+  minimumViewportScreenWidth: number;
+}
+
+
+export interface ProportionalBounds {
+  x: number; // 0.0 to 1.0 (0% to 100% of workspace width)
+  y: number; // 0.0 to 1.0 (0% to 100% of workspace height)
+  width: number; // 0.0 to 1.0 (0% to 100% of workspace width)
+  height: number; // 0.0 to 1.0 (0% to 100% of workspace height)
+}
 
 /**
  * Screen coordinates and dimensions
@@ -24,8 +61,14 @@ export interface ScreenBounds {
 export interface WorkspaceConfig {
   id: string;
   screenBounds: ScreenBounds;
-  layout?: LayoutManager; // Optional, will use default if not provided
-  idGenerator: IdGenerator; // Required - explicit ID generation strategy
+}
+
+export interface WorkspaceContextSnapshot {
+  id: string;
+  name: string;
+  minimumViewportScreenHeight: number;
+  minimumViewportScreenWidth: number;
+  snapshots: ViewportSnapshot[];
 }
 
 /**
@@ -37,7 +80,6 @@ export interface WorkspaceConfig {
 export interface WorkspaceInterface {
   readonly id: string;
   readonly screenBounds: ScreenBounds;
-  readonly layout: LayoutManager;
 
   // Viewport operations - create/split return new viewport, others return success/failure
   /**
@@ -51,13 +93,11 @@ export interface WorkspaceInterface {
    * Create a viewport adjacent to existing viewports
    * @param existingViewports - Collection of viewports to position relative to
    * @param direction - Direction to place new viewport relative to collection
-   * @param size - Optional proportional size for the new viewport
    * @returns The new viewport object (shared reference)
    */
   createAdjacentViewport(
     existingViewportsOrIds: (Viewport | string)[],
-    direction: 'up' | 'down' | 'left' | 'right',
-    size?: { width?: number; height?: number }
+    direction: 'up' | 'down' | 'left' | 'right'
   ): Viewport;
 
   /**

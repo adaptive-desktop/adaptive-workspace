@@ -90,7 +90,6 @@ export class ViewportSnapshotManager {
   setCurrentWorkspaceContext(workspaceContext: WorkspaceContext) {
     this.currentWorkspaceContext = workspaceContext;
     // this has to calulate the MutableViewports
-    
   }
 
   private addSnapshot(snapshot: ViewportSnapshot) {

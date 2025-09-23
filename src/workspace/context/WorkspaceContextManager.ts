@@ -12,9 +12,11 @@ export class WorkspaceContextManager {
   private contexts: Map<string, WorkspaceContext> = new Map();
   private currentContext: WorkspaceContext | null = null;
 
+  constructor(private workspaceContextDetector: WorkspaceContextDetector) {}
+
   getContext(screenBounds: ScreenBounds): WorkspaceContext {
-    const context = WorkspaceContextDetector.detectContext(screenBounds);
-    const key = WorkspaceContextDetector.generateContextKey(context);
+    const context = this.workspaceContextDetector.detectContext(screenBounds);
+    const key = this.workspaceContextDetector.generateContextKey(context);
     if (!this.contexts.has(key)) {
       this.contexts.set(key, context);
     }
@@ -23,8 +25,8 @@ export class WorkspaceContextManager {
   }
 
   getOrCreateContext(screenBounds: ScreenBounds): WorkspaceContext {
-    const context = WorkspaceContextDetector.detectContext(screenBounds);
-    const key = WorkspaceContextDetector.generateContextKey(context);
+    const context = this.workspaceContextDetector.detectContext(screenBounds);
+    const key = this.workspaceContextDetector.generateContextKey(context);
     if (!this.contexts.has(key)) {
       this.contexts.set(key, context);
     }

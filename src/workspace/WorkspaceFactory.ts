@@ -1,6 +1,8 @@
 import { Workspace } from './Workspace';
 import { ScreenBounds, WorkspaceSnapshot } from './types';
 import { IdGenerator } from '../shared/types';
+import { WorkspaceContextFactory } from './context/WorkspaceContextFactory';
+import { WorkspaceContextCollection } from './context/WorkspaceContextCollection';
 
 /**
  * Configuration for creating a workspace via WorkspaceFactory
@@ -23,26 +25,30 @@ export class WorkspaceFactory {
    * @param config - Configuration including screen bounds
    * @returns New workspace instance with auto-generated ID
    */
-  create(config: WorkspaceFactoryConfig): Workspace {
+  create(): Workspace {
     const id = this.idGenerator.generate();
     return new Workspace({
       id,
-      screenBounds: { x: config.x, y: config.y, width: config.width, height: config.height },
+      name: '',
       idGenerator: this.idGenerator,
+      workspaceContexts: new WorkspaceContextCollection(),
     });
   }
 
   fromSnapshot(snapshot: WorkspaceSnapshot, screenBounds: ScreenBounds): Workspace {
-    //
-    // you haved to create each WorkspaceContext, in WorkspaceContextCollection
-    // you need to determine the current WorkspaceContext,
-    // then create the ViewportSnapshotCollection,
-    // add the ViewportSnapshotCollection to each WorkspaceContext
-    // and finally create and return the Workspace with the provided screen
-    // bounds, workspace contexts and the ViewportManager
-    //
-    // it will be the responsibility of the calling code to call
-    // Workspace.updateWorkspace(currentContext: WorkspaceConext)
-    // to create the screen bounds for the viewports
+    const contextFactory = new WorkspaceContextFactory();
+    const workspaceContexts = snapshot.workspaceContexts.map((contextSnapshot) =>
+      contextFactory.fromSnapshot(contextSnapshot)
+    );
+
+    const workspace = new Workspace({
+      id: snapshot.id,
+      name: snapshot.name,
+      idGenerator: this.idGenerator,
+      workspaceContexts: new WorkspaceContextCollection(workspaceContexts),
+    });
+    workspace.setScreenBounds(screenBounds);
+
+    return workspace;
   }
 }

@@ -1,15 +1,7 @@
-/**
- * @fileoverview Tests for ViewportManager findViewportById functionality
- *
- * Tests the findViewportById() method, ensuring:
- * 1. Returns correct viewport when ID exists
- * 2. Returns null when ID does not exist
- * 3. Works correctly with multiple viewports
- */
-
-import { ViewportManager } from '../../ViewportManager';
-import { ScreenBounds } from '../../types';
-import { TestIdGenerator } from '../../../shared/TestIdGenerator';
+import { TestIdGenerator } from '../../shared';
+import { ScreenBounds } from '../../workspace';
+import { WorkspaceContextCollection } from '../../workspace/context/WorkspaceContextCollection';
+import { ViewportManager } from '../ViewportManager';
 
 describe('ViewportManager - findViewportById()', () => {
   let layoutManager: ViewportManager;
@@ -21,7 +13,10 @@ describe('ViewportManager - findViewportById()', () => {
   };
 
   beforeEach(() => {
-    layoutManager = new ViewportManager(new TestIdGenerator('viewport'));
+    layoutManager = new ViewportManager(
+      new WorkspaceContextCollection(),
+      new TestIdGenerator('viewport')
+    );
     layoutManager.setScreenBounds(testWorkspaceBounds);
   });
 

@@ -1,53 +1,192 @@
-/**
- * @fileoverview Tests for WorkspaceFactory
- *
- * Tests the WorkspaceFactory class and workspace creation methods.
- */
-
 import { WorkspaceFactory } from '../WorkspaceFactory';
-import { Workspace } from '../Workspace';
 import { TestIdGenerator } from '../../shared/TestIdGenerator';
+import { WorkspaceContextFactory } from '../context/WorkspaceContextFactory';
+import { WorkspaceContextCollection } from '../context/WorkspaceContextCollection';
+import { Workspace } from '../Workspace';
+import { WorkspaceSnapshot, ScreenBounds } from '../types';
+
+// Mock dependencies
+jest.mock('../context/WorkspaceContextFactory');
+jest.mock('../context/WorkspaceContextCollection');
+jest.mock('../Workspace');
 
 describe('WorkspaceFactory', () => {
-  test('create() produces a workspace with correct id, bounds, and initial snapshot', () => {
-    const idGen = new TestIdGenerator('ws');
-    const factory = new WorkspaceFactory(idGen);
-    const config = { x: 100, y: 200, width: 800, height: 600 };
-    const workspace = factory.create(config);
-    expect(workspace.id).toBe('ws-1');
-    expect(workspace.screenBounds).toEqual(config);
-    expect(workspace.layout.getViewportCount()).toBe(0);
-    // Optionally: check that a snapshot can be created (if API exists)
-    // expect(workspace.createSnapshot()).toBeDefined();
-  });
+  describe('fromSnapshot', () => {
+    let factory: WorkspaceFactory;
+    let idGenerator: TestIdGenerator;
+    let mockSnapshot: WorkspaceSnapshot;
+    let mockScreenBounds: ScreenBounds;
 
-  test('create() returns Workspace instance', () => {
-    const factory = new WorkspaceFactory(new TestIdGenerator('ws'));
-    const workspace = factory.create({ x: 0, y: 0, width: 800, height: 600 });
-    expect(workspace).toBeInstanceOf(Workspace);
-  });
+    beforeEach(() => {
+      // Reset mocks
+      jest.clearAllMocks();
 
-  test('create() generates unique IDs per factory', () => {
-    const factory = new WorkspaceFactory(new TestIdGenerator('uniq'));
-    const ws1 = factory.create({ x: 0, y: 0, width: 800, height: 600 });
-    const ws2 = factory.create({ x: 0, y: 0, width: 800, height: 600 });
-    expect(ws1.id).not.toBe(ws2.id);
-    expect(ws1.id).toBe('uniq-1');
-    expect(ws2.id).toBe('uniq-2');
-  });
+      // Setup test data
+      idGenerator = new TestIdGenerator('test');
+      factory = new WorkspaceFactory(idGenerator);
 
-  test('createWithViewport() returns Workspace instance (no viewport yet)', () => {
-    const factory = new WorkspaceFactory(new TestIdGenerator('vw'));
-    const workspace = factory.createWithViewport({ x: 0, y: 0, width: 800, height: 600 });
-    expect(workspace).toBeInstanceOf(Workspace);
-    expect(workspace.layout.getViewportCount()).toBe(0); // Will be 1 when implemented
-  });
+      mockScreenBounds = { x: 0, y: 0, width: 1440, height: 900 };
+      mockSnapshot = {
+        id: 'workspace-1',
+        name: 'Test Workspace',
+        workspaceContexts: [
+          {
+            id: 'context-1',
+            name: 'Desktop Context',
+            maxScreenBounds: { x: 0, y: 0, width: 1920, height: 1080 },
+            snapshots: [
+              {
+                id: 'viewport-1',
+                workspaceContextId: 'context-1',
+                bounds: { x: 0, y: 0, width: 0.5, height: 1 },
+                isDefault: true,
+                isMaximized: false,
+                isMinimized: false,
+                isRequired: true,
+                timestamp: Date.now(),
+              },
+              {
+                id: 'viewport-2',
+                workspaceContextId: 'context-1',
+                bounds: { x: 0.5, y: 0, width: 0.5, height: 1 },
+                isDefault: false,
+                isMaximized: false,
+                isMinimized: false,
+                isRequired: false,
+                timestamp: Date.now(),
+              },
+            ],
+            orientation: 'landscape',
+            aspectRatio: 16 / 9,
+            breakpoint: 'lg',
+            sizeCategory: 'large',
+            deviceType: 'desktop',
+            minimumViewportScreenHeight: 200,
+            minimumViewportScreenWidth: 300,
+          },
+          {
+            id: 'context-2',
+            name: 'Mobile Context',
+            maxScreenBounds: { x: 0, y: 0, width: 390, height: 844 },
+            snapshots: [],
+            orientation: 'portrait',
+            aspectRatio: 9 / 19.5,
+            breakpoint: 'sm',
+            sizeCategory: 'small',
+            deviceType: 'phone',
+            minimumViewportScreenHeight: 100,
+            minimumViewportScreenWidth: 150,
+          },
+        ],
+      };
 
-  test('IdGenerator is used for workspace and viewport IDs', () => {
-    const factory = new WorkspaceFactory(new TestIdGenerator('vw'));
-    const workspace = factory.create({ x: 0, y: 0, width: 800, height: 600 });
-    expect(workspace.id).toBe('vw-1');
-    const viewport = workspace.createViewport();
-    expect(viewport.id).toBe('vw-2');
+      // Mock WorkspaceContextFactory
+      (WorkspaceContextFactory as jest.Mock).mockImplementation(() => ({
+        fromSnapshot: jest.fn((contextSnapshot) => ({
+          id: contextSnapshot.id,
+          name: contextSnapshot.name,
+          // Return a mock context object with the same ID as the snapshot
+        })),
+      }));
+
+      // Mock WorkspaceContextCollection
+      (WorkspaceContextCollection as jest.Mock).mockImplementation(() => ({
+        // Mock methods as needed
+      }));
+
+      // Mock Workspace
+      (Workspace as jest.Mock).mockImplementation(() => ({
+        setScreenBounds: jest.fn(),
+        // Other workspace methods
+      }));
+    });
+
+    it('should create a workspace from a snapshot with the correct properties', () => {
+      // Unmock actual implementations for this test
+      jest.unmock('../context/WorkspaceContextFactory');
+      jest.unmock('../context/WorkspaceContextCollection');
+      jest.unmock('../Workspace');
+
+      // Create real instances instead of mocks
+      const realFactory = new WorkspaceFactory(idGenerator);
+
+      // Spy on Workspace constructor
+      const workspaceSpy = jest.spyOn(Workspace.prototype, 'setScreenBounds');
+
+      // Execute the method
+      const result = realFactory.fromSnapshot(mockSnapshot, mockScreenBounds);
+
+      // Verify the result
+      expect(result).toBeDefined();
+      expect(result.id).toBe(mockSnapshot.id);
+      expect(result.name).toBe(mockSnapshot.name);
+      expect(workspaceSpy).toHaveBeenCalledWith(mockScreenBounds);
+
+      // Restore the spy
+      workspaceSpy.mockRestore();
+    });
+
+    it('should convert all context snapshots using WorkspaceContextFactory', () => {
+      // Execute the method
+      factory.fromSnapshot(mockSnapshot, mockScreenBounds);
+
+      // Verify WorkspaceContextFactory was used correctly
+      const contextFactoryInstance = (WorkspaceContextFactory as jest.Mock).mock.instances[0];
+      const fromSnapshotMethod = contextFactoryInstance.fromSnapshot;
+
+      // Should be called once for each context in the snapshot
+      expect(fromSnapshotMethod).toHaveBeenCalledTimes(mockSnapshot.workspaceContexts.length);
+      expect(fromSnapshotMethod).toHaveBeenNthCalledWith(1, mockSnapshot.workspaceContexts[0]);
+      expect(fromSnapshotMethod).toHaveBeenNthCalledWith(2, mockSnapshot.workspaceContexts[1]);
+    });
+
+    it('should create a WorkspaceContextCollection with the converted contexts', () => {
+      // Setup mock context objects that will be returned by the factory
+      mockSnapshot.workspaceContexts.map((ctx) => ({ id: ctx.id }));
+      const contextFactoryMock = {
+        fromSnapshot: jest.fn((ctx) => ({ id: ctx.id })),
+      };
+      (WorkspaceContextFactory as jest.Mock).mockImplementation(() => contextFactoryMock);
+
+      // Execute the method
+      factory.fromSnapshot(mockSnapshot, mockScreenBounds);
+
+      // Verify WorkspaceContextCollection was created with the contexts
+      expect(WorkspaceContextCollection).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'context-1' }),
+          expect.objectContaining({ id: 'context-2' }),
+        ])
+      );
+    });
+
+    it('should set the screen bounds on the created workspace', () => {
+      // Mock workspace instance
+      const setScreenBoundsMock = jest.fn();
+      (Workspace as jest.Mock).mockImplementation(() => ({
+        setScreenBounds: setScreenBoundsMock,
+      }));
+
+      // Execute the method
+      factory.fromSnapshot(mockSnapshot, mockScreenBounds);
+
+      // Verify setScreenBounds was called with the correct bounds
+      expect(setScreenBoundsMock).toHaveBeenCalledWith(mockScreenBounds);
+    });
+
+    it('should handle empty workspaceContexts array', () => {
+      // Create a snapshot with no contexts
+      const emptySnapshot = {
+        ...mockSnapshot,
+        workspaceContexts: [],
+      };
+
+      // Execute the method
+      const result = factory.fromSnapshot(emptySnapshot, mockScreenBounds);
+
+      // Verify a workspace was still created
+      expect(result).toBeDefined();
+      expect(WorkspaceContextCollection).toHaveBeenCalledWith([]);
+    });
   });
 });

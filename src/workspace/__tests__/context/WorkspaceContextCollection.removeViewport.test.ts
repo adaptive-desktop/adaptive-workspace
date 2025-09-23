@@ -20,7 +20,7 @@ describe('WorkspaceContextCollection.removeViewport', () => {
       id,
       name: id,
       snapshots,
-      screenBounds: { x: 0, y: 0, width: 100, height: 100 },
+      maxScreenBounds: { x: 0, y: 0, width: 100, height: 100 },
       orientation: 'landscape',
       aspectRatio: 1,
       breakpoint: 'lg',

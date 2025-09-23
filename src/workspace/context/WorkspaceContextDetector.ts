@@ -1,59 +1,94 @@
-/**
- * @fileoverview Workspace context detection utility
- */
-
 import { ScreenBounds } from '../types';
 import { WorkspaceContext } from '../types';
+import { WorkspaceContextCollection } from './WorkspaceContextCollection';
 
 export class WorkspaceContextDetector {
-  static detectContext(screenBounds: ScreenBounds): WorkspaceContext {
-    const { width, height } = screenBounds;
-    const aspectRatio = width / height;
-    const orientation = width >= height ? 'landscape' : 'portrait';
+  private workspaceContextCollection: WorkspaceContextCollection;
 
-    // Size breakpoints (based on width)
-    const breakpoint = this.getBreakpoint(width);
-    const sizeCategory = this.getSizeCategory(breakpoint);
-
-    // Device type detection
-    const deviceType = this.getDeviceType(width, aspectRatio);
-
-    return {
-      id: 'default',
-      name: 'Default',
-      orientation,
-      aspectRatio,
-      breakpoint,
-      sizeCategory,
-      deviceType,
-      screenBounds,
-      // Default: single viewport state covering the whole screen
-      viewportStates: [
-        {
-          viewportId: 'viewport-1',
-          bounds: { x: 0, y: 0, width: 1, height: 1 },
-          isMinimized: false,
-        },
-      ],
-    };
+  constructor(workspaceContextCollection: WorkspaceContextCollection) {
+    this.workspaceContextCollection = workspaceContextCollection;
   }
 
-  static generateContextKey(context: WorkspaceContext): string {
-    const { orientation, breakpoint, screenBounds } = context;
-    if (screenBounds) {
-      return `${orientation}-${breakpoint}-${screenBounds.width}x${screenBounds.height}`;
+  detectContext(screenBounds: ScreenBounds): WorkspaceContext {
+    let contexts = this.workspaceContextCollection.findByOrientation(
+      this.getOrientation(screenBounds)
+    );
+    if (contexts.length === 0) {
+      throw Error('No matching WorkspaceContext found. A future version will create a new context');
     }
-    return `${orientation}-${breakpoint}-unknown`;
+    contexts = this.removeExcessiveSizeCategories(contexts, screenBounds);
+
+    return this.extractContextWithClosestAspectRatio(contexts, screenBounds);
   }
 
-  private static getBreakpoint(width: number): 'sm' | 'md' | 'lg' | 'xl' {
-    if (width < 1024) return 'sm';
-    if (width < 1600) return 'md';
-    if (width < 2560) return 'lg';
+  generateContextKey(context: WorkspaceContext): string {
+    const { orientation, breakpoint, maxScreenBounds } = context;
+
+    return `${orientation}-${breakpoint}-${maxScreenBounds.width}x${maxScreenBounds.height}`;
+  }
+
+  private extractContextWithClosestAspectRatio(
+    contexts: WorkspaceContext[],
+    screenBounds: ScreenBounds
+  ): WorkspaceContext {
+    let closestAspectRatio = Infinity;
+    let closestContext: WorkspaceContext | null = null;
+    for (const ctx of contexts) {
+      const aspectRatio = Math.abs(
+        this.getAspectRatio(ctx.maxScreenBounds) - this.getAspectRatio(screenBounds)
+      );
+      if (aspectRatio < closestAspectRatio) {
+        closestAspectRatio = aspectRatio;
+        closestContext = ctx;
+      }
+
+      return closestContext!;
+    }
+    throw new Error(
+      'No matching WorkspaceContext found. A future version will create a new context'
+    );
+  }
+
+  private removeExcessiveSizeCategories(
+    contexts: WorkspaceContext[],
+    screenBounds: ScreenBounds
+  ): WorkspaceContext[] {
+    const sizeCategory = this.getSizeCategory(screenBounds);
+    const sizeCategories = ['extra-large', 'large', 'medium', 'small'];
+    const targetIndex = sizeCategories.indexOf(sizeCategory);
+
+    if (targetIndex === -1) {
+      throw new Error(
+        'No matching WorkspaceContext found. A future version will create a new context'
+      );
+    }
+
+    // Filter contexts that have a size category no larger than the target
+    return contexts.filter((context) => {
+      const contexSizeCategoryIndex = sizeCategories.indexOf(context.sizeCategory);
+      return contexSizeCategoryIndex >= targetIndex;
+    });
+  }
+
+  private getAspectRatio(screenBounds: ScreenBounds): number {
+    return screenBounds.width / screenBounds.height;
+  }
+
+  private getBreakpoint(screenBounds: ScreenBounds): 'sm' | 'md' | 'lg' | 'xl' {
+    if (screenBounds.width < 1024) return 'sm';
+    if (screenBounds.width < 1600) return 'md';
+    if (screenBounds.width < 2560) return 'lg';
     return 'xl';
   }
 
-  private static getSizeCategory(breakpoint: string): 'small' | 'medium' | 'large' | 'extra-large' {
+  private getOrientation(screenBounds: ScreenBounds): 'landscape' | 'portrait' {
+    return screenBounds.width >= screenBounds.height ? 'landscape' : 'portrait';
+  }
+
+  private getSizeCategory(
+    screenBounds: ScreenBounds
+  ): 'small' | 'medium' | 'large' | 'extra-large' {
+    const breakpoint = this.getBreakpoint(screenBounds);
     switch (breakpoint) {
       case 'sm':
         return 'small';
@@ -63,8 +98,6 @@ export class WorkspaceContextDetector {
         return 'large';
       case 'xl':
         return 'extra-large';
-      default:
-        return 'medium';
     }
   }
 

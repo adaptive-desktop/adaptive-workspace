@@ -79,7 +79,7 @@ describe('WorkspaceContextFactory', () => {
     // Spy on ViewportSnapshotCollection's add method
     const addSpy = jest.spyOn(ViewportSnapshotCollection.prototype, 'add');
 
-    const result = factory.fromSnapshot(mockSnapshot);
+    factory.fromSnapshot(mockSnapshot);
 
     // Verify snapshots were added to the collection
     expect(addSpy).toHaveBeenCalledTimes(2);

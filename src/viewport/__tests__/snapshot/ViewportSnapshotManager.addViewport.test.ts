@@ -3,6 +3,7 @@ import { WorkspaceContext } from '../../../workspace/types';
 import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 import { ProportionalBounds } from '../../../workspace/types';
 import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
+import { WorkspaceContextCollection } from '../../../workspace/context/WorkspaceContextCollection';
 
 describe('ViewportSnapshotManager.addViewport', () => {
   const bounds: ProportionalBounds = { x: 0, y: 0, width: 1, height: 1 };
@@ -14,7 +15,7 @@ describe('ViewportSnapshotManager.addViewport', () => {
       id,
       name: id,
       snapshots: new ViewportSnapshotCollection([]),
-      screenBounds: { x: 0, y: 0, width: size, height: size },
+      maxScreenBounds: { x: 0, y: 0, width: size, height: size },
       orientation: 'landscape',
       aspectRatio: 1,
       breakpoint: 'lg',
@@ -26,11 +27,12 @@ describe('ViewportSnapshotManager.addViewport', () => {
   }
 
   it('adds a snapshot when there are no previous snapshots', () => {
-    const ctx = makeContext(10000, 'A');
-    const mgr = new ViewportSnapshotManager([ctx], idGen);
-    mgr.setCurrentWorkspaceContext(ctx);
-    mgr.addViewport(bounds);
-    const all = ctx.snapshots.getAll();
+    const context = makeContext(10000, 'A');
+    const contextCollection = new WorkspaceContextCollection([context]);
+    const manager = new ViewportSnapshotManager(contextCollection, idGen);
+    manager.setCurrentWorkspaceContext(context);
+    manager.addViewport(bounds);
+    const all = context.snapshots.getAll();
     expect(all.length).toBe(1);
     expect(all[0].isMinimized).toBe(false);
     expect(all[0].bounds).toBe(bounds);
@@ -39,9 +41,10 @@ describe('ViewportSnapshotManager.addViewport', () => {
   it('sets isMinimized and bounds correctly for smaller/larger contexts', () => {
     const large = makeContext(10000, 'L');
     const small = makeContext(100, 'S');
-    const mgr = new ViewportSnapshotManager([large, small], idGen);
-    mgr.setCurrentWorkspaceContext(large);
-    mgr.addViewport(bounds);
+    const contextCollection = new WorkspaceContextCollection([large, small]);
+    const manager = new ViewportSnapshotManager(contextCollection, idGen);
+    manager.setCurrentWorkspaceContext(large);
+    manager.addViewport(bounds);
     // Large context: not minimized
     const largeSnap = large.snapshots.getAll()[0];
     expect(largeSnap.isMinimized).toBe(false);
@@ -55,9 +58,10 @@ describe('ViewportSnapshotManager.addViewport', () => {
   it('sets isMinimized and bounds correctly when current context is smaller', () => {
     const large = makeContext(10000, 'L');
     const small = makeContext(100, 'S');
-    const mgr = new ViewportSnapshotManager([large, small], idGen);
-    mgr.setCurrentWorkspaceContext(small);
-    mgr.addViewport(bounds);
+    const contextCollection = new WorkspaceContextCollection([large, small]);
+    const manager = new ViewportSnapshotManager(contextCollection, idGen);
+    manager.setCurrentWorkspaceContext(small);
+    manager.addViewport(bounds);
     // Small context: not minimized
     const smallSnap = small.snapshots.getAll()[0];
     expect(smallSnap.isMinimized).toBe(false);

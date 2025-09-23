@@ -1,5 +1,7 @@
 import { Viewport, ViewportSnapshot } from '../viewport/types';
 import { ViewportSnapshotCollection } from '../viewport/snapshot/ViewportSnapshotCollection';
+import { WorkspaceContextCollection } from './context/WorkspaceContextCollection';
+import { IdGenerator } from '../shared';
 /**
  * @fileoverview Workspace types and interfaces
  *
@@ -57,7 +59,9 @@ export interface ScreenBounds {
  */
 export interface WorkspaceConfig {
   id: string;
-  screenBounds: ScreenBounds;
+  idGenerator: IdGenerator;
+  name: string;
+  workspaceContexts: WorkspaceContextCollection;
 }
 
 export interface WorkspaceSnapshot {
@@ -100,6 +104,7 @@ export interface WorkspaceContextSnapshot {
  */
 export interface WorkspaceInterface {
   readonly id: string;
+  readonly name: string;
   readonly screenBounds: ScreenBounds;
 
   // Viewport operations - create/split return new viewport, others return success/failure
@@ -186,8 +191,8 @@ export interface WorkspaceInterface {
 
   // Position operations
   /**
-   * Update the workspace screen bounds (position and size)
-   * @param newScreenBounds - New screen bounds
+   * Set the workspace screen bounds (position and size)
+   * @param screenBounds - New screen bounds
    */
-  updateScreenBounds(newScreenBounds: ScreenBounds): void;
+  setScreenBounds(screenBounds: ScreenBounds): void;
 }

@@ -2,6 +2,7 @@ import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager'
 import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 import { ProportionalBounds, WorkspaceContext } from '../../../workspace/types';
 import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
+import { WorkspaceContextCollection } from '../../../workspace/context/WorkspaceContextCollection';
 
 describe('ViewportSnapshotManager.maximizeViewport', () => {
   let manager: ViewportSnapshotManager;
@@ -19,7 +20,7 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
     jest.spyOn(snapshots, 'getAll').mockImplementation(() => []);
     context = {
       id: 'ctx1',
-      screenBounds: bounds,
+      maxScreenBounds: bounds,
       orientation: 'landscape',
       aspectRatio: 1,
       breakpoint: 'md',
@@ -29,7 +30,8 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
       minimumViewportScreenWidth: 0,
       snapshots,
     };
-    manager = new ViewportSnapshotManager([context], idGenerator);
+    const contextCollection = new WorkspaceContextCollection([context]);
+    manager = new ViewportSnapshotManager(contextCollection, idGenerator);
     manager.setCurrentWorkspaceContext(context);
   });
 

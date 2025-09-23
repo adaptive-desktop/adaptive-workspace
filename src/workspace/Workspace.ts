@@ -1,21 +1,16 @@
-import { WorkspaceInterface, WorkspaceConfig, ScreenBounds } from './types';
+import { WorkspaceInterface, WorkspaceConfig, ScreenBounds, ProportionalBounds } from './types';
 import { Viewport, ViewportManager } from '../viewport';
-import { IdGenerator } from '../shared/types';
 
 export class Workspace implements WorkspaceInterface {
   public readonly id: string;
-  public readonly screenBounds: ScreenBounds;
+  public readonly name: string;
+  public screenBounds!: ScreenBounds;
   public readonly viewportManager: ViewportManager;
-  private readonly idGenerator: IdGenerator;
 
   constructor(config: WorkspaceConfig) {
     this.id = config.id;
-    this.screenBounds = config.screenBounds;
-    this.idGenerator = config.idGenerator;
-    this.viewportManager = config.viewportManager || this.createDefaultLayout();
-
-    // Initialize viewport manager with workspace screen bounds
-    this.viewportManager.setScreenBounds(this.screenBounds);
+    this.name = config.name;
+    this.viewportManager = new ViewportManager(config.workspaceContexts, config.idGenerator);
   }
 
   // Viewport operations
@@ -62,17 +57,6 @@ export class Workspace implements WorkspaceInterface {
     return this.viewportManager.splitViewport(viewportObj, direction, ratio);
   }
 
-  removeViewport(viewport: Viewport | string): boolean {
-    const viewportObj = this.resolveViewport(viewport);
-    return this.viewportManager.removeViewport(viewportObj);
-  }
-
-  swapViewports(viewport1: Viewport | string, viewport2: Viewport | string): boolean {
-    const viewport1Obj = this.resolveViewport(viewport1);
-    const viewport2Obj = this.resolveViewport(viewport2);
-    return this.viewportManager.swapViewports(viewport1Obj, viewport2Obj);
-  }
-
   getViewports(): Viewport[] {
     return this.viewportManager.getViewports();
   }
@@ -96,19 +80,20 @@ export class Workspace implements WorkspaceInterface {
     return this.viewportManager.restoreViewport(viewportObj);
   }
 
-  //
-  // it will be the responsibility of the calling code to call
-  // Workspace.updateWorkspace (ScreenBounds?) (currentContext: WorkspaceConext)
-  // to create the screen bounds for the viewports
-  updateScreenBounds(newScreenBounds: ScreenBounds): void {
-    // Update workspace screen bounds
-    (this as { -readonly [K in keyof this]: this[K] }).screenBounds = newScreenBounds;
-
-    this.viewportManager.setScreenBounds(newScreenBounds);
+  removeViewport(viewport: Viewport | string): boolean {
+    const viewportObj = this.resolveViewport(viewport);
+    return this.viewportManager.removeViewport(viewportObj);
   }
 
-  private createDefaultLayout(): ViewportManager {
-    return new ViewportManager(this.idGenerator);
+  swapViewports(viewport1: Viewport | string, viewport2: Viewport | string): boolean {
+    const viewport1Obj = this.resolveViewport(viewport1);
+    const viewport2Obj = this.resolveViewport(viewport2);
+    return this.viewportManager.swapViewports(viewport1Obj, viewport2Obj);
+  }
+
+  setScreenBounds(screenBounds: ScreenBounds): void {
+    this.screenBounds = screenBounds;
+    // use WorkspaceContextDetector to detect new context based on newScreenBounds
   }
 
   private resolveViewport(viewportOrId: Viewport | string): Viewport {

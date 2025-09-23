@@ -22,6 +22,10 @@ export class WorkspaceContextCollection {
     }
   }
 
+  findByOrientation(orientation: string): WorkspaceContext[] {
+    return Array.from(this.contexts.values()).filter((ctx) => ctx.orientation === orientation);
+  }
+
   getAll(): WorkspaceContext[] {
     return Array.from(this.contexts.values());
   }

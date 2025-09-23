@@ -4,6 +4,7 @@ import { IdGenerator } from '../shared/types';
 import { WorkspaceContext } from '../workspace/types';
 import { WorkspaceContextDetector } from '../workspace/context/WorkspaceContextDetector';
 import { ViewportSnapshotManager } from './snapshot/ViewportSnapshotManager';
+import { WorkspaceContextCollection } from '../workspace/context/WorkspaceContextCollection';
 
 /**
  * Viewport Manager class
@@ -16,28 +17,23 @@ export class ViewportManager {
   private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
   private idGenerator: IdGenerator;
   private viewportSnapshotManager: ViewportSnapshotManager;
+  private workspaceContextDetector: WorkspaceContextDetector;
 
   private currentContext?: WorkspaceContext;
 
-  constructor(contexts: WorkspaceContext[], idGenerator: IdGenerator) {
+  constructor(workspaceContexts: WorkspaceContextCollection, idGenerator: IdGenerator) {
     this.idGenerator = idGenerator;
-    this.viewportSnapshotManager = new ViewportSnapshotManager(contexts, idGenerator);
+    this.viewportSnapshotManager = new ViewportSnapshotManager(workspaceContexts, idGenerator);
+    this.workspaceContextDetector = new WorkspaceContextDetector(workspaceContexts);
   }
 
   /**
    * Rebuilds the internal viewport map from the given WorkspaceContext's viewportStates array.
    * Destroys all existing viewports and creates new ones as described by the context.
    */
-  applyWorkspaceContext(context: WorkspaceContext): void {
-    this.viewports.clear();
-    this.workspaceBounds = context.screenBounds!;
-    if (context.viewportStates) {
-      for (const state of context.viewportStates) {
-        const viewport = this.createViewportFromState(state);
-        this.viewports.set(state.viewportId, viewport);
-      }
-    }
+  setCurrentWorkspaceContext(context: WorkspaceContext): void {
     this.currentContext = context;
+    this.viewportSnapshotManager.setCurrentWorkspaceContext(context);
   }
 
   // Viewport management operations
@@ -45,7 +41,6 @@ export class ViewportManager {
     // Use provided bounds or find optimal placement
     const bounds = proportionalBounds || this.findLargestAvailableSpace();
     const snapshot = this.viewportSnapshotManager.addViewport(bounds);
-    this.mutateViewports();
 
     return this.findViewportById(snapshot.id)!;
   }
@@ -72,94 +67,11 @@ export class ViewportManager {
   splitViewport(
     viewport: Viewport,
     direction: 'up' | 'down' | 'left' | 'right',
-    _ratio?: number
+    ratio?: number
   ): Viewport {
-    const mutableViewport = viewport as MutableViewport;
-    const currentBounds = mutableViewport.proportionalBounds;
-
-    let originalBounds: ProportionalBounds;
-    let newBounds: ProportionalBounds;
-
-    switch (direction) {
-      case 'down':
-        // Original viewport becomes top half
-        originalBounds = {
-          x: currentBounds.x,
-          y: currentBounds.y,
-          width: currentBounds.width,
-          height: currentBounds.height / 2,
-        };
-        // New viewport becomes bottom half
-        newBounds = {
-          x: currentBounds.x,
-          y: currentBounds.y + currentBounds.height / 2,
-          width: currentBounds.width,
-          height: currentBounds.height / 2,
-        };
-        break;
-
-      case 'up':
-        // Original viewport becomes bottom half
-        originalBounds = {
-          x: currentBounds.x,
-          y: currentBounds.y + currentBounds.height / 2,
-          width: currentBounds.width,
-          height: currentBounds.height / 2,
-        };
-        // New viewport becomes top half
-        newBounds = {
-          x: currentBounds.x,
-          y: currentBounds.y,
-          width: currentBounds.width,
-          height: currentBounds.height / 2,
-        };
-        break;
-
-      case 'right':
-        // Original viewport becomes left half
-        originalBounds = {
-          x: currentBounds.x,
-          y: currentBounds.y,
-          width: currentBounds.width / 2,
-          height: currentBounds.height,
-        };
-        // New viewport becomes right half
-        newBounds = {
-          x: currentBounds.x + currentBounds.width / 2,
-          y: currentBounds.y,
-          width: currentBounds.width / 2,
-          height: currentBounds.height,
-        };
-        break;
-
-      case 'left':
-        // Original viewport becomes right half
-        originalBounds = {
-          x: currentBounds.x + currentBounds.width / 2,
-          y: currentBounds.y,
-          width: currentBounds.width / 2,
-          height: currentBounds.height,
-        };
-        // New viewport becomes left half
-        newBounds = {
-          x: currentBounds.x,
-          y: currentBounds.y,
-          width: currentBounds.width / 2,
-          height: currentBounds.height,
-        };
-        break;
-
-      default:
-        throw new Error(`Invalid split direction: ${direction}`);
-    }
-
-    // Update original viewport bounds
-    mutableViewport.updateProportionalBounds(originalBounds);
-
-    // Create new viewport with calculated bounds
-    const newViewport = this.createViewportInternal(newBounds);
-
-    return newViewport;
+    // TODO: this should be handled in the ViewportSnapshotManager
+    console.log('splitViewport called with:', { viewport, direction, ratio });
+    throw new Error('createAdjacentViewport not yet implemented');
   }
 
   removeViewport(viewport: Viewport): boolean {
@@ -175,11 +87,8 @@ export class ViewportManager {
 
   setScreenBounds(screenBounds: ScreenBounds): void {
     this.workspaceBounds = screenBounds;
-    // Update context using WorkspaceContextDetector
-    this.currentContext = WorkspaceContextDetector.detectContext(screenBounds);
-    this.viewports.forEach((viewport) => {
-      viewport.updateWorkspaceBounds(screenBounds);
-    });
+    this.currentContext = this.workspaceContextDetector.detectContext(screenBounds);
+    this.viewportSnapshotManager.setCurrentWorkspaceContext(this.currentContext);
   }
 
   /**
@@ -188,7 +97,7 @@ export class ViewportManager {
   getCurrentContext(): WorkspaceContext {
     if (!this.currentContext && this.workspaceBounds) {
       // Fallback: compute if not set
-      this.currentContext = WorkspaceContextDetector.detectContext(this.workspaceBounds);
+      this.currentContext = this.workspaceContextDetector.detectContext(this.workspaceBounds);
     }
     if (!this.currentContext) {
       throw new Error('Screen bounds not set. Cannot determine current context.');
@@ -213,18 +122,6 @@ export class ViewportManager {
   restoreViewport(_viewport: Viewport): boolean {
     // Not implemented yet
     return false;
-  }
-
-  /**
-   * Private method to create a new viewport with specified proportional bounds
-   * Sets ID, workspace bounds, and adds to viewport collection
-   */
-  private createViewportInternal(viewportRequest: ViewportRequest) {
-    viewportRequest.id = viewportRequest.id ?? this.idGenerator.generate();
-
-    const viewportState = this.viewportSnapshotManager.addViewport(viewportRequest);
-
-    return viewportState;
   }
 
   private findLargestAvailableSpace(): ProportionalBounds {

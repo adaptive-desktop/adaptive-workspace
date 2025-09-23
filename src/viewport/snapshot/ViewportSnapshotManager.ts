@@ -12,8 +12,8 @@ export class ViewportSnapshotManager {
   private currentWorkspaceContext?: WorkspaceContext;
   private idGenerator: IdGenerator;
 
-  constructor(contexts: WorkspaceContext[], idGenerator: IdGenerator) {
-    this.contexts = new WorkspaceContextCollection(contexts);
+  constructor(contexts: WorkspaceContextCollection, idGenerator: IdGenerator) {
+    this.contexts = contexts;
     this.idGenerator = idGenerator;
   }
 
@@ -25,7 +25,7 @@ export class ViewportSnapshotManager {
     throw new Error('Not implemented');
   }
 
-  importSnapshot(snapshot: ViewportSnapshot): boolean {
+  importSnapshot(snapshot: ViewportSnapshot): void {
     this.addSnapshot(snapshot);
   }
 
@@ -89,6 +89,8 @@ export class ViewportSnapshotManager {
 
   setCurrentWorkspaceContext(workspaceContext: WorkspaceContext) {
     this.currentWorkspaceContext = workspaceContext;
+    // this has to calulate the MutableViewports
+    
   }
 
   private addSnapshot(snapshot: ViewportSnapshot) {

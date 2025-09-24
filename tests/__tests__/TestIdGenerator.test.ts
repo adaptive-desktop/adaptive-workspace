@@ -4,7 +4,7 @@
  * Tests the test ID generator utility for unit tests.
  */
 
-import { TestIdGenerator } from '../TestIdGenerator';
+import { TestIdGenerator } from '../../src/shared/TestIdGenerator';
 
 describe('TestIdGenerator', () => {
   test('generates predictable IDs with default prefix', () => {

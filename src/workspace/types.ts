@@ -12,14 +12,8 @@ import { IdGenerator } from '../shared';
  * WorkspaceContext: describes the current display environment and viewport arrangement.
  */
 export interface WorkspaceContext {
-  id?: string;
-  name?: string;
-  maxScreenBounds: ScreenBounds;
-  orientation: 'landscape' | 'portrait';
   aspectRatio: number;
-  breakpoint: 'sm' | 'md' | 'lg' | 'xl';
-  sizeCategory: 'small' | 'medium' | 'large' | 'extra-large';
-  snapshots: ViewportSnapshotCollection;
+  sizeCategory: 'sm' | 'md' | 'lg' | 'xl';
   deviceType:
     | 'small-tablet'
     | 'large-tablet'
@@ -33,8 +27,13 @@ export interface WorkspaceContext {
     | 'phone'
     | 'phablet'
     | 'foldable';
+  id?: string;
+  maxScreenBounds: ScreenBounds;
   minimumViewportScreenHeight: number;
   minimumViewportScreenWidth: number;
+  name?: string;
+  orientation: 'landscape' | 'portrait';
+  snapshots: ViewportSnapshotCollection;
 }
 
 export interface ProportionalBounds {
@@ -72,7 +71,7 @@ export interface WorkspaceSnapshot {
 
 export interface WorkspaceContextSnapshot {
   aspectRatio: number;
-  breakpoint: 'sm' | 'md' | 'lg' | 'xl';
+  sizeCategory: 'sm' | 'md' | 'lg' | 'xl';
   deviceType:
     | 'small-tablet'
     | 'large-tablet'
@@ -92,7 +91,6 @@ export interface WorkspaceContextSnapshot {
   minimumViewportScreenWidth: number;
   name: string;
   orientation: 'landscape' | 'portrait';
-  sizeCategory: 'small' | 'medium' | 'large' | 'extra-large';
   snapshots: ViewportSnapshot[];
 }
 

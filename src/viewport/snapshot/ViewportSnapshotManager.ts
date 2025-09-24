@@ -25,6 +25,13 @@ export class ViewportSnapshotManager {
     throw new Error('Not implemented');
   }
 
+  getSnapshotsForContext(contextId: string): ViewportSnapshot[] {
+    return this.contexts
+      .getAll()
+      .filter((context) => context.id === contextId)
+      .flatMap((context) => context.snapshots.getAll());
+  }
+
   importSnapshot(snapshot: ViewportSnapshot): void {
     this.addSnapshot(snapshot);
   }
@@ -89,7 +96,6 @@ export class ViewportSnapshotManager {
 
   setCurrentWorkspaceContext(workspaceContext: WorkspaceContext) {
     this.currentWorkspaceContext = workspaceContext;
-    // this has to calulate the MutableViewports
   }
 
   private addSnapshot(snapshot: ViewportSnapshot) {

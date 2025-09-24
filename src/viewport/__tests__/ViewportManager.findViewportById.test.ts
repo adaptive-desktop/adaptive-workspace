@@ -1,7 +1,7 @@
-import { TestIdGenerator } from '../../shared';
 import { ScreenBounds } from '../../workspace';
-import { createTestWorkspaceContextCollection } from '../../shared/testWorkspaceContextUtils';
+import { createTestWorkspaceContextCollection } from '../../../tests/testWorkspaceContextUtils';
 import { ViewportManager } from '../ViewportManager';
+import { createTestWorkspaceFromSnapshotData } from '../../../tests/testWorkspaceFactory';
 
 describe('ViewportManager - findViewportById()', () => {
   let viewportManager: ViewportManager;
@@ -23,10 +23,11 @@ describe('ViewportManager - findViewportById()', () => {
   describe('findViewportById()', () => {
     it('should return viewport when ID exists', () => {
       // Create a viewport with explicit bounds
-      const viewport = viewportManager.createViewport({ x: 0, y: 0, width: 1, height: 1 });
+      const workspace = createTestWorkspaceFromSnapshotData();
+      workspace.setScreenBounds(testWorkspaceBounds); // sets up proper context and regenerates viewports
 
       // Find viewport by ID
-      const foundViewport = viewportManager.findViewportById(viewport.id);
+      const foundViewport = workspace.viewportManager.findViewportById(viewport.id);
 
       expect(foundViewport).toBe(viewport);
       expect(foundViewport?.id).toBe(viewport.id);

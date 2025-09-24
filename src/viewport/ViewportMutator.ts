@@ -1,7 +1,7 @@
 import { MutableViewport } from './MutableViewport';
 import { ViewportSnapshotCollection } from './snapshot/ViewportSnapshotCollection';
 import { ViewportSnapshot } from './types';
-import { ScreenBounds } from '../workspace/types';
+import { ScreenBounds, WorkspaceContext } from '../workspace/types';
 
 /**
  * Class responsible for mutating the set of MutableViewports in ViewportManager
@@ -9,14 +9,18 @@ import { ScreenBounds } from '../workspace/types';
  */
 export class ViewportMutator {
   private viewports: Map<string, MutableViewport>;
-  private workspaceBounds: ScreenBounds;
+  private workspaceBounds!: ScreenBounds;
 
-  constructor(viewports: Map<string, MutableViewport>, workspaceBounds: ScreenBounds) {
+  constructor(viewports: Map<string, MutableViewport>) {
     this.viewports = viewports;
-    this.workspaceBounds = workspaceBounds;
   }
 
-  mutateFromSnapshots(snapshots: ViewportSnapshotCollection) {
+  mutateFromWorkspaceContext(context: WorkspaceContext, workspaceBounds: ScreenBounds) {
+    this.mutateFromSnapshots(context.snapshots, workspaceBounds);
+  }
+
+  mutateFromSnapshots(snapshots: ViewportSnapshotCollection, workspaceBounds: ScreenBounds) {
+    this.workspaceBounds = workspaceBounds;
     this.removeUntrackedViewports(snapshots);
     this.addNewViewports(snapshots);
     this.recalculateScreenBoundsForViewports(snapshots);
@@ -61,9 +65,15 @@ export class ViewportMutator {
   }
 
   private calculateScreenBounds(snapshot: ViewportSnapshot): ScreenBounds {
+    // this is a problem when there is a minimized snapshot, without bounds
+    // maximized snapshot (there can only be one) forces the non-locked viewports to be minimized,
+    // then the maximized viewport will have its bounds to be calculated to the maximum area of non-locked viewports
+    // when a viewport is maximized, just the screen bounds is set, the original proportionalBounds remains the same
     if (!snapshot.bounds) {
       throw new Error('Cannot calculate screen bounds without proportional bounds');
     }
+
+    // this needs to make sure the
 
     const { x, y, width, height } = snapshot.bounds;
     const {
@@ -74,10 +84,10 @@ export class ViewportMutator {
     } = this.workspaceBounds;
 
     return {
-      x: workspaceX + x * workspaceWidth,
-      y: workspaceY + y * workspaceHeight,
-      width: width * workspaceWidth,
-      height: height * workspaceHeight,
+      x: Math.round(workspaceX + x * workspaceWidth),
+      y: Math.round(workspaceY + y * workspaceHeight),
+      width: Math.round(width * workspaceWidth),
+      height: Math.round(height * workspaceHeight),
     };
   }
 

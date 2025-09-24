@@ -22,8 +22,7 @@ describe('Workspace snapshot and viewport restoration', () => {
           default: {
             orientation: 'landscape',
             aspectRatio: 1.33,
-            breakpoint: 'md',
-            sizeCategory: 'medium',
+            sizeCategory: 'md',
             deviceType: 'standard-laptop',
             viewports: [{ id: vp.id, bounds: proportionalBounds }],
           },

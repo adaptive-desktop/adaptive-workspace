@@ -12,8 +12,7 @@ describe('WorkspaceContextFactory', () => {
       snapshots: [],
       orientation: 'landscape',
       aspectRatio: 16 / 9,
-      breakpoint: 'md',
-      sizeCategory: 'medium',
+      sizeCategory: 'md',
       deviceType: 'standard-laptop',
       minimumViewportScreenHeight: 300,
       minimumViewportScreenWidth: 400,
@@ -27,8 +26,7 @@ describe('WorkspaceContextFactory', () => {
     expect(result.maxScreenBounds).toEqual({ x: 0, y: 0, width: 1440, height: 900 });
     expect(result.orientation).toBe('landscape');
     expect(result.aspectRatio).toBe(16 / 9);
-    expect(result.breakpoint).toBe('md');
-    expect(result.sizeCategory).toBe('medium');
+    expect(result.sizeCategory).toBe('md');
     expect(result.deviceType).toBe('standard-laptop');
     expect(result.minimumViewportScreenHeight).toBe(300);
     expect(result.minimumViewportScreenWidth).toBe(400);
@@ -69,8 +67,7 @@ describe('WorkspaceContextFactory', () => {
       snapshots: viewportSnapshots,
       orientation: 'landscape',
       aspectRatio: 16 / 9,
-      breakpoint: 'md',
-      sizeCategory: 'medium',
+      sizeCategory: 'md',
       deviceType: 'standard-laptop',
       minimumViewportScreenHeight: 300,
       minimumViewportScreenWidth: 400,
@@ -99,8 +96,7 @@ describe('WorkspaceContextFactory', () => {
       snapshots: [],
       orientation: 'landscape',
       aspectRatio: 16 / 9,
-      breakpoint: 'md',
-      sizeCategory: 'medium',
+      sizeCategory: 'md',
       deviceType: 'standard-laptop',
       minimumViewportScreenHeight: 300,
       minimumViewportScreenWidth: 400,

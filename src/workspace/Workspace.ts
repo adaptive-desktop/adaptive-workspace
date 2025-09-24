@@ -48,14 +48,6 @@ export class Workspace implements WorkspaceInterface {
   /**
    * Split a viewport into two viewports
    */
-  splitViewport(
-    viewport: Viewport | string,
-    direction: 'up' | 'down' | 'left' | 'right',
-    ratio?: number
-  ): Viewport {
-    const viewportObj = this.resolveViewport(viewport);
-    return this.viewportManager.splitViewport(viewportObj, direction, ratio);
-  }
 
   getViewports(): Viewport[] {
     return this.viewportManager.getViewports();
@@ -85,6 +77,15 @@ export class Workspace implements WorkspaceInterface {
     return this.viewportManager.removeViewport(viewportObj);
   }
 
+  splitViewport(
+    viewport: Viewport | string,
+    direction: 'up' | 'down' | 'left' | 'right',
+    ratio?: number
+  ): Viewport {
+    const viewportObj = this.resolveViewport(viewport);
+    return this.viewportManager.splitViewport(viewportObj, direction, ratio);
+  }
+
   swapViewports(viewport1: Viewport | string, viewport2: Viewport | string): boolean {
     const viewport1Obj = this.resolveViewport(viewport1);
     const viewport2Obj = this.resolveViewport(viewport2);
@@ -93,7 +94,8 @@ export class Workspace implements WorkspaceInterface {
 
   setScreenBounds(screenBounds: ScreenBounds): void {
     this.screenBounds = screenBounds;
-    // use WorkspaceContextDetector to detect new context based on newScreenBounds
+
+    this.viewportManager.setScreenBounds(screenBounds);
   }
 
   private resolveViewport(viewportOrId: Viewport | string): Viewport {

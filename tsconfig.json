@@ -17,6 +17,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tests/testWorkspaceFactory.ts", "tests/__tests__", "tests/testWorkspaceContextUtils.ts"],
   "exclude": ["node_modules", "dist", "tests", "**/*.test.ts"]
 }

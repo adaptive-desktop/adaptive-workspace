@@ -4,7 +4,7 @@
  * Provides predictable ID generation for testing purposes.
  */
 
-import { IdGenerator } from './types';
+import { IdGenerator } from '../src/shared/types';
 
 /**
  * Test ID generator that produces predictable IDs

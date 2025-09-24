@@ -7,6 +7,11 @@
       "name": "Ultrawide Monitor",
       "minimumViewportScreenHeight": 300,
       "minimumViewportScreenWidth": 300,
+      "aspectRatio": 2.333,
+      "deviceType": "ultrawide",
+      "maxScreenBounds": { "x": 0, "y": 0, "width": 3440, "height": 1440 },
+      "orientation": "landscape",
+      "sizeCategory": "lg",
       "snapshots": [
         { 
           "id": "main", 
@@ -33,10 +38,15 @@
       "name": "Laptop Display",
       "minimumViewportScreenHeight": 300,
       "minimumViewportScreenWidth": 300,
+      "aspectRatio": 1.6,
+      "sizeCategory": "md",
+      "deviceType": "standard-laptop",
+      "maxScreenBounds": { "x": 0, "y": 0, "width": 1440, "height": 900 },
+      "orientation": "landscape",
       "snapshots": [
         { 
           "id": "main", 
-          "bounds": { "x": 0, "y": 0, "width": 1, "height": 1 }, 
+          "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
           "isDefault": true,
           "isMaximized": false,
           "isMinimized": false,
@@ -59,10 +69,15 @@
       "name": "Phone Portrait",
       "minimumViewportScreenHeight": 300,
       "minimumViewportScreenWidth": 300,
+      "aspectRatio": 0.4615,
+      "sizeCategory": "sm",
+      "deviceType": "phone",
+      "maxScreenBounds": { "x": 0, "y": 0, "width": 375, "height": 812 },
+      "orientation": "portrait",
       "snapshots": [
         { 
           "id": "main", 
-          "bounds": { "x": 0, "y": 0, "width": 1, "height": 1 }, 
+          "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
           "isDefault": true,
           "isMaximized": false,
           "isMinimized": false,

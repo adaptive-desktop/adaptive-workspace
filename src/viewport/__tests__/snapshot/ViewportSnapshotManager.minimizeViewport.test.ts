@@ -18,8 +18,7 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
       maxScreenBounds: { x: 0, y: 0, width: size, height: size },
       orientation: 'landscape',
       aspectRatio: 1,
-      breakpoint: 'lg',
-      sizeCategory: 'large',
+      sizeCategory: 'lg',
       deviceType: 'desktop',
       minimumViewportScreenHeight: 10,
       minimumViewportScreenWidth: 10,
@@ -27,13 +26,13 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
   }
 
   it('sets isMinimized to true and leaves bounds unchanged', () => {
-    const contex = makeContext(10000, 'A');
-    const contextCollection = new WorkspaceContextCollection([contex]);
+    const context = makeContext(10000, 'A');
+    const contextCollection = new WorkspaceContextCollection([context]);
     const manager = new ViewportSnapshotManager(contextCollection, idGenerator);
-    manager.setCurrentWorkspaceContext(contex);
+    manager.setCurrentWorkspaceContext(context);
     manager.addViewport(bounds, 'v1');
     // Precondition
-    let snap = contex.snapshots.getAll()[0];
+    let snap = context.snapshots.getAll()[0];
     expect(snap.isMinimized).toBe(false);
     expect(snap.bounds).toBe(bounds);
     // Minimize
@@ -46,15 +45,16 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
       isRequired: false,
     });
     expect(result).toBe(true);
-    snap = contex.snapshots.getAll()[0];
+    snap = context.snapshots.getAll()[0];
     expect(snap.isMinimized).toBe(true);
     expect(snap.bounds).toBe(bounds);
   });
 
   it('returns false if viewport is not found', () => {
-    const contex = makeContext(10000, 'A');
-    const contextCollection = new WorkspaceContextCollection([contex]);
+    const context = makeContext(10000, 'A');
+    const contextCollection = new WorkspaceContextCollection([context]);
     const manager = new ViewportSnapshotManager(contextCollection, idGenerator);
+    manager.setCurrentWorkspaceContext(context);
     manager.addViewport(bounds, 'v1');
     const result = manager.minimizeViewport({
       id: 'notfound',

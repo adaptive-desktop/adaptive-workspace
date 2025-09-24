@@ -1,10 +1,11 @@
-import { Viewport, MutableViewport } from '.';
+import { Viewport, MutableViewport, ViewportSnapshot } from '.';
 import { ProportionalBounds, ScreenBounds } from '../workspace/types';
 import { IdGenerator } from '../shared/types';
 import { WorkspaceContext } from '../workspace/types';
 import { WorkspaceContextDetector } from '../workspace/context/WorkspaceContextDetector';
 import { ViewportSnapshotManager } from './snapshot/ViewportSnapshotManager';
 import { WorkspaceContextCollection } from '../workspace/context/WorkspaceContextCollection';
+import { ViewportMutator } from './ViewportMutator';
 
 /**
  * Viewport Manager class
@@ -13,27 +14,18 @@ import { WorkspaceContextCollection } from '../workspace/context/WorkspaceContex
  * Provides the core functionality for viewport management.
  */
 export class ViewportManager {
+  private viewportMutator: ViewportMutator;
   private viewports: Map<string, MutableViewport> = new Map();
-  private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
-  private idGenerator: IdGenerator;
   private viewportSnapshotManager: ViewportSnapshotManager;
+  private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
   private workspaceContextDetector: WorkspaceContextDetector;
 
   private currentContext?: WorkspaceContext;
 
   constructor(workspaceContexts: WorkspaceContextCollection, idGenerator: IdGenerator) {
-    this.idGenerator = idGenerator;
+    this.viewportMutator = new ViewportMutator(this.viewports);
     this.viewportSnapshotManager = new ViewportSnapshotManager(workspaceContexts, idGenerator);
     this.workspaceContextDetector = new WorkspaceContextDetector(workspaceContexts);
-  }
-
-  /**
-   * Rebuilds the internal viewport map from the given WorkspaceContext's viewportStates array.
-   * Destroys all existing viewports and creates new ones as described by the context.
-   */
-  setCurrentWorkspaceContext(context: WorkspaceContext): void {
-    this.currentContext = context;
-    this.viewportSnapshotManager.setCurrentWorkspaceContext(context);
   }
 
   // Viewport management operations
@@ -43,6 +35,10 @@ export class ViewportManager {
     const snapshot = this.viewportSnapshotManager.addViewport(bounds);
 
     return this.findViewportById(snapshot.id)!;
+  }
+
+  getSnapshotsForContext(contextId: string): ViewportSnapshot[] {
+    return this.viewportSnapshotManager.getSnapshotsForContext(contextId);
   }
 
   getViewports(): Viewport[] {
@@ -62,6 +58,21 @@ export class ViewportManager {
     // For now, return a placeholder
     console.log('createAdjacentViewport called with:', { existingViewports, direction, size });
     throw new Error('createAdjacentViewport not yet implemented');
+  }
+
+  getCurrentContext(): WorkspaceContext {
+    if (!this.currentContext && this.workspaceBounds) {
+      // Fallback: compute if not set
+      this.currentContext = this.workspaceContextDetector.detectContext(this.workspaceBounds);
+    }
+    if (!this.currentContext) {
+      throw new Error('Screen bounds not set. Cannot determine current context.');
+    }
+    return this.currentContext;
+  }
+
+  getViewportCount(): number {
+    return this.viewports.size;
   }
 
   splitViewport(
@@ -89,24 +100,7 @@ export class ViewportManager {
     this.workspaceBounds = screenBounds;
     this.currentContext = this.workspaceContextDetector.detectContext(screenBounds);
     this.viewportSnapshotManager.setCurrentWorkspaceContext(this.currentContext);
-  }
-
-  /**
-   * Returns the current layout context (orientation, aspect ratio, etc)
-   */
-  getCurrentContext(): WorkspaceContext {
-    if (!this.currentContext && this.workspaceBounds) {
-      // Fallback: compute if not set
-      this.currentContext = this.workspaceContextDetector.detectContext(this.workspaceBounds);
-    }
-    if (!this.currentContext) {
-      throw new Error('Screen bounds not set. Cannot determine current context.');
-    }
-    return this.currentContext;
-  }
-
-  getViewportCount(): number {
-    return this.viewports.size;
+    this.viewportMutator.mutateFromWorkspaceContext(this.currentContext, screenBounds);
   }
 
   minimizeViewport(_viewport: Viewport): boolean {

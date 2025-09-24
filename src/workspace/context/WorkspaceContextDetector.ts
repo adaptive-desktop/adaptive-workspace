@@ -22,9 +22,9 @@ export class WorkspaceContextDetector {
   }
 
   generateContextKey(context: WorkspaceContext): string {
-    const { orientation, breakpoint, maxScreenBounds } = context;
+    const { orientation, sizeCategory, maxScreenBounds } = context;
 
-    return `${orientation}-${breakpoint}-${maxScreenBounds.width}x${maxScreenBounds.height}`;
+    return `${orientation}-${sizeCategory}-${maxScreenBounds.width}x${maxScreenBounds.height}`;
   }
 
   private extractContextWithClosestAspectRatio(
@@ -54,7 +54,7 @@ export class WorkspaceContextDetector {
     screenBounds: ScreenBounds
   ): WorkspaceContext[] {
     const sizeCategory = this.getSizeCategory(screenBounds);
-    const sizeCategories = ['extra-large', 'large', 'medium', 'small'];
+    const sizeCategories = ['xl', 'lg', 'md', 'sm'];
     const targetIndex = sizeCategories.indexOf(sizeCategory);
 
     if (targetIndex === -1) {
@@ -74,7 +74,7 @@ export class WorkspaceContextDetector {
     return screenBounds.width / screenBounds.height;
   }
 
-  private getBreakpoint(screenBounds: ScreenBounds): 'sm' | 'md' | 'lg' | 'xl' {
+  private getSizeCategory(screenBounds: ScreenBounds): 'sm' | 'md' | 'lg' | 'xl' {
     if (screenBounds.width < 1024) return 'sm';
     if (screenBounds.width < 1600) return 'md';
     if (screenBounds.width < 2560) return 'lg';
@@ -83,22 +83,6 @@ export class WorkspaceContextDetector {
 
   private getOrientation(screenBounds: ScreenBounds): 'landscape' | 'portrait' {
     return screenBounds.width >= screenBounds.height ? 'landscape' : 'portrait';
-  }
-
-  private getSizeCategory(
-    screenBounds: ScreenBounds
-  ): 'small' | 'medium' | 'large' | 'extra-large' {
-    const breakpoint = this.getBreakpoint(screenBounds);
-    switch (breakpoint) {
-      case 'sm':
-        return 'small';
-      case 'md':
-        return 'medium';
-      case 'lg':
-        return 'large';
-      case 'xl':
-        return 'extra-large';
-    }
   }
 
   private static getDeviceType(

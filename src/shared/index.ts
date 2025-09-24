@@ -6,5 +6,4 @@
 
 // Re-export everything from this domain
 export * from './types';
-export * from './TestIdGenerator';
 export * from './utils';

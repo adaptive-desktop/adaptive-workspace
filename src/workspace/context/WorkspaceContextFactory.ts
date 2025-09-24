@@ -16,7 +16,6 @@ export class WorkspaceContextFactory {
       snapshots: snapshotCollection,
       orientation: snapshot.orientation,
       aspectRatio: snapshot.aspectRatio,
-      breakpoint: snapshot.breakpoint,
       sizeCategory: snapshot.sizeCategory,
       deviceType: snapshot.deviceType,
       minimumViewportScreenHeight: snapshot.minimumViewportScreenHeight,

@@ -12,7 +12,7 @@
       "maxScreenBounds": { "x": 0, "y": 0, "width": 3440, "height": 1440 },
       "orientation": "landscape",
       "sizeCategory": "lg",
-      "snapshots": [
+      "viewportSnapshots": [
         { 
           "id": "main", 
           "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
@@ -43,7 +43,7 @@
       "deviceType": "standard-laptop",
       "maxScreenBounds": { "x": 0, "y": 0, "width": 1440, "height": 900 },
       "orientation": "landscape",
-      "snapshots": [
+      "viewportSnapshots": [
         { 
           "id": "main", 
           "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
@@ -74,7 +74,7 @@
       "deviceType": "phone",
       "maxScreenBounds": { "x": 0, "y": 0, "width": 375, "height": 812 },
       "orientation": "portrait",
-      "snapshots": [
+      "viewportSnapshots": [
         { 
           "id": "main", 
           "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 

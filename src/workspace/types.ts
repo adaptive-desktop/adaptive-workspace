@@ -33,7 +33,7 @@ export interface WorkspaceContext {
   minimumViewportScreenWidth: number;
   name?: string;
   orientation: 'landscape' | 'portrait';
-  snapshots: ViewportSnapshotCollection;
+  viewportSnapshots: ViewportSnapshotCollection;
 }
 
 export interface ProportionalBounds {
@@ -91,7 +91,7 @@ export interface WorkspaceContextSnapshot {
   minimumViewportScreenWidth: number;
   name: string;
   orientation: 'landscape' | 'portrait';
-  snapshots: ViewportSnapshot[];
+  viewportSnapshots: ViewportSnapshot[];
 }
 
 /**

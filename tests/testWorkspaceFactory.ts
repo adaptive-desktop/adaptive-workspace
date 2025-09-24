@@ -30,10 +30,12 @@ export function createTestWorkspaceFromSnapshotData(
       deviceType: context.deviceType || 'desktop',
       minimumViewportScreenHeight: context.minimumViewportScreenHeight,
       minimumViewportScreenWidth: context.minimumViewportScreenWidth,
-      snapshots: new ViewportSnapshotCollection(context.snapshots),
+      viewportSnapshots: new ViewportSnapshotCollection(context.viewportSnapshots),
       maxScreenBounds: context.maxScreenBounds || { x: 0, y: 0, width: 1440, height: 900 },
     };
   });
+  console.log(workspaceContexts);
+  console.log(workspaceContexts[0].viewportSnapshots.getAll());
   const contextCollection = new WorkspaceContextCollection(workspaceContexts);
   const config = {
     id: data.id,

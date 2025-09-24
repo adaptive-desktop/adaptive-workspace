@@ -29,7 +29,7 @@ export class ViewportSnapshotManager {
     return this.contexts
       .getAll()
       .filter((context) => context.id === contextId)
-      .flatMap((context) => context.snapshots.getAll());
+      .flatMap((context) => context.viewportSnapshots.getAll());
   }
 
   importSnapshot(snapshot: ViewportSnapshot): void {
@@ -107,7 +107,7 @@ export class ViewportSnapshotManager {
       const isSmaller = area < currentArea;
       const now = Date.now();
       if (isSmaller) {
-        context.snapshots.add({
+        context.viewportSnapshots.add({
           ...snapshot,
           isMinimized: true,
           bounds: undefined,
@@ -115,7 +115,7 @@ export class ViewportSnapshotManager {
           timestamp: now,
         });
       } else {
-        context.snapshots.add({
+        context.viewportSnapshots.add({
           ...snapshot,
           workspaceContextId: context.id!,
           timestamp: now,

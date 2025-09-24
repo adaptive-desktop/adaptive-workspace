@@ -9,7 +9,7 @@ describe('WorkspaceContextFactory', () => {
       id: 'test-context-id',
       name: 'Test Context',
       maxScreenBounds: { x: 0, y: 0, width: 1440, height: 900 },
-      snapshots: [],
+      viewportSnapshots: [],
       orientation: 'landscape',
       aspectRatio: 16 / 9,
       sizeCategory: 'md',
@@ -30,7 +30,7 @@ describe('WorkspaceContextFactory', () => {
     expect(result.deviceType).toBe('standard-laptop');
     expect(result.minimumViewportScreenHeight).toBe(300);
     expect(result.minimumViewportScreenWidth).toBe(400);
-    expect(result.snapshots).toBeInstanceOf(ViewportSnapshotCollection);
+    expect(result.viewportSnapshots).toBeInstanceOf(ViewportSnapshotCollection);
   });
 
   test('should correctly transfer all viewport snapshots from the snapshot to the new context', () => {
@@ -64,7 +64,7 @@ describe('WorkspaceContextFactory', () => {
       id: 'test-context-id',
       name: 'Test Context',
       maxScreenBounds: { x: 0, y: 0, width: 1440, height: 900 },
-      snapshots: viewportSnapshots,
+      viewportSnapshots,
       orientation: 'landscape',
       aspectRatio: 16 / 9,
       sizeCategory: 'md',
@@ -93,7 +93,7 @@ describe('WorkspaceContextFactory', () => {
       id: 'empty-context-id',
       name: 'Empty Context',
       maxScreenBounds: { x: 0, y: 0, width: 1440, height: 900 },
-      snapshots: [],
+      viewportSnapshots: [],
       orientation: 'landscape',
       aspectRatio: 16 / 9,
       sizeCategory: 'md',
@@ -108,7 +108,7 @@ describe('WorkspaceContextFactory', () => {
     const result = factory.fromSnapshot(mockSnapshot);
 
     // Verify snapshots collection was created but no snapshots were added
-    expect(result.snapshots).toBeInstanceOf(ViewportSnapshotCollection);
+    expect(result.viewportSnapshots).toBeInstanceOf(ViewportSnapshotCollection);
     expect(addSpy).not.toHaveBeenCalled();
 
     // Restore the spy

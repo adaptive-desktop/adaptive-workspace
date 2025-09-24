@@ -46,6 +46,7 @@ export class ViewportManager {
   }
 
   findViewportById(id: string): Viewport | null {
+    console.log('viewports', this.viewports);
     return this.viewports.get(id) || null;
   }
 

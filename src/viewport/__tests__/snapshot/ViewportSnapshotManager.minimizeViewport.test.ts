@@ -1,9 +1,9 @@
 import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager';
 import { WorkspaceContext } from '../../../workspace/types';
-import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 import { ProportionalBounds } from '../../../workspace/types';
 import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 import { WorkspaceContextCollection } from '../../../workspace/context/WorkspaceContextCollection';
+import { TestIdGenerator } from '../../../../tests/TestIdGenerator';
 
 describe('ViewportSnapshotManager.minimizeViewport', () => {
   const bounds: ProportionalBounds = { x: 0, y: 0, width: 1, height: 1 };
@@ -14,7 +14,7 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
     return {
       id,
       name: id,
-      snapshots: new ViewportSnapshotCollection([]),
+      viewportSnapshots: new ViewportSnapshotCollection([]),
       maxScreenBounds: { x: 0, y: 0, width: size, height: size },
       orientation: 'landscape',
       aspectRatio: 1,
@@ -32,7 +32,7 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
     manager.setCurrentWorkspaceContext(context);
     manager.addViewport(bounds, 'v1');
     // Precondition
-    let snap = context.snapshots.getAll()[0];
+    let snap = context.viewportSnapshots.getAll()[0];
     expect(snap.isMinimized).toBe(false);
     expect(snap.bounds).toBe(bounds);
     // Minimize
@@ -45,7 +45,7 @@ describe('ViewportSnapshotManager.minimizeViewport', () => {
       isRequired: false,
     });
     expect(result).toBe(true);
-    snap = context.snapshots.getAll()[0];
+    snap = context.viewportSnapshots.getAll()[0];
     expect(snap.isMinimized).toBe(true);
     expect(snap.bounds).toBe(bounds);
   });

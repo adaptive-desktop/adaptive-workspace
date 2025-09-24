@@ -11,7 +11,7 @@ describe('ViewportMutator', () => {
   beforeEach(() => {
     workspaceBounds = { x: 0, y: 0, width: 1000, height: 800 };
     viewports = new Map();
-    mutator = new ViewportMutator(viewports, workspaceBounds);
+    mutator = new ViewportMutator(viewports);
   });
 
   function makeSnapshot(
@@ -41,7 +41,7 @@ describe('ViewportMutator', () => {
 
   it('adds new MutableViewport for new snapshot', () => {
     const snapshots = new ViewportSnapshotCollection([makeSnapshot('v1')]);
-    mutator.mutateFromSnapshots(snapshots);
+    mutator.mutateFromSnapshots(snapshots, workspaceBounds);
     expect(viewports.size).toBe(1);
     expect(viewports.get('v1')).toBeDefined();
   });
@@ -57,7 +57,7 @@ describe('ViewportMutator', () => {
     });
     viewports.set('v1', v1);
     const snapshots = new ViewportSnapshotCollection([]);
-    mutator.mutateFromSnapshots(snapshots);
+    mutator.mutateFromSnapshots(snapshots, workspaceBounds);
     expect(viewports.size).toBe(0);
   });
 
@@ -65,7 +65,7 @@ describe('ViewportMutator', () => {
     const snapshots = new ViewportSnapshotCollection([
       makeSnapshot('v1', { x: 0, y: 0, width: 1, height: 1 }, false, true, false, false),
     ]);
-    mutator.mutateFromSnapshots(snapshots);
+    mutator.mutateFromSnapshots(snapshots, workspaceBounds);
     const v1 = viewports.get('v1');
     expect(v1?.isMinimized).toBe(true);
     expect(v1?.isMaximized).toBe(false);
@@ -75,7 +75,7 @@ describe('ViewportMutator', () => {
     const snapshots = new ViewportSnapshotCollection([
       makeSnapshot('v1', { x: 0, y: 0, width: 1, height: 1 }, false, false, true, false),
     ]);
-    mutator.mutateFromSnapshots(snapshots);
+    mutator.mutateFromSnapshots(snapshots, workspaceBounds);
     const v1 = viewports.get('v1');
     expect(v1?.isMaximized).toBe(true);
     expect(v1?.isMinimized).toBe(false);
@@ -94,7 +94,7 @@ describe('ViewportMutator', () => {
     const snapshots = new ViewportSnapshotCollection([
       makeSnapshot('v1', { x: 0.1, y: 0.2, width: 0.3, height: 0.4 }),
     ]);
-    mutator.mutateFromSnapshots(snapshots);
+    mutator.mutateFromSnapshots(snapshots, workspaceBounds);
     const updated = viewports.get('v1');
     expect(updated?.proportionalBounds).toEqual({ x: 0.1, y: 0.2, width: 0.3, height: 0.4 });
     expect(updated?.screenBounds.x).toBeCloseTo(100);

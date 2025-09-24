@@ -15,8 +15,23 @@ export class ViewportMutator {
     this.viewports = viewports;
   }
 
+  addViewport(viewport: MutableViewport) {
+    this.viewports.set(viewport.id, viewport);
+  }
+
+  removeViewport(id: string) {
+    this.viewports.delete(id);
+  }
+
+  updateViewport(id: string, updater: (v: MutableViewport) => void) {
+    const viewport = this.viewports.get(id);
+    if (viewport) {
+      updater(viewport);
+    }
+  }
+
   mutateFromWorkspaceContext(context: WorkspaceContext, workspaceBounds: ScreenBounds) {
-    this.mutateFromSnapshots(context.snapshots, workspaceBounds);
+    this.mutateFromSnapshots(context.viewportSnapshots, workspaceBounds);
   }
 
   mutateFromSnapshots(snapshots: ViewportSnapshotCollection, workspaceBounds: ScreenBounds) {
@@ -43,7 +58,7 @@ export class ViewportMutator {
       isMaximized: snapshot.isMaximized,
       isRequired: snapshot.isRequired,
     });
-    this.viewports.set(snapshot.id, viewport);
+    this.addViewport(viewport);
     return viewport;
   }
 
@@ -94,7 +109,7 @@ export class ViewportMutator {
   private removeUntrackedViewports(snapshots: ViewportSnapshotCollection) {
     for (const [id] of this.viewports) {
       if (!snapshots.findById(id)) {
-        this.viewports.delete(id);
+        this.removeViewport(id);
       }
     }
   }

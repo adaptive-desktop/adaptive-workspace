@@ -1,9 +1,9 @@
 import { WorkspaceFactory } from '../WorkspaceFactory';
-import { TestIdGenerator } from '../../shared/TestIdGenerator';
 import { WorkspaceContextFactory } from '../context/WorkspaceContextFactory';
 import { WorkspaceContextCollection } from '../context/WorkspaceContextCollection';
 import { Workspace } from '../Workspace';
 import { WorkspaceSnapshot, ScreenBounds } from '../types';
+import { TestIdGenerator } from '../../../tests/TestIdGenerator';
 
 // Mock dependencies
 jest.mock('../context/WorkspaceContextFactory');
@@ -34,7 +34,7 @@ describe('WorkspaceFactory', () => {
             id: 'context-1',
             name: 'Desktop Context',
             maxScreenBounds: { x: 0, y: 0, width: 1920, height: 1080 },
-            snapshots: [
+            viewportSnapshots: [
               {
                 id: 'viewport-1',
                 workspaceContextId: 'context-1',
@@ -67,7 +67,7 @@ describe('WorkspaceFactory', () => {
             id: 'context-2',
             name: 'Mobile Context',
             maxScreenBounds: { x: 0, y: 0, width: 390, height: 844 },
-            snapshots: [],
+            viewportSnapshots: [],
             orientation: 'portrait',
             aspectRatio: 9 / 19.5,
             sizeCategory: 'sm',

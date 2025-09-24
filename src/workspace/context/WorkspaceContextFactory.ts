@@ -5,7 +5,7 @@ export class WorkspaceContextFactory {
   fromSnapshot(snapshot: WorkspaceContextSnapshot): WorkspaceContext {
     const snapshotCollection = new ViewportSnapshotCollection();
 
-    for (const viewportSnapshot of snapshot.snapshots) {
+    for (const viewportSnapshot of snapshot.viewportSnapshots) {
       snapshotCollection.add(viewportSnapshot);
     }
 
@@ -13,7 +13,7 @@ export class WorkspaceContextFactory {
       id: snapshot.id,
       name: snapshot.name,
       maxScreenBounds: snapshot.maxScreenBounds,
-      snapshots: snapshotCollection,
+      viewportSnapshots: snapshotCollection,
       orientation: snapshot.orientation,
       aspectRatio: snapshot.aspectRatio,
       sizeCategory: snapshot.sizeCategory,

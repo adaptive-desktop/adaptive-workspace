@@ -40,7 +40,7 @@ export class WorkspaceContextCollection {
   removeViewport(viewport: ViewportSnapshot): boolean {
     let removed = false;
     for (const context of this.contexts.values()) {
-      if (context.snapshots.remove(viewport)) {
+      if (context.viewportSnapshots.remove(viewport)) {
         removed = true;
       }
     }
@@ -50,7 +50,7 @@ export class WorkspaceContextCollection {
   updateViewport(partial: Partial<ViewportSnapshot> & { id: string }): boolean {
     let updated = false;
     for (const context of this.contexts.values()) {
-      if (context.snapshots.update(partial)) {
+      if (context.viewportSnapshots.update(partial)) {
         updated = true;
       }
     }

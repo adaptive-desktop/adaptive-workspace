@@ -1,8 +1,8 @@
 import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager';
-import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 import { ProportionalBounds, WorkspaceContext } from '../../../workspace/types';
 import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 import { WorkspaceContextCollection } from '../../../workspace/context/WorkspaceContextCollection';
+import { TestIdGenerator } from '../../../../tests/TestIdGenerator';
 
 describe('ViewportSnapshotManager.maximizeViewport', () => {
   let manager: ViewportSnapshotManager;
@@ -27,7 +27,7 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
       deviceType: 'desktop',
       minimumViewportScreenHeight: 0,
       minimumViewportScreenWidth: 0,
-      snapshots,
+      viewportSnapshots: snapshots,
     };
     const contextCollection = new WorkspaceContextCollection([context]);
     manager = new ViewportSnapshotManager(contextCollection, idGenerator);
@@ -43,7 +43,7 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
       isDefault: false,
       isRequired: false,
     };
-    const spy = jest.spyOn(context.snapshots, 'update');
+    const spy = jest.spyOn(context.viewportSnapshots, 'update');
     manager.maximizeViewport(viewport);
     expect(spy).toHaveBeenCalledWith({ id: 'v1', isMaximized: true, isMinimized: false });
   });
@@ -61,7 +61,7 @@ describe('ViewportSnapshotManager.maximizeViewport', () => {
   });
 
   it('should return false if updateViewport returns false', () => {
-    jest.spyOn(context.snapshots, 'update').mockReturnValue(false);
+    jest.spyOn(context.viewportSnapshots, 'update').mockReturnValue(false);
     const viewport = {
       id: 'v1',
       screenBounds: bounds,

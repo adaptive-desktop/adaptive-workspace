@@ -14,7 +14,7 @@ describe('ViewportSnapshotManager legacy scenarios', () => {
     return {
       id,
       name: id,
-      snapshots: new ViewportSnapshotCollection([]),
+      viewportSnapshots: new ViewportSnapshotCollection([]),
       maxScreenBounds: { x: 0, y: 0, width: size, height: size },
       orientation: 'landscape',
       aspectRatio: 1,
@@ -36,7 +36,7 @@ describe('ViewportSnapshotManager legacy scenarios', () => {
     manager.setCurrentWorkspaceContext(contexts[0]);
     manager.addViewport(bounds, 'A');
     for (const context of contexts) {
-      const snaps = context.snapshots.getAll();
+      const snaps = context.viewportSnapshots.getAll();
       expect(snaps.length).toBe(1);
       expect(snaps[0].id).toBe('A');
       expect(snaps[0].bounds).toEqual(bounds);
@@ -49,9 +49,9 @@ describe('ViewportSnapshotManager.getSnapshotsForContext', () => {
   const idGen = new TestIdGenerator('snap');
 
   function makeContextWithSnapshots(id: string, snapIds: string[]): WorkspaceContext {
-    const snapshots = new ViewportSnapshotCollection();
+    const viewportSnapshots = new ViewportSnapshotCollection();
     for (const snapId of snapIds) {
-      snapshots.add({
+      viewportSnapshots.add({
         id: snapId,
         isDefault: false,
         isMaximized: false,
@@ -64,7 +64,7 @@ describe('ViewportSnapshotManager.getSnapshotsForContext', () => {
     return {
       id,
       name: id,
-      snapshots,
+      viewportSnapshots,
       maxScreenBounds: { x: 0, y: 0, width: 100, height: 100 },
       orientation: 'landscape',
       aspectRatio: 1,

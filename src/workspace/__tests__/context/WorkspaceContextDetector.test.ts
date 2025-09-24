@@ -121,7 +121,7 @@ function createContext(overrides: Partial<WorkspaceContext> = {}): WorkspaceCont
     deviceType: 'desktop',
     minimumViewportScreenHeight: 100,
     minimumViewportScreenWidth: 100,
-    snapshots: new ViewportSnapshotCollection(),
+    viewportSnapshots: new ViewportSnapshotCollection(),
     ...overrides,
   };
 }

@@ -1,9 +1,9 @@
 import { ViewportSnapshotManager } from '../../snapshot/ViewportSnapshotManager';
 import { ViewportSnapshotCollection } from '../../snapshot/ViewportSnapshotCollection';
 import { WorkspaceContext } from '../../../workspace/types';
-import { TestIdGenerator } from '../../../shared/TestIdGenerator';
 import { ProportionalBounds } from '../../../workspace/types';
 import { WorkspaceContextCollection } from '../../../workspace/context/WorkspaceContextCollection';
+import { TestIdGenerator } from '../../../../tests/TestIdGenerator';
 
 describe('ViewportSnapshotManager.restoreViewport', () => {
   let manager: ViewportSnapshotManager;
@@ -14,11 +14,11 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
   beforeEach(() => {
     bounds = { x: 0, y: 0, width: 1, height: 1 };
     idGenerator = new TestIdGenerator('v');
-    const snapshots = new ViewportSnapshotCollection();
-    jest.spyOn(snapshots, 'add').mockImplementation(jest.fn());
-    jest.spyOn(snapshots, 'update').mockImplementation(() => true);
-    jest.spyOn(snapshots, 'remove').mockImplementation(jest.fn());
-    jest.spyOn(snapshots, 'getAll').mockImplementation(() => []);
+    const viewportSnapshots = new ViewportSnapshotCollection();
+    jest.spyOn(viewportSnapshots, 'add').mockImplementation(jest.fn());
+    jest.spyOn(viewportSnapshots, 'update').mockImplementation(() => true);
+    jest.spyOn(viewportSnapshots, 'remove').mockImplementation(jest.fn());
+    jest.spyOn(viewportSnapshots, 'getAll').mockImplementation(() => []);
     context = {
       id: 'ctx1',
       maxScreenBounds: bounds,
@@ -28,7 +28,7 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       deviceType: 'desktop',
       minimumViewportScreenHeight: 0,
       minimumViewportScreenWidth: 0,
-      snapshots,
+      viewportSnapshots,
     };
     const contextCollection = new WorkspaceContextCollection([context]);
     manager = new ViewportSnapshotManager(contextCollection, idGenerator);
@@ -44,7 +44,7 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
       isDefault: false,
       isRequired: false,
     };
-    const spy = jest.spyOn(context.snapshots, 'update');
+    const spy = jest.spyOn(context.viewportSnapshots, 'update');
     manager.restoreViewport(viewport);
     expect(spy).toHaveBeenCalledWith({ id: 'v1', isMinimized: false, isMaximized: false });
   });
@@ -62,7 +62,7 @@ describe('ViewportSnapshotManager.restoreViewport', () => {
   });
 
   it('should return false if updateViewport returns false', () => {
-    jest.spyOn(context.snapshots, 'update').mockReturnValue(false);
+    jest.spyOn(context.viewportSnapshots, 'update').mockReturnValue(false);
     const viewport = {
       id: 'v1',
       screenBounds: bounds,

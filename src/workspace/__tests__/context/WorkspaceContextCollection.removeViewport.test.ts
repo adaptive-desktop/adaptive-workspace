@@ -4,9 +4,9 @@ import { ViewportSnapshotCollection } from '../../../viewport/snapshot/ViewportS
 
 describe('WorkspaceContextCollection.removeViewport', () => {
   function makeContext(id: string, snapshotId?: string): WorkspaceContext {
-    const snapshots = new ViewportSnapshotCollection();
+    const viewportSnapshots = new ViewportSnapshotCollection();
     if (snapshotId) {
-      snapshots.add({
+      viewportSnapshots.add({
         id: snapshotId,
         isDefault: false,
         isMaximized: false,
@@ -19,7 +19,7 @@ describe('WorkspaceContextCollection.removeViewport', () => {
     return {
       id,
       name: id,
-      snapshots,
+      viewportSnapshots,
       maxScreenBounds: { x: 0, y: 0, width: 100, height: 100 },
       orientation: 'landscape',
       aspectRatio: 1,
@@ -45,8 +45,8 @@ describe('WorkspaceContextCollection.removeViewport', () => {
       timestamp: 1,
     };
     expect(collection.removeViewport(snapshot)).toBe(true);
-    expect(contextA.snapshots.getAll().length).toBe(0);
-    expect(contextB.snapshots.getAll().length).toBe(0);
+    expect(contextA.viewportSnapshots.getAll().length).toBe(0);
+    expect(contextB.viewportSnapshots.getAll().length).toBe(0);
   });
 
   it('returns false if no context removes the viewport', () => {

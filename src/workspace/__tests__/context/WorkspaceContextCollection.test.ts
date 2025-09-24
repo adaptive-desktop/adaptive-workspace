@@ -4,9 +4,9 @@ import { ViewportSnapshotCollection } from '../../../viewport/snapshot/ViewportS
 
 describe('WorkspaceContextCollection', () => {
   function makeContext(id: string, snapId?: string): WorkspaceContext {
-    const snapshots = new ViewportSnapshotCollection();
+    const viewportSnapshots = new ViewportSnapshotCollection();
     if (snapId) {
-      snapshots.add({
+      viewportSnapshots.add({
         id: snapId,
         isDefault: false,
         isMaximized: false,
@@ -19,7 +19,7 @@ describe('WorkspaceContextCollection', () => {
     return {
       id,
       name: id,
-      snapshots,
+      viewportSnapshots,
       maxScreenBounds: { x: 0, y: 0, width: 100, height: 100 },
       orientation: 'landscape',
       aspectRatio: 1,
@@ -55,7 +55,7 @@ describe('WorkspaceContextCollection', () => {
     const updated = c.updateViewport({ id: 'v1', isMinimized: true });
     expect(updated).toBe(true);
     for (const ctx of c.getAll()) {
-      expect(ctx.snapshots.findById('v1')?.isMinimized).toBe(true);
+      expect(ctx.viewportSnapshots.findById('v1')?.isMinimized).toBe(true);
     }
   });
 
@@ -79,7 +79,7 @@ describe('WorkspaceContextCollection', () => {
       deviceType: 'desktop',
       minimumViewportScreenHeight: 200,
       minimumViewportScreenWidth: 300,
-      snapshots: new ViewportSnapshotCollection(),
+      viewportSnapshots: new ViewportSnapshotCollection(),
     });
 
     // Test contexts

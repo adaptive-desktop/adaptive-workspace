@@ -34,8 +34,6 @@ export function createTestWorkspaceFromSnapshotData(
       maxScreenBounds: context.maxScreenBounds || { x: 0, y: 0, width: 1440, height: 900 },
     };
   });
-  console.log(workspaceContexts);
-  console.log(workspaceContexts[0].viewportSnapshots.getAll());
   const contextCollection = new WorkspaceContextCollection(workspaceContexts);
   const config = {
     id: data.id,

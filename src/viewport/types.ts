@@ -35,6 +35,5 @@ export interface ViewportSnapshot {
   readonly isMaximized: boolean;
   readonly isMinimized: boolean;
   readonly isRequired: boolean;
-  readonly workspaceContextId: string;
   readonly timestamp: number;
 }

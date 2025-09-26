@@ -50,7 +50,6 @@ describe('MutableViewport', () => {
         isMaximized: false,
         isMinimized: true,
         isRequired: false,
-        workspaceContextId: 'test-context',
         timestamp: 1234567890,
       };
 

@@ -1,30 +1,34 @@
-import { WorkspaceInterface, WorkspaceConfig, ScreenBounds, ProportionalBounds } from './types';
-import { Viewport, ViewportManager } from '../viewport';
+import {
+  WorkspaceInterface,
+  WorkspaceConfig,
+  ScreenBounds,
+  ProportionalBounds,
+  WorkspaceContext,
+} from './types';
+import { MutableViewport, Viewport, ViewportManager } from '../viewport';
 
 export class Workspace implements WorkspaceInterface {
   public readonly id: string;
   public readonly name: string;
   public screenBounds!: ScreenBounds;
-  public readonly viewportManager: ViewportManager;
+  public viewports: Map<string, MutableViewport> = new Map();
+  private readonly viewportManager: ViewportManager;
 
   constructor(config: WorkspaceConfig) {
     this.id = config.id;
     this.name = config.name;
-    this.viewportManager = new ViewportManager(config.workspaceContexts, config.idGenerator);
+    this.viewportManager = new ViewportManager(
+      config.workspaceContexts,
+      config.idGenerator,
+      this.viewports
+    );
   }
 
-  // Viewport operations
-  /**
-   * Create a new viewport in the workspace
-   */
-  createViewport(proportionalBounds?: ProportionalBounds): Viewport {
+  createViewport(_proportionalBounds?: ProportionalBounds): Viewport {
     // Delegate to viewport manager (it will find optimal placement if no bounds provided)
-    return this.viewportManager.createViewport(proportionalBounds);
+    throw new Error(`createViewport not implemented`);
   }
 
-  /**
-   * Create a viewport adjacent to existing viewports
-   */
   createAdjacentViewport(
     existingViewportsOrIds: (Viewport | string)[],
     direction: 'up' | 'down' | 'left' | 'right',
@@ -33,7 +37,7 @@ export class Workspace implements WorkspaceInterface {
     // Resolve any IDs to viewport objects
     const existingViewports = existingViewportsOrIds.map((viewportOrId) => {
       if (typeof viewportOrId === 'string') {
-        const viewport = this.viewportManager.findViewportById(viewportOrId);
+        const viewport = this.findViewportById(viewportOrId);
         if (!viewport) {
           throw new Error(`Viewport not found: ${viewportOrId}`);
         }
@@ -45,16 +49,12 @@ export class Workspace implements WorkspaceInterface {
     return this.viewportManager.createAdjacentViewport(existingViewports, direction, size);
   }
 
-  /**
-   * Split a viewport into two viewports
-   */
-
-  getViewports(): Viewport[] {
-    return this.viewportManager.getViewports();
+  getCurrentContext(): WorkspaceContext | undefined {
+    return this.viewportManager.currentContext;
   }
 
-  hasViewport(viewportId: string): boolean {
-    return this.viewportManager.findViewportById(viewportId) !== null;
+  hasViewport(viewport: Viewport | string): boolean {
+    return this.resolveViewport(viewport) !== null;
   }
 
   minimizeViewport(viewport: Viewport | string): boolean {
@@ -77,6 +77,12 @@ export class Workspace implements WorkspaceInterface {
     return this.viewportManager.removeViewport(viewportObj);
   }
 
+  setScreenBounds(screenBounds: ScreenBounds): void {
+    this.screenBounds = screenBounds;
+
+    this.viewportManager.setScreenBounds(screenBounds);
+  }
+
   splitViewport(
     viewport: Viewport | string,
     direction: 'up' | 'down' | 'left' | 'right',
@@ -92,15 +98,13 @@ export class Workspace implements WorkspaceInterface {
     return this.viewportManager.swapViewports(viewport1Obj, viewport2Obj);
   }
 
-  setScreenBounds(screenBounds: ScreenBounds): void {
-    this.screenBounds = screenBounds;
-
-    this.viewportManager.setScreenBounds(screenBounds);
+  private findViewportById(viewportId: string): Viewport | null {
+    return this.viewports.get(viewportId) || null;
   }
 
   private resolveViewport(viewportOrId: Viewport | string): Viewport {
     if (typeof viewportOrId === 'string') {
-      const viewport = this.viewportManager.findViewportById(viewportOrId);
+      const viewport = this.findViewportById(viewportOrId);
       if (!viewport) {
         throw new Error(`Viewport not found: ${viewportOrId}`);
       }

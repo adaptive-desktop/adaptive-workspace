@@ -14,40 +14,36 @@ import { ViewportMutator } from './ViewportMutator';
  * Provides the core functionality for viewport management.
  */
 export class ViewportManager {
+  public currentContext?: WorkspaceContext;
+
   private viewportMutator: ViewportMutator;
   private viewports: Map<string, MutableViewport> = new Map();
   private viewportSnapshotManager: ViewportSnapshotManager;
   private workspaceBounds!: ScreenBounds; // Will be set by setScreenBounds()
   private workspaceContextDetector: WorkspaceContextDetector;
 
-  private currentContext?: WorkspaceContext;
-
-  constructor(workspaceContexts: WorkspaceContextCollection, idGenerator: IdGenerator) {
-    this.viewportMutator = new ViewportMutator(this.viewports);
+  constructor(
+    workspaceContexts: WorkspaceContextCollection,
+    idGenerator: IdGenerator,
+    viewports: Map<string, MutableViewport>
+  ) {
+    this.viewports = viewports;
+    this.viewportMutator = new ViewportMutator(viewports);
     this.viewportSnapshotManager = new ViewportSnapshotManager(workspaceContexts, idGenerator);
     this.workspaceContextDetector = new WorkspaceContextDetector(workspaceContexts);
   }
 
   // Viewport management operations
-  createViewport(proportionalBounds?: ProportionalBounds): Viewport {
+  createViewport(proportionalBounds?: ProportionalBounds): boolean {
     // Use provided bounds or find optimal placement
     const bounds = proportionalBounds || this.findLargestAvailableSpace();
-    const snapshot = this.viewportSnapshotManager.addViewport(bounds);
+    this.viewportSnapshotManager.addViewport(bounds);
 
-    return this.findViewportById(snapshot.id)!;
+    return true;
   }
 
   getSnapshotsForContext(contextId: string): ViewportSnapshot[] {
     return this.viewportSnapshotManager.getSnapshotsForContext(contextId);
-  }
-
-  getViewports(): Viewport[] {
-    return Array.from(this.viewports.values());
-  }
-
-  findViewportById(id: string): Viewport | null {
-    console.log('viewports', this.viewports);
-    return this.viewports.get(id) || null;
   }
 
   createAdjacentViewport(
@@ -59,17 +55,6 @@ export class ViewportManager {
     // For now, return a placeholder
     console.log('createAdjacentViewport called with:', { existingViewports, direction, size });
     throw new Error('createAdjacentViewport not yet implemented');
-  }
-
-  getCurrentContext(): WorkspaceContext {
-    if (!this.currentContext && this.workspaceBounds) {
-      // Fallback: compute if not set
-      this.currentContext = this.workspaceContextDetector.detectContext(this.workspaceBounds);
-    }
-    if (!this.currentContext) {
-      throw new Error('Screen bounds not set. Cannot determine current context.');
-    }
-    return this.currentContext;
   }
 
   getViewportCount(): number {

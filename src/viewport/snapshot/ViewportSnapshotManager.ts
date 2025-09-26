@@ -71,7 +71,7 @@ export class ViewportSnapshotManager {
     throw new Error('Not implemented');
   }
 
-  addViewport(bounds: ProportionalBounds, id?: string): ViewportSnapshot {
+  addViewport(bounds: ProportionalBounds, id?: string): Viewport {
     if (!this.currentWorkspaceContext || !this.currentWorkspaceContext.id) {
       throw new Error('The current WorkspaceContext must be set');
     }
@@ -85,13 +85,13 @@ export class ViewportSnapshotManager {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: this.currentWorkspaceContext.id,
       timestamp: Date.now(),
     };
 
     this.addSnapshot(snapshot);
 
-    return snapshot;
+    // todo: mutate and return the new viewport
+    return { ...snapshot, screenBounds: { x: 0, y: 0, width: 100, height: 100 } };
   }
 
   setCurrentWorkspaceContext(workspaceContext: WorkspaceContext) {
@@ -111,13 +111,11 @@ export class ViewportSnapshotManager {
           ...snapshot,
           isMinimized: true,
           bounds: undefined,
-          workspaceContextId: context.id!,
           timestamp: now,
         });
       } else {
         context.viewportSnapshots.add({
           ...snapshot,
-          workspaceContextId: context.id!,
           timestamp: now,
         });
       }

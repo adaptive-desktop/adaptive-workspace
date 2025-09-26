@@ -55,7 +55,7 @@
         },
         { 
           "id": "side", 
-          "bounds": { "x": 0, "y": 0, "width": 0.25, "height": 1 },
+          "bounds": { "x": 0.75, "y": 0, "width": 0.25, "height": 1 },
           "isDefault": false,
           "isMaximized": false,
           "isMinimized": true,
@@ -77,7 +77,7 @@
       "viewportSnapshots": [
         { 
           "id": "main", 
-          "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
+          "bounds": { "x": 0, "y": 0, "width": 1, "height": 0.5 }, 
           "isDefault": true,
           "isMaximized": false,
           "isMinimized": false,
@@ -86,7 +86,7 @@
         },
         { 
           "id": "side", 
-          "bounds": { "x": 0, "y": 0, "width": 0.25, "height": 1 },
+          "bounds": { "x": 0, "y": 0.5, "width": 1, "height": 0.5 },
           "isDefault": false,
           "isMaximized": false,
           "isMinimized": true,

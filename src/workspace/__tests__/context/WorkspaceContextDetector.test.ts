@@ -158,24 +158,18 @@ describe('WorkspaceContextDetector', () => {
 
   describe('detectContext()', () => {
     it('should detect landscape context when width > height', () => {
-      // eslint-disable-next-line no-console
-      console.log('TEST: should detect landscape context when width > height');
       const bounds: ScreenBounds = { x: 0, y: 0, width: 1920, height: 1080 };
       const context = detector.detectContext(bounds);
       expect(context.orientation).toBe('landscape');
     });
 
     it('should detect portrait context when height > width', () => {
-      // eslint-disable-next-line no-console
-      console.log('TEST: should detect portrait context when height > width');
       const bounds: ScreenBounds = { x: 0, y: 0, width: 800, height: 1200 };
       const context = detector.detectContext(bounds);
       expect(context.orientation).toBe('portrait');
     });
 
     it('should detect landscape context when width equals height (square)', () => {
-      // eslint-disable-next-line no-console
-      console.log('TEST: should detect landscape context when width equals height (square)');
       const bounds: ScreenBounds = { x: 0, y: 0, width: 1000, height: 1000 };
       const context = detector.detectContext(bounds);
       expect(context.orientation).toBe('landscape');

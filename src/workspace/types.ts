@@ -104,6 +104,7 @@ export interface WorkspaceInterface {
   readonly id: string;
   readonly name: string;
   readonly screenBounds: ScreenBounds;
+  readonly viewports: Map<string, Viewport>;
 
   // Viewport operations - create/split return new viewport, others return success/failure
   /**
@@ -151,13 +152,6 @@ export interface WorkspaceInterface {
    * @returns Success/failure of the operation
    */
   swapViewports(viewport1: Viewport, viewport2: Viewport): boolean;
-
-  // Viewport queries
-  /**
-   * Get all viewports in the workspace
-   * @returns Array of viewports
-   */
-  getViewports(): Viewport[];
 
   /**
    * Check if a viewport exists

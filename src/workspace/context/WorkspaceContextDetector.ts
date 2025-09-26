@@ -59,15 +59,29 @@ export class WorkspaceContextDetector {
 
     if (targetIndex === -1) {
       throw new Error(
-        'No matching WorkspaceContext found. A future version will create a new context'
+        `No matching WorkspaceContext found for ${sizeCategory}. A future version will create a new context`
       );
     }
 
-    // Filter contexts that have a size category no larger than the target
-    return contexts.filter((context) => {
-      const contexSizeCategoryIndex = sizeCategories.indexOf(context.sizeCategory);
-      return contexSizeCategoryIndex >= targetIndex;
+    // Remove contexts larger than the target, but if none remain, return the smallest available size
+    let filtered = contexts.filter((context) => {
+      const contextSizeCategoryIndex = sizeCategories.indexOf(context.sizeCategory);
+      return contextSizeCategoryIndex >= targetIndex;
     });
+    if (filtered.length === 0) {
+      // No context is small enough, so return the largest available size (closest to target, but not larger)
+      const availableIndexes = contexts.map((ctx) => sizeCategories.indexOf(ctx.sizeCategory));
+      // Find the largest index (smallest size) that is still less than targetIndex, or the largest available if all are larger
+      const eligibleIndexes = availableIndexes.filter((idx) => idx <= targetIndex);
+      let chosenIndex;
+      if (eligibleIndexes.length > 0) {
+        chosenIndex = Math.max(...eligibleIndexes);
+      } else {
+        chosenIndex = Math.max(...availableIndexes); // fallback: largest available
+      }
+      filtered = contexts.filter((ctx) => sizeCategories.indexOf(ctx.sizeCategory) === chosenIndex);
+    }
+    return filtered;
   }
 
   private getAspectRatio(screenBounds: ScreenBounds): number {

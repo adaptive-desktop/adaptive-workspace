@@ -12,7 +12,6 @@ describe('WorkspaceContextCollection.removeViewport', () => {
         isMaximized: false,
         isMinimized: false,
         isRequired: false,
-        workspaceContextId: id,
         timestamp: 1,
       });
     }
@@ -41,7 +40,6 @@ describe('WorkspaceContextCollection.removeViewport', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'A',
       timestamp: 1,
     };
     expect(collection.removeViewport(snapshot)).toBe(true);
@@ -60,7 +58,6 @@ describe('WorkspaceContextCollection.removeViewport', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'A',
       timestamp: 1,
     };
     expect(collection.removeViewport(fakeSnapshot)).toBe(false);

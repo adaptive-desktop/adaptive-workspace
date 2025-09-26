@@ -34,7 +34,6 @@ describe('ViewportMutator', () => {
       isMaximized,
       isMinimized,
       isRequired,
-      workspaceContextId: 'ctx',
       timestamp: Date.now(),
     };
   }

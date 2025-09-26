@@ -12,7 +12,6 @@ describe('WorkspaceContextCollection', () => {
         isMaximized: false,
         isMinimized: false,
         isRequired: false,
-        workspaceContextId: id,
         timestamp: 1,
       });
     }

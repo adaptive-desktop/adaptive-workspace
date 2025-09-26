@@ -1,10 +1,4 @@
-/**
- * @fileoverview Tests for TestIdGenerator
- *
- * Tests the test ID generator utility for unit tests.
- */
-
-import { TestIdGenerator } from '../../src/shared/TestIdGenerator';
+import { TestIdGenerator } from "../TestIdGenerator";
 
 describe('TestIdGenerator', () => {
   test('generates predictable IDs with default prefix', () => {

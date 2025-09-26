@@ -40,7 +40,6 @@ describe('WorkspaceContextFactory', () => {
     const viewportSnapshots = [
       {
         id: 'viewport-1',
-        workspaceContextId: 'test-context-id',
         isDefault: false,
         isMaximized: false,
         isMinimized: false,
@@ -50,7 +49,6 @@ describe('WorkspaceContextFactory', () => {
       },
       {
         id: 'viewport-2',
-        workspaceContextId: 'test-context-id',
         isDefault: true,
         isMaximized: false,
         isMinimized: false,

@@ -57,7 +57,6 @@ describe('ViewportSnapshotManager.getSnapshotsForContext', () => {
         isMaximized: false,
         isMinimized: false,
         isRequired: false,
-        workspaceContextId: id,
         timestamp: Date.now(),
       });
     }

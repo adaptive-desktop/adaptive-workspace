@@ -1,6 +1,6 @@
+import { IdGenerator } from '../shared/types';
 import { Workspace } from './Workspace';
 import { ScreenBounds, WorkspaceSnapshot } from './types';
-import { IdGenerator } from '../shared/types';
 import { WorkspaceContextFactory } from './context/WorkspaceContextFactory';
 import { WorkspaceContextCollection } from './context/WorkspaceContextCollection';
 
@@ -35,15 +35,15 @@ export class WorkspaceFactory {
     });
   }
 
-  fromSnapshot(snapshot: WorkspaceSnapshot, screenBounds: ScreenBounds): Workspace {
+  fromSnapshot(workspaceSnapshot: WorkspaceSnapshot, screenBounds: ScreenBounds): Workspace {
     const contextFactory = new WorkspaceContextFactory();
-    const workspaceContexts = snapshot.workspaceContexts.map((contextSnapshot) =>
+    const workspaceContexts = workspaceSnapshot.workspaceContexts.map((contextSnapshot) =>
       contextFactory.fromSnapshot(contextSnapshot)
     );
 
     const workspace = new Workspace({
-      id: snapshot.id,
-      name: snapshot.name,
+      id: workspaceSnapshot.id,
+      name: workspaceSnapshot.name,
       idGenerator: this.idGenerator,
       workspaceContexts: new WorkspaceContextCollection(workspaceContexts),
     });

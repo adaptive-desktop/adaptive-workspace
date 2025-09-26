@@ -18,7 +18,6 @@ describe('ViewportSnapshotCollection', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'ctx2',
       timestamp: fixedTimestamp,
     };
     collection.add(snapshot);
@@ -35,7 +34,6 @@ describe('ViewportSnapshotCollection', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'ctx2',
       timestamp: fixedTimestamp,
     };
     expect(collection.remove(fakeSnapshot)).toBe(false);
@@ -49,7 +47,6 @@ describe('ViewportSnapshotCollection', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'ctx1',
       timestamp: fixedTimestamp,
     };
     c.add(snap);
@@ -65,7 +62,6 @@ describe('ViewportSnapshotCollection', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'ctx1',
       timestamp: 1,
     });
     const updated = c.update({ id: 'v1', isMinimized: true });
@@ -81,7 +77,6 @@ describe('ViewportSnapshotCollection', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'ctx1',
       timestamp: 1,
     };
     c.add(snap);
@@ -99,7 +94,6 @@ describe('ViewportSnapshotCollection', () => {
       isMaximized: false,
       isMinimized: false,
       isRequired: false,
-      workspaceContextId: 'ctx1',
       timestamp: 1,
     };
     expect(c.remove(fakeSnap)).toBe(false);

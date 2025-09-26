@@ -5,32 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.0] - 2025-09-25
 
 ### Added
-
-- Nothing yet
+- Workspace state persistence: new APIs and documentation for saving, loading, and migrating workspace layouts and profiles (see `WORKSPACE_PERSISTENCE.md`)
+- Documentation and code examples for profile templates and migration strategies
 
 ### Changed
-
-- Nothing yet
-
-### Deprecated
-
-- Nothing yet
-
-### Removed
-
-- Nothing yet
+- Major expansion and improvement of the test suite: many new and updated tests for workspace, viewport, and context logic
+- Improved persistence architecture for snapshots and profiles
+- Enhanced documentation for persistence, migration, and integration with frameworks
 
 ### Fixed
-
-- Nothing yet
-
-### Security
-
-- Nothing yet
-
+- Minor test and type issues in viewport and workspace modules
 
 ## [0.6.0] - 2025-09-09
 
@@ -446,7 +433,8 @@ workspace.updateScreenBounds({ x: 100, y: 100, width: 800, height: 600 });
 - **Build Targets**: CommonJS and ESM modules with TypeScript declarations
 - **Test Framework**: Jest with comprehensive coverage reporting
 
-[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/adaptive-desktop/adaptive-workspace/compare/v0.3.0...v0.4.0

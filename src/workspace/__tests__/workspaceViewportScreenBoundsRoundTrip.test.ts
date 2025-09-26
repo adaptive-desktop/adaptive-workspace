@@ -1,5 +1,5 @@
 import { WorkspaceFactory } from '..';
-import { loadDesktopSnapshot } from '../../../tests/loadDesktopSnapshot';
+import { loadDesktopSnapshot } from '../../shared/test/loadDesktopSnapshot';
 import { TestIdGenerator } from '../../../tests/TestIdGenerator';
 
 describe('Workspace viewport and screenBounds round-trip', () => {

@@ -5,10 +5,9 @@ import { WorkspaceContext } from '../src/workspace/types';
 import { ViewportSnapshotCollection } from '../src/viewport/snapshot/ViewportSnapshotCollection';
 import { WorkspaceContextCollection } from '../src/workspace/context/WorkspaceContextCollection';
 import { TestIdGenerator } from './TestIdGenerator';
+import { loadDesktopSnapshot } from '../src/shared/test/loadDesktopSnapshot';
 
-const snapshotPath = path.join(__dirname, '/desktop-snapshot.json');
-const raw = fs.readFileSync(snapshotPath, 'utf-8');
-const defaultSnapshot = JSON.parse(raw);
+const defaultSnapshot = loadDesktopSnapshot();
 
 /**
  * Create a Workspace instance matching the desktop-snapshot.json structure, with optional overrides.

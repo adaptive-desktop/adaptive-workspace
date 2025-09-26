@@ -65,6 +65,68 @@
       ]
     },
     {
+      "id": "tablet-landscape",
+      "name": "Landscape Tablet Display",
+      "minimumViewportScreenHeight": 300,
+      "minimumViewportScreenWidth": 300,
+      "aspectRatio": 1.6,
+      "sizeCategory": "sm",
+      "deviceType": "small-tablet",
+      "maxScreenBounds": { "x": 0, "y": 0, "width": 1024, "height": 768 },
+      "orientation": "landscape",
+      "viewportSnapshots": [
+        { 
+          "id": "main", 
+          "bounds": { "x": 0, "y": 0, "width": 0.75, "height": 1 }, 
+          "isDefault": true,
+          "isMaximized": false,
+          "isMinimized": false,
+          "isRequired": true,
+          "timestamp": 1639547653212
+        },
+        { 
+          "id": "side", 
+          "bounds": { "x": 0.75, "y": 0, "width": 0.25, "height": 1 },
+          "isDefault": false,
+          "isMaximized": false,
+          "isMinimized": true,
+          "isRequired": false,
+          "timestamp": 1639547653213
+        }
+      ]
+    },
+    {
+      "id": "tablet-portrait",
+      "name": "Portrait Laptop Display",
+      "minimumViewportScreenHeight": 300,
+      "minimumViewportScreenWidth": 300,
+      "aspectRatio": 1.6,
+      "sizeCategory": "sm",
+      "deviceType": "small-tablet",
+      "maxScreenBounds": { "x": 0, "y": 0, "width": 768, "height": 1024 },
+      "orientation": "portrait",
+      "viewportSnapshots": [
+        { 
+          "id": "main", 
+          "bounds": { "x": 0, "y": 0, "width": 0.5, "height": 1 }, 
+          "isDefault": true,
+          "isMaximized": false,
+          "isMinimized": false,
+          "isRequired": true,
+          "timestamp": 1639547653212
+        },
+        { 
+          "id": "side", 
+          "bounds": { "x": 0.5, "y": 0, "width": 0.5, "height": 1 },
+          "isDefault": false,
+          "isMaximized": false,
+          "isMinimized": true,
+          "isRequired": false,
+          "timestamp": 1639547653213
+        }
+      ]
+    },
+    {
       "id": "phone",
       "name": "Phone Portrait",
       "minimumViewportScreenHeight": 300,

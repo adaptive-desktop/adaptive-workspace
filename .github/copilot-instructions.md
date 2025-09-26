@@ -4,7 +4,7 @@ When a new release is requested:
 
 1. **Determine Version Bump:**
    - Find the current version in `package.json`.
-   - Compare the current codebase to the last release (current version tag) to summarize changes.
+   - Compare the current codebase to the last release (current version tag) to summarize changes. Ask the user if they want any changes.
    - Propose a version bump (patch or minor) based on the changes and ask for confirmation.
 
 2. **Update Version:**

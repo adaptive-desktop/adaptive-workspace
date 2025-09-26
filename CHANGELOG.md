@@ -1,3 +1,9 @@
+# [0.7.4] - 2025-09-26
+
+### Changed
+- `loadDesktopSnapshot` is now exported from the main entry point and available for import by consumers.
+- Removed the separate Rollup bundle for `loadDesktopSnapshot` (test helper is now part of the main build).
+
 # [0.7.3] - 2025-09-26
 
 ### Changed

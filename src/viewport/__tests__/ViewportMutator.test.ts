@@ -4,6 +4,24 @@ import { ViewportSnapshotCollection } from '../snapshot/ViewportSnapshotCollecti
 import { ScreenBounds } from '../../workspace/types';
 
 describe('ViewportMutator', () => {
+  it('directly updates a MutableViewport using updateViewport', () => {
+    const v1 = new MutableViewport({
+      id: 'v1',
+      proportionalBounds: { x: 0, y: 0, width: 1, height: 1 },
+      isDefault: false,
+      isMinimized: false,
+      isMaximized: false,
+      isRequired: false,
+    });
+    viewports.set('v1', v1);
+    mutator.updateViewport('v1', (vp: MutableViewport) => {
+      vp.isMinimized = true;
+      vp.proportionalBounds = { x: 0.2, y: 0.2, width: 0.5, height: 0.5 };
+    });
+    const updated = viewports.get('v1');
+    expect(updated?.isMinimized).toBe(true);
+    expect(updated?.proportionalBounds).toEqual({ x: 0.2, y: 0.2, width: 0.5, height: 0.5 });
+  });
   let viewports: Map<string, MutableViewport>;
   let workspaceBounds: ScreenBounds;
   let mutator: ViewportMutator;

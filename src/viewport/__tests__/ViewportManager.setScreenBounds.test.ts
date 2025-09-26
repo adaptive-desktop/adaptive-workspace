@@ -50,7 +50,8 @@ describe('ViewportManager.setScreenBounds', () => {
     workspace.setScreenBounds(laptopBounds);
     const context = workspace.getCurrentContext();
     expect(context).toBeDefined();
-    expect(context!.id).toBe('laptop');
+    // For width 1000, the closest context is 'tablet-landscape' (width 1024, aspectRatio 1.28)
+    expect(context!.id).toBe('tablet-landscape');
     expect(workspace.viewports.size).toBe(2);
     // Main viewport
     const main = workspace.viewports.get('main');

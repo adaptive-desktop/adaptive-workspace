@@ -41,8 +41,9 @@ export class WorkspaceContextDetector {
         closestAspectRatio = aspectRatio;
         closestContext = ctx;
       }
-
-      return closestContext!;
+    }
+    if (closestContext) {
+      return closestContext;
     }
     throw new Error(
       'No matching WorkspaceContext found. A future version will create a new context'

@@ -1,3 +1,8 @@
+# [0.7.2] - 2025-09-26
+
+### Changed
+- Version bump to 0.7.2 for release (no user-facing changes since 0.7.1)
+
 # [0.7.1] - 2025-09-26
 
 ### Added

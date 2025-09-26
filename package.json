@@ -1,6 +1,6 @@
 {
   "name": "@adaptive-desktop/adaptive-workspace",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Framework-agnostic workspace layout manager for adaptive desktop applications",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

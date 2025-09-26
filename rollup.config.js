@@ -1,5 +1,5 @@
 const typescript = require('@rollup/plugin-typescript');
-const copy = require('rollup-plugin-copy');
+
 const { readFileSync } = require('fs');
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
@@ -24,14 +24,6 @@ module.exports = [
       typescript({
         tsconfig: './tsconfig.json',
         exclude: ['tests/**/*', '**/*.test.ts'],
-      }),
-      copy({
-        targets: [
-          {
-            src: 'src/shared/test/desktop-snapshot.json',
-            dest: 'dist/shared/test/'
-          }
-        ]
       })
     ],
     external: [

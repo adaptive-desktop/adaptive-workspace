@@ -1,3 +1,14 @@
+# [0.7.3] - 2025-09-26
+
+### Changed
+- Inlined the desktop snapshot JSON into `loadDesktopSnapshot.ts` and removed the external `desktop-snapshot.json` file for simpler test setup.
+
+# [0.7.3] - 2025-09-26
+
+### Changed
+- Inlined the desktop snapshot JSON into `loadDesktopSnapshot.ts` and removed the external `desktop-snapshot.json` file for simpler test setup.
+- Cleaned up `rollup.config.js` to remove all JSON file copy logic (no longer needed).
+
 # [0.7.2] - 2025-09-26
 
 ### Changed

@@ -1,3 +1,11 @@
+# [0.7.1] - 2025-09-26
+
+### Added
+- Utility addition (see commit log for details)
+
+### Fixed
+- Bug in WorkspaceContextDetector: context selection now correctly finds the closest aspect ratio (fixes phone/tablet context selection)
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

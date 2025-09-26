@@ -31,32 +31,5 @@ module.exports = [
       ...Object.keys(pkg.peerDependencies || {}),
       'react/jsx-runtime',
     ],
-  },
-  {
-    input: 'src/shared/test/loadDesktopSnapshot.ts',
-    output: [
-      {
-        file: 'dist/shared/test/loadDesktopSnapshot.js',
-        format: 'cjs',
-        sourcemap: true,
-        exports: 'named',
-      },
-      {
-        file: 'dist/shared/test/loadDesktopSnapshot.esm.js',
-        format: 'esm',
-        sourcemap: true,
-      },
-    ],
-    plugins: [
-      typescript({
-        tsconfig: './tsconfig.json',
-        exclude: ['tests/**/*', '**/*.test.ts'],
-      })
-    ],
-    external: [
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
-      'react/jsx-runtime',
-    ],
   }
 ];

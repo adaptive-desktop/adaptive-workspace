@@ -14,5 +14,8 @@ export * from './shared';
 export * from './utils/boundsUtils';
 export * from './utils/validation';
 
+// Test helpers (public API for consumers)
+export { loadDesktopSnapshot } from './shared/test/loadDesktopSnapshot';
+
 // Version information
 export const VERSION = '0.5.0';
